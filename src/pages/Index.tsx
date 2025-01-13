@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ExpenseCard } from "@/components/ExpenseCard";
 import { ExpenseForm } from "@/components/ExpenseForm";
 import { ExpenseFilters } from "@/components/ExpenseFilters";
 import { ExpenseList } from "@/components/ExpenseList";
+import { ExpenseCSVUpload } from "@/components/ExpenseCSVUpload";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Expense {
   id: number;
@@ -29,14 +31,33 @@ const Index = () => {
     },
   });
 
-  const handleAddExpense = (newExpense: Omit<Expense, "id">) => {
-    setExpenses([
-      ...expenses,
-      {
-        ...newExpense,
-        id: Date.now(),
-      },
-    ]);
+  const fetchExpenses = async () => {
+    const { data, error } = await supabase
+      .from("expenses")
+      .select("*")
+      .order("date", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching expenses:", error);
+      return;
+    }
+
+    setExpenses(data || []);
+  };
+
+  useEffect(() => {
+    fetchExpenses();
+  }, []);
+
+  const handleAddExpense = async (newExpense: Omit<Expense, "id">) => {
+    const { error } = await supabase.from("expenses").insert([newExpense]);
+
+    if (error) {
+      console.error("Error adding expense:", error);
+      return;
+    }
+
+    fetchExpenses();
   };
 
   const handleClearFilters = () => {
@@ -55,12 +76,20 @@ const Index = () => {
   };
 
   const filteredExpenses = expenses.filter((expense) => {
-    const matchesClient = !filters.client || expense.client.toLowerCase().includes(filters.client.toLowerCase());
+    const matchesClient =
+      !filters.client ||
+      expense.client.toLowerCase().includes(filters.client.toLowerCase());
     const matchesType = !filters.type || expense.type === filters.type;
-    const matchesDateStart = !filters.dateRange.start || expense.date >= filters.dateRange.start;
-    const matchesDateEnd = !filters.dateRange.end || expense.date <= filters.dateRange.end;
-    const matchesMinAmount = !filters.amountRange.min || expense.amount >= parseFloat(filters.amountRange.min);
-    const matchesMaxAmount = !filters.amountRange.max || expense.amount <= parseFloat(filters.amountRange.max);
+    const matchesDateStart =
+      !filters.dateRange.start || expense.date >= filters.dateRange.start;
+    const matchesDateEnd =
+      !filters.dateRange.end || expense.date <= filters.dateRange.end;
+    const matchesMinAmount =
+      !filters.amountRange.min ||
+      expense.amount >= parseFloat(filters.amountRange.min);
+    const matchesMaxAmount =
+      !filters.amountRange.max ||
+      expense.amount <= parseFloat(filters.amountRange.max);
 
     return (
       matchesClient &&
@@ -98,8 +127,11 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex items-center space-x-4">
-          <h1 className="text-3xl font-semibold text-gray-900">Expenses Tracker</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-semibold text-gray-900">
+            Expenses Tracker
+          </h1>
+          <ExpenseCSVUpload onUploadComplete={fetchExpenses} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -108,7 +140,7 @@ const Index = () => {
         </div>
 
         <ExpenseForm onAddExpense={handleAddExpense} />
-        
+
         <ExpenseFilters
           filters={filters}
           onFilterChange={setFilters}
