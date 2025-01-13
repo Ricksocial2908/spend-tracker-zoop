@@ -18,6 +18,7 @@ export type Database = {
           frequency: string
           id: number
           name: string
+          status: string
           type: string
         }
         Insert: {
@@ -28,6 +29,7 @@ export type Database = {
           frequency: string
           id?: number
           name: string
+          status?: string
           type: string
         }
         Update: {
@@ -38,6 +40,7 @@ export type Database = {
           frequency?: string
           id?: number
           name?: string
+          status?: string
           type?: string
         }
         Relationships: []

@@ -19,6 +19,7 @@ interface ExpenseFormProps {
     date: string;
     name: string;
     frequency: string;
+    status: string;
   }) => void;
   onCancel?: () => void;
 }
@@ -30,11 +31,12 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
   const [date, setDate] = useState("");
   const [name, setName] = useState("");
   const [frequency, setFrequency] = useState("");
+  const [status, setStatus] = useState("keep");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!amount || !client || !type || !date || !name || !frequency) {
+    if (!amount || !client || !type || !date || !name || !frequency || !status) {
       toast.error("Please fill in all fields");
       return;
     }
@@ -46,6 +48,7 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
       date,
       name,
       frequency,
+      status,
     });
 
     setAmount("");
@@ -54,6 +57,7 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
     setDate("");
     setName("");
     setFrequency("");
+    setStatus("keep");
     
     toast.success("Expense added successfully");
   };
@@ -65,6 +69,7 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
     setDate("");
     setName("");
     setFrequency("");
+    setStatus("keep");
     onCancel?.();
   };
 
@@ -116,6 +121,15 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
           <SelectContent>
             <SelectItem value="monthly">Monthly</SelectItem>
             <SelectItem value="yearly">Yearly</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={status} onValueChange={setStatus}>
+          <SelectTrigger className="bg-white/80 backdrop-blur-sm">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="keep">Keep</SelectItem>
+            <SelectItem value="cancel">Cancel</SelectItem>
           </SelectContent>
         </Select>
       </div>

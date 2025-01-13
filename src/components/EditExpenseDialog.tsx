@@ -26,6 +26,7 @@ interface Expense {
   date: string;
   name: string;
   frequency: string;
+  status: string;
 }
 
 interface EditExpenseDialogProps {
@@ -47,6 +48,7 @@ export const EditExpenseDialog = ({
   const [date, setDate] = useState("");
   const [name, setName] = useState("");
   const [frequency, setFrequency] = useState("");
+  const [status, setStatus] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
@@ -57,6 +59,7 @@ export const EditExpenseDialog = ({
       setDate(expense.date);
       setName(expense.name);
       setFrequency(expense.frequency);
+      setStatus(expense.status);
     }
   }, [expense]);
 
@@ -64,7 +67,7 @@ export const EditExpenseDialog = ({
     e.preventDefault();
     if (!expense) return;
 
-    if (!amount || !client || !type || !date || !name || !frequency) {
+    if (!amount || !client || !type || !date || !name || !frequency || !status) {
       toast.error("Please fill in all fields");
       return;
     }
@@ -81,6 +84,7 @@ export const EditExpenseDialog = ({
           date,
           name,
           frequency,
+          status,
         })
         .eq("id", expense.id);
 
@@ -144,6 +148,15 @@ export const EditExpenseDialog = ({
               <SelectContent>
                 <SelectItem value="monthly">Monthly</SelectItem>
                 <SelectItem value="yearly">Yearly</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={status} onValueChange={setStatus}>
+              <SelectTrigger>
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="keep">Keep</SelectItem>
+                <SelectItem value="cancel">Cancel</SelectItem>
               </SelectContent>
             </Select>
           </div>
