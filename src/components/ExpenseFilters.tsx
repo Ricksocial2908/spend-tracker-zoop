@@ -13,6 +13,7 @@ interface ExpenseFiltersProps {
   filters: {
     client: string;
     type: string;
+    name: string;
     dateRange: {
       start: string;
       end: string;
@@ -47,6 +48,17 @@ export const ExpenseFilters = ({
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Name</label>
+          <Input
+            placeholder="Filter by name"
+            value={filters.name}
+            onChange={(e) =>
+              onFilterChange({ ...filters, name: e.target.value })
+            }
+          />
+        </div>
+
         <div className="space-y-2">
           <label className="text-sm font-medium">Client</label>
           <Input

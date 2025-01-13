@@ -22,6 +22,7 @@ const Index = () => {
   const [filters, setFilters] = useState({
     client: "",
     type: "",
+    name: "",
     dateRange: {
       start: "",
       end: "",
@@ -65,6 +66,7 @@ const Index = () => {
     setFilters({
       client: "",
       type: "",
+      name: "",
       dateRange: {
         start: "",
         end: "",
@@ -81,6 +83,9 @@ const Index = () => {
       !filters.client ||
       expense.client.toLowerCase().includes(filters.client.toLowerCase());
     const matchesType = !filters.type || expense.type === filters.type;
+    const matchesName =
+      !filters.name ||
+      expense.name.toLowerCase().includes(filters.name.toLowerCase());
     const matchesDateStart =
       !filters.dateRange.start || expense.date >= filters.dateRange.start;
     const matchesDateEnd =
@@ -95,6 +100,7 @@ const Index = () => {
     return (
       matchesClient &&
       matchesType &&
+      matchesName &&
       matchesDateStart &&
       matchesDateEnd &&
       matchesMinAmount &&
