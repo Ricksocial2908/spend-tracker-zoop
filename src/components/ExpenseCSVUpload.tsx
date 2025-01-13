@@ -36,10 +36,22 @@ export const ExpenseCSVUpload = ({ onUploadComplete }: ExpenseCSVUploadProps) =>
       const text = await file.text();
       Papa.parse<CSVExpense>(text, {
         header: true,
+        skipEmptyLines: true,
         complete: async (results) => {
           if (results.errors.length > 0) {
-            toast.error("Error parsing CSV file");
+            toast.error("Error parsing CSV file. Please make sure all required fields are present.");
             console.error(results.errors);
+            return;
+          }
+
+          // Validate required fields
+          const requiredFields = ["name", "amount", "client", "type", "date", "frequency"];
+          const missingFields = requiredFields.filter(
+            field => !results.meta.fields?.includes(field)
+          );
+
+          if (missingFields.length > 0) {
+            toast.error(`Missing required fields: ${missingFields.join(", ")}`);
             return;
           }
 
