@@ -21,6 +21,11 @@ interface ExpenseCSVUploadProps {
 export const ExpenseCSVUpload = ({ onUploadComplete }: ExpenseCSVUploadProps) => {
   const [isUploading, setIsUploading] = useState(false);
 
+  const isValidDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date instanceof Date && !isNaN(date.getTime());
+  };
+
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -55,33 +60,45 @@ export const ExpenseCSVUpload = ({ onUploadComplete }: ExpenseCSVUploadProps) =>
             return;
           }
 
+          // Validate and format data before insertion
+          const validatedData = results.data.map((row) => {
+            if (!row.date || !isValidDate(row.date)) {
+              throw new Error(`Invalid date format for expense: ${row.name}`);
+            }
+
+            const amount = parseFloat(row.amount);
+            if (isNaN(amount)) {
+              throw new Error(`Invalid amount for expense: ${row.name}`);
+            }
+
+            return {
+              name: row.name,
+              amount: amount,
+              client: row.client,
+              type: row.type,
+              date: new Date(row.date).toISOString().split('T')[0], // Format as YYYY-MM-DD
+              frequency: row.frequency,
+            };
+          });
+
           try {
             const { error } = await supabase
               .from("expenses")
-              .insert(
-                results.data.map((row) => ({
-                  name: row.name,
-                  amount: parseFloat(row.amount),
-                  client: row.client,
-                  type: row.type,
-                  date: row.date,
-                  frequency: row.frequency,
-                }))
-              );
+              .insert(validatedData);
 
             if (error) throw error;
 
-            toast.success(`Successfully imported ${results.data.length} expenses`);
+            toast.success(`Successfully imported ${validatedData.length} expenses`);
             onUploadComplete();
           } catch (error) {
             console.error("Error inserting data:", error);
-            toast.error("Error uploading expenses");
+            toast.error("Error uploading expenses: " + error.message);
           }
         },
       });
     } catch (error) {
       console.error("Error reading file:", error);
-      toast.error("Error reading file");
+      toast.error("Error: " + error.message);
     } finally {
       setIsUploading(false);
       event.target.value = "";
@@ -96,7 +113,7 @@ export const ExpenseCSVUpload = ({ onUploadComplete }: ExpenseCSVUploadProps) =>
         amount: "100.00",
         client: "Internal",
         type: "Operating",
-        date: "2024-03-15",
+        date: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
         frequency: "monthly",
       },
     ];
