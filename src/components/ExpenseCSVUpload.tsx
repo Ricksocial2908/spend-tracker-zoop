@@ -27,6 +27,10 @@ export const ExpenseCSVUpload = ({ onUploadComplete }: ExpenseCSVUploadProps) =>
   };
 
   const parseAmount = (amountStr: string): number => {
+    if (!amountStr || amountStr.trim() === '') {
+      throw new Error('Amount cannot be empty');
+    }
+    
     // Remove any currency symbols, spaces, and commas
     const cleanedAmount = amountStr.replace(/[^0-9.-]/g, '');
     const parsedAmount = parseFloat(cleanedAmount);
@@ -74,6 +78,10 @@ export const ExpenseCSVUpload = ({ onUploadComplete }: ExpenseCSVUploadProps) =>
 
           // Validate and format data before insertion
           const validatedData = results.data.map((row) => {
+            if (!row.name || row.name.trim() === '') {
+              throw new Error('Name cannot be empty');
+            }
+
             if (!row.date || !isValidDate(row.date)) {
               throw new Error(`Invalid date format for expense: ${row.name}`);
             }
@@ -82,16 +90,28 @@ export const ExpenseCSVUpload = ({ onUploadComplete }: ExpenseCSVUploadProps) =>
             try {
               amount = parseAmount(row.amount);
             } catch (error) {
-              throw new Error(`Invalid amount format for expense ${row.name}: ${row.amount}`);
+              throw new Error(`Invalid amount for expense "${row.name}": Amount cannot be empty`);
+            }
+
+            if (!row.client || row.client.trim() === '') {
+              throw new Error(`Client cannot be empty for expense: ${row.name}`);
+            }
+
+            if (!row.type || row.type.trim() === '') {
+              throw new Error(`Type cannot be empty for expense: ${row.name}`);
+            }
+
+            if (!row.frequency || row.frequency.trim() === '') {
+              throw new Error(`Frequency cannot be empty for expense: ${row.name}`);
             }
 
             return {
-              name: row.name,
+              name: row.name.trim(),
               amount: amount,
-              client: row.client,
-              type: row.type,
+              client: row.client.trim(),
+              type: row.type.trim(),
               date: new Date(row.date).toISOString().split('T')[0], // Format as YYYY-MM-DD
-              frequency: row.frequency,
+              frequency: row.frequency.trim(),
             };
           });
 
