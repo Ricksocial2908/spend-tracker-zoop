@@ -26,9 +26,9 @@ export const ExpenseCSVUpload = ({ onUploadComplete }: ExpenseCSVUploadProps) =>
     return date instanceof Date && !isNaN(date.getTime());
   };
 
-  const parseAmount = (amountStr: string): number => {
+  const parseAmount = (amountStr: string, rowIndex: number): number => {
     if (!amountStr || amountStr.trim() === '') {
-      throw new Error('Amount cannot be empty');
+      throw new Error(`Row ${rowIndex + 1}: Amount cannot be empty`);
     }
     
     // Remove any currency symbols, spaces, and commas
@@ -36,7 +36,7 @@ export const ExpenseCSVUpload = ({ onUploadComplete }: ExpenseCSVUploadProps) =>
     const parsedAmount = parseFloat(cleanedAmount);
     
     if (isNaN(parsedAmount)) {
-      throw new Error(`Invalid amount format: ${amountStr}`);
+      throw new Error(`Row ${rowIndex + 1}: Invalid amount format: ${amountStr}`);
     }
     
     return parsedAmount;
@@ -76,46 +76,46 @@ export const ExpenseCSVUpload = ({ onUploadComplete }: ExpenseCSVUploadProps) =>
             return;
           }
 
-          // Validate and format data before insertion
-          const validatedData = results.data.map((row) => {
-            if (!row.name || row.name.trim() === '') {
-              throw new Error('Name cannot be empty');
-            }
-
-            if (!row.date || !isValidDate(row.date)) {
-              throw new Error(`Invalid date format for expense: ${row.name}`);
-            }
-
-            let amount;
-            try {
-              amount = parseAmount(row.amount);
-            } catch (error) {
-              throw new Error(`Invalid amount for expense "${row.name}": Amount cannot be empty`);
-            }
-
-            if (!row.client || row.client.trim() === '') {
-              throw new Error(`Client cannot be empty for expense: ${row.name}`);
-            }
-
-            if (!row.type || row.type.trim() === '') {
-              throw new Error(`Type cannot be empty for expense: ${row.name}`);
-            }
-
-            if (!row.frequency || row.frequency.trim() === '') {
-              throw new Error(`Frequency cannot be empty for expense: ${row.name}`);
-            }
-
-            return {
-              name: row.name.trim(),
-              amount: amount,
-              client: row.client.trim(),
-              type: row.type.trim(),
-              date: new Date(row.date).toISOString().split('T')[0], // Format as YYYY-MM-DD
-              frequency: row.frequency.trim(),
-            };
-          });
-
           try {
+            // Validate all rows first before attempting insertion
+            const validatedData = results.data.map((row, index) => {
+              if (!row.name || row.name.trim() === '') {
+                throw new Error(`Row ${index + 1}: Name cannot be empty`);
+              }
+
+              if (!row.date || !isValidDate(row.date)) {
+                throw new Error(`Row ${index + 1}: Invalid date format for expense: ${row.name}`);
+              }
+
+              let amount;
+              try {
+                amount = parseAmount(row.amount, index);
+              } catch (error) {
+                throw new Error(`Row ${index + 1}: Invalid amount for expense "${row.name}": ${error.message}`);
+              }
+
+              if (!row.client || row.client.trim() === '') {
+                throw new Error(`Row ${index + 1}: Client cannot be empty for expense: ${row.name}`);
+              }
+
+              if (!row.type || row.type.trim() === '') {
+                throw new Error(`Row ${index + 1}: Type cannot be empty for expense: ${row.name}`);
+              }
+
+              if (!row.frequency || row.frequency.trim() === '') {
+                throw new Error(`Row ${index + 1}: Frequency cannot be empty for expense: ${row.name}`);
+              }
+
+              return {
+                name: row.name.trim(),
+                amount: amount,
+                client: row.client.trim(),
+                type: row.type.trim(),
+                date: new Date(row.date).toISOString().split('T')[0], // Format as YYYY-MM-DD
+                frequency: row.frequency.trim(),
+              };
+            });
+
             const { error } = await supabase
               .from("expenses")
               .insert(validatedData);
@@ -125,8 +125,8 @@ export const ExpenseCSVUpload = ({ onUploadComplete }: ExpenseCSVUploadProps) =>
             toast.success(`Successfully imported ${validatedData.length} expenses`);
             onUploadComplete();
           } catch (error) {
-            console.error("Error inserting data:", error);
-            toast.error("Error uploading expenses: " + error.message);
+            console.error("Error processing data:", error);
+            toast.error(error.message);
           }
         },
       });
