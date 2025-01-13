@@ -32,7 +32,7 @@ interface ExpenseListProps {
 export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) => {
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [highlightedId, setHighlightedId] = useState<number | null>(null);
+  const [highlightedIds, setHighlightedIds] = useState<number[]>([]);
 
   const handleEdit = (expense: Expense) => {
     setSelectedExpense(expense);
@@ -58,7 +58,13 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
   };
 
   const handleRowClick = (expenseId: number) => {
-    setHighlightedId(highlightedId === expenseId ? null : expenseId);
+    setHighlightedIds(prev => {
+      if (prev.includes(expenseId)) {
+        return prev.filter(id => id !== expenseId);
+      } else {
+        return [...prev, expenseId];
+      }
+    });
   };
 
   return (
@@ -82,7 +88,7 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
                 key={expense.id}
                 onClick={() => handleRowClick(expense.id)}
                 className={`cursor-pointer transition-colors ${
-                  highlightedId === expense.id ? "bg-blue-50 hover:bg-blue-100" : "hover:bg-muted/50"
+                  highlightedIds.includes(expense.id) ? "bg-blue-50 hover:bg-blue-100" : "hover:bg-muted/50"
                 }`}
               >
                 <TableCell>{new Date(expense.date).toLocaleDateString()}</TableCell>
