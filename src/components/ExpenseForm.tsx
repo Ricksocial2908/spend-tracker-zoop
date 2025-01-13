@@ -75,6 +75,7 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 animate-fade-in">
+      <h2 className="text-2xl font-semibold text-gray-900 mb-4">Add Expenses</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Input
           type="text"
