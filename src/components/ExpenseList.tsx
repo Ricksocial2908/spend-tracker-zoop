@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { EditIcon, CheckCircleIcon, XCircleIcon } from "lucide-react";
+import { EditIcon, CheckCircleIcon, XCircleIcon, ArrowUpDown } from "lucide-react";
 import { useState } from "react";
 import { EditExpenseDialog } from "./EditExpenseDialog";
 import { supabase } from "@/integrations/supabase/client";
@@ -29,10 +29,15 @@ interface ExpenseListProps {
   onExpenseUpdated: () => void;
 }
 
+type SortField = 'amount' | 'name' | 'client' | 'date';
+type SortDirection = 'asc' | 'desc';
+
 export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) => {
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [highlightedIds, setHighlightedIds] = useState<number[]>([]);
+  const [sortField, setSortField] = useState<SortField>('date');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
   const handleEdit = (expense: Expense) => {
     setSelectedExpense(expense);
@@ -67,23 +72,68 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
     });
   };
 
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const sortedExpenses = [...expenses].sort((a, b) => {
+    const multiplier = sortDirection === 'asc' ? 1 : -1;
+    
+    switch (sortField) {
+      case 'amount':
+        return (a.amount - b.amount) * multiplier;
+      case 'name':
+        return a.name.localeCompare(b.name) * multiplier;
+      case 'client':
+        return a.client.localeCompare(b.client) * multiplier;
+      case 'date':
+        return (new Date(a.date).getTime() - new Date(b.date).getTime()) * multiplier;
+      default:
+        return 0;
+    }
+  });
+
+  const SortButton = ({ field, label }: { field: SortField, label: string }) => (
+    <Button
+      variant="ghost"
+      onClick={() => handleSort(field)}
+      className="hover:bg-muted/30"
+    >
+      {label}
+      <ArrowUpDown className="ml-2 h-4 w-4" />
+    </Button>
+  );
+
   return (
     <>
       <div className="rounded-xl bg-white/80 backdrop-blur-sm border border-gray-200 animate-fade-in">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Expense Name</TableHead>
-              <TableHead>Client</TableHead>
+              <TableHead>
+                <SortButton field="date" label="Date" />
+              </TableHead>
+              <TableHead>
+                <SortButton field="name" label="Expense Name" />
+              </TableHead>
+              <TableHead>
+                <SortButton field="client" label="Client" />
+              </TableHead>
               <TableHead>Type</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
+              <TableHead className="text-right">
+                <SortButton field="amount" label="Amount" />
+              </TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="w-[150px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {expenses.map((expense) => (
+            {sortedExpenses.map((expense) => (
               <TableRow 
                 key={expense.id}
                 onClick={() => handleRowClick(expense.id)}
