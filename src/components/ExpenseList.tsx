@@ -13,6 +13,8 @@ interface Expense {
   client: string;
   type: string;
   date: string;
+  name: string;
+  frequency: string;
 }
 
 interface ExpenseListProps {
@@ -26,6 +28,7 @@ export const ExpenseList = ({ expenses }: ExpenseListProps) => {
         <TableHeader>
           <TableRow>
             <TableHead>Date</TableHead>
+            <TableHead>Expense Name</TableHead>
             <TableHead>Client</TableHead>
             <TableHead>Type</TableHead>
             <TableHead className="text-right">Amount</TableHead>
@@ -35,6 +38,7 @@ export const ExpenseList = ({ expenses }: ExpenseListProps) => {
           {expenses.map((expense) => (
             <TableRow key={expense.id}>
               <TableCell>{new Date(expense.date).toLocaleDateString()}</TableCell>
+              <TableCell>{expense.name}</TableCell>
               <TableCell>{expense.client}</TableCell>
               <TableCell>
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
@@ -48,7 +52,7 @@ export const ExpenseList = ({ expenses }: ExpenseListProps) => {
           ))}
           {expenses.length === 0 && (
             <TableRow>
-              <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+              <TableCell colSpan={5} className="text-center py-8 text-gray-500">
                 No expenses found
               </TableCell>
             </TableRow>
