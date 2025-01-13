@@ -32,6 +32,7 @@ interface ExpenseListProps {
 export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) => {
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [highlightedId, setHighlightedId] = useState<number | null>(null);
 
   const handleEdit = (expense: Expense) => {
     setSelectedExpense(expense);
@@ -56,6 +57,10 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
     }
   };
 
+  const handleRowClick = (expenseId: number) => {
+    setHighlightedId(highlightedId === expenseId ? null : expenseId);
+  };
+
   return (
     <>
       <div className="rounded-xl bg-white/80 backdrop-blur-sm border border-gray-200 animate-fade-in">
@@ -73,7 +78,13 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
           </TableHeader>
           <TableBody>
             {expenses.map((expense) => (
-              <TableRow key={expense.id}>
+              <TableRow 
+                key={expense.id}
+                onClick={() => handleRowClick(expense.id)}
+                className={`cursor-pointer transition-colors ${
+                  highlightedId === expense.id ? "bg-blue-50 hover:bg-blue-100" : "hover:bg-muted/50"
+                }`}
+              >
                 <TableCell>{new Date(expense.date).toLocaleDateString()}</TableCell>
                 <TableCell>{expense.name}</TableCell>
                 <TableCell>{expense.client}</TableCell>
@@ -101,14 +112,20 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => handleEdit(expense)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEdit(expense);
+                      }}
                     >
                       <EditIcon className="h-4 w-4" />
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => handleStatusToggle(expense)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleStatusToggle(expense);
+                      }}
                     >
                       {expense.status === "keep" ? (
                         <XCircleIcon className="h-4 w-4 text-red-500" />
