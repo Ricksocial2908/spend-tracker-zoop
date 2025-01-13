@@ -26,6 +26,18 @@ export const ExpenseCSVUpload = ({ onUploadComplete }: ExpenseCSVUploadProps) =>
     return date instanceof Date && !isNaN(date.getTime());
   };
 
+  const parseAmount = (amountStr: string): number => {
+    // Remove any currency symbols, spaces, and commas
+    const cleanedAmount = amountStr.replace(/[^0-9.-]/g, '');
+    const parsedAmount = parseFloat(cleanedAmount);
+    
+    if (isNaN(parsedAmount)) {
+      throw new Error(`Invalid amount format: ${amountStr}`);
+    }
+    
+    return parsedAmount;
+  };
+
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -66,9 +78,11 @@ export const ExpenseCSVUpload = ({ onUploadComplete }: ExpenseCSVUploadProps) =>
               throw new Error(`Invalid date format for expense: ${row.name}`);
             }
 
-            const amount = parseFloat(row.amount);
-            if (isNaN(amount)) {
-              throw new Error(`Invalid amount for expense: ${row.name}`);
+            let amount;
+            try {
+              amount = parseAmount(row.amount);
+            } catch (error) {
+              throw new Error(`Invalid amount format for expense ${row.name}: ${row.amount}`);
             }
 
             return {
