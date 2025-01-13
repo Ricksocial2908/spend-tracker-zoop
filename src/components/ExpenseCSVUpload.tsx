@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { UploadIcon } from "lucide-react";
+import { UploadIcon, DownloadIcon } from "lucide-react";
 import { toast } from "sonner";
 import Papa from "papaparse";
 import { supabase } from "@/integrations/supabase/client";
@@ -76,6 +76,36 @@ export const ExpenseCSVUpload = ({ onUploadComplete }: ExpenseCSVUploadProps) =>
     }
   };
 
+  const downloadTemplate = () => {
+    const headers = ["name", "amount", "client", "type", "date", "frequency"];
+    const sampleData = [
+      {
+        name: "Office Supplies",
+        amount: "100.00",
+        client: "Internal",
+        type: "Operating",
+        date: "2024-03-15",
+        frequency: "monthly",
+      },
+    ];
+
+    const csv = Papa.unparse({
+      fields: headers,
+      data: sampleData,
+    });
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "expense-template.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("Template downloaded successfully");
+  };
+
   return (
     <div className="flex items-center space-x-2">
       <input
@@ -99,6 +129,10 @@ export const ExpenseCSVUpload = ({ onUploadComplete }: ExpenseCSVUploadProps) =>
           </span>
         </Button>
       </label>
+      <Button variant="outline" onClick={downloadTemplate}>
+        <DownloadIcon className="w-4 h-4 mr-2" />
+        Download Template
+      </Button>
     </div>
   );
 };
