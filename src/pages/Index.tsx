@@ -10,6 +10,8 @@ interface Expense {
   client: string;
   type: string;
   date: string;
+  name: string;
+  frequency: string;
 }
 
 const Index = () => {
@@ -76,7 +78,8 @@ const Index = () => {
       const currentDate = new Date();
       return (
         expenseDate.getMonth() === currentDate.getMonth() &&
-        expenseDate.getFullYear() === currentDate.getFullYear()
+        expenseDate.getFullYear() === currentDate.getFullYear() &&
+        expense.frequency === "monthly"
       );
     })
     .reduce((sum, expense) => sum + expense.amount, 0);
@@ -85,7 +88,10 @@ const Index = () => {
     .filter((expense) => {
       const expenseDate = new Date(expense.date);
       const currentDate = new Date();
-      return expenseDate.getFullYear() === currentDate.getFullYear();
+      return (
+        expenseDate.getFullYear() === currentDate.getFullYear() &&
+        expense.frequency === "yearly"
+      );
     })
     .reduce((sum, expense) => sum + expense.amount, 0);
 

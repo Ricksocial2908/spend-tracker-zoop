@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, XIcon } from "lucide-react";
 
 interface ExpenseFormProps {
   onAddExpense: (expense: {
@@ -17,19 +17,24 @@ interface ExpenseFormProps {
     client: string;
     type: string;
     date: string;
+    name: string;
+    frequency: string;
   }) => void;
+  onCancel?: () => void;
 }
 
-export const ExpenseForm = ({ onAddExpense }: ExpenseFormProps) => {
+export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
   const [amount, setAmount] = useState("");
   const [client, setClient] = useState("");
   const [type, setType] = useState("");
   const [date, setDate] = useState("");
+  const [name, setName] = useState("");
+  const [frequency, setFrequency] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!amount || !client || !type || !date) {
+    if (!amount || !client || !type || !date || !name || !frequency) {
       toast.error("Please fill in all fields");
       return;
     }
@@ -39,19 +44,40 @@ export const ExpenseForm = ({ onAddExpense }: ExpenseFormProps) => {
       client,
       type,
       date,
+      name,
+      frequency,
     });
 
     setAmount("");
     setClient("");
     setType("");
     setDate("");
+    setName("");
+    setFrequency("");
     
     toast.success("Expense added successfully");
+  };
+
+  const handleCancel = () => {
+    setAmount("");
+    setClient("");
+    setType("");
+    setDate("");
+    setName("");
+    setFrequency("");
+    onCancel?.();
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 animate-fade-in">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Input
+          type="text"
+          placeholder="Expense Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="bg-white/80 backdrop-blur-sm"
+        />
         <Input
           type="number"
           placeholder="Amount"
@@ -83,11 +109,26 @@ export const ExpenseForm = ({ onAddExpense }: ExpenseFormProps) => {
           onChange={(e) => setDate(e.target.value)}
           className="bg-white/80 backdrop-blur-sm"
         />
+        <Select value={frequency} onValueChange={setFrequency}>
+          <SelectTrigger className="bg-white/80 backdrop-blur-sm">
+            <SelectValue placeholder="Frequency" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="monthly">Monthly</SelectItem>
+            <SelectItem value="yearly">Yearly</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
-      <Button type="submit" className="w-full md:w-auto">
-        <PlusIcon className="w-4 h-4 mr-2" />
-        Add Expense
-      </Button>
+      <div className="flex gap-2 justify-end">
+        <Button type="button" variant="outline" onClick={handleCancel}>
+          <XIcon className="w-4 h-4 mr-2" />
+          Cancel
+        </Button>
+        <Button type="submit">
+          <PlusIcon className="w-4 h-4 mr-2" />
+          Add Expense
+        </Button>
+      </div>
     </form>
   );
 };
