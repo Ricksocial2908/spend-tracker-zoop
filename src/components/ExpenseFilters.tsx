@@ -68,7 +68,7 @@ export const ExpenseFilters = ({
               <SelectValue placeholder="Select type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All</SelectItem>
+              <SelectItem value="all">All</SelectItem>
               <SelectItem value="software">Software</SelectItem>
               <SelectItem value="hardware">Hardware</SelectItem>
               <SelectItem value="service">Service</SelectItem>
