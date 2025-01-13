@@ -147,7 +147,7 @@ const Index = () => {
           onClearFilters={handleClearFilters}
         />
 
-        <ExpenseList expenses={filteredExpenses} />
+        <ExpenseList expenses={filteredExpenses} onExpenseUpdated={fetchExpenses} />
       </div>
     </div>
   );
