@@ -34,17 +34,21 @@ const Index = () => {
   });
 
   const fetchExpenses = async () => {
-    const { data, error } = await supabase
-      .from("expenses")
-      .select("*")
-      .order("date", { ascending: false });
+    try {
+      const { data, error } = await supabase
+        .from("expenses")
+        .select("*")
+        .order("date", { ascending: false });
 
-    if (error) {
-      console.error("Error fetching expenses:", error);
-      return;
+      if (error) {
+        console.error("Error fetching expenses:", error);
+        return;
+      }
+
+      setExpenses(data || []);
+    } catch (error) {
+      console.error("Error in fetchExpenses:", error);
     }
-
-    setExpenses(data || []);
   };
 
   useEffect(() => {
@@ -52,14 +56,18 @@ const Index = () => {
   }, []);
 
   const handleAddExpense = async (newExpense: Omit<Expense, "id">) => {
-    const { error } = await supabase.from("expenses").insert([newExpense]);
+    try {
+      const { error } = await supabase.from("expenses").insert([newExpense]);
 
-    if (error) {
-      console.error("Error adding expense:", error);
-      return;
+      if (error) {
+        console.error("Error adding expense:", error);
+        return;
+      }
+
+      fetchExpenses();
+    } catch (error) {
+      console.error("Error in handleAddExpense:", error);
     }
-
-    fetchExpenses();
   };
 
   const handleClearFilters = () => {
