@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -32,6 +32,14 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
   const [name, setName] = useState("");
   const [frequency, setFrequency] = useState("");
   const [status, setStatus] = useState("keep");
+
+  // Set default date to today when component mounts
+  useEffect(() => {
+    if (!date) {
+      const today = new Date().toISOString().split('T')[0];
+      setDate(today);
+    }
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
