@@ -29,7 +29,7 @@ interface ExpenseListProps {
   onExpenseUpdated: () => void;
 }
 
-type SortField = 'amount' | 'name' | 'client' | 'date';
+type SortField = 'amount' | 'name' | 'client' | 'date' | 'frequency';
 type SortDirection = 'asc' | 'desc';
 
 export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) => {
@@ -93,6 +93,8 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
         return a.client.localeCompare(b.client) * multiplier;
       case 'date':
         return (new Date(a.date).getTime() - new Date(b.date).getTime()) * multiplier;
+      case 'frequency':
+        return a.frequency.localeCompare(b.frequency) * multiplier;
       default:
         return 0;
     }
@@ -125,6 +127,9 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
                 <SortButton field="client" label="Client" />
               </TableHead>
               <TableHead>Type</TableHead>
+              <TableHead>
+                <SortButton field="frequency" label="Frequency" />
+              </TableHead>
               <TableHead className="text-right">
                 <SortButton field="amount" label="Amount" />
               </TableHead>
@@ -147,6 +152,11 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
                 <TableCell>
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                     {expense.type}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                    {expense.frequency}
                   </span>
                 </TableCell>
                 <TableCell className="text-right">
@@ -195,7 +205,7 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
             ))}
             {expenses.length === 0 && (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={8} className="text-center py-8 text-gray-500">
                   No expenses found
                 </TableCell>
               </TableRow>
