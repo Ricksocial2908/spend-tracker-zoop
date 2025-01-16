@@ -101,10 +101,18 @@ export const ExpenseCSVUpload = ({ onUploadComplete }: ExpenseCSVUploadProps) =>
               if (!row.type || row.type.trim() === '') {
                 throw new Error(`Row ${index + 1}: Type cannot be empty for expense: ${row.name}`);
               }
+      
+              // Convert type to sentence case
+              const type = row.type.trim();
+              row.type = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
 
               if (!row.frequency || row.frequency.trim() === '') {
                 throw new Error(`Row ${index + 1}: Frequency cannot be empty for expense: ${row.name}`);
               }
+      
+              // Convert frequency to sentence case
+              const frequency = row.frequency.trim();
+              row.frequency = frequency.charAt(0).toUpperCase() + frequency.slice(1).toLowerCase();
 
               return {
                 name: row.name.trim(),

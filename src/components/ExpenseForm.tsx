@@ -111,11 +111,11 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
             <SelectValue placeholder="Type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="software">Software</SelectItem>
-            <SelectItem value="hardware">Hardware</SelectItem>
-            <SelectItem value="service">Service</SelectItem>
-            <SelectItem value="hosting">Hosting</SelectItem>
-            <SelectItem value="other">Other</SelectItem>
+            <SelectItem value="Software">Software</SelectItem>
+            <SelectItem value="Hardware">Hardware</SelectItem>
+            <SelectItem value="Service">Service</SelectItem>
+            <SelectItem value="Hosting">Hosting</SelectItem>
+            <SelectItem value="Other">Other</SelectItem>
           </SelectContent>
         </Select>
         <Input
@@ -129,9 +129,9 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
             <SelectValue placeholder="Frequency" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="monthly">Monthly</SelectItem>
-            <SelectItem value="yearly">Yearly</SelectItem>
-            <SelectItem value="once-off">Once-off</SelectItem>
+            <SelectItem value="Monthly">Monthly</SelectItem>
+            <SelectItem value="Yearly">Yearly</SelectItem>
+            <SelectItem value="Once-off">Once-off</SelectItem>
           </SelectContent>
         </Select>
         <Select value={status} onValueChange={setStatus}>
@@ -139,8 +139,8 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="keep">Keep</SelectItem>
-            <SelectItem value="cancel">Cancel</SelectItem>
+            <SelectItem value="Keep">Keep</SelectItem>
+            <SelectItem value="Cancel">Cancel</SelectItem>
           </SelectContent>
         </Select>
       </div>
