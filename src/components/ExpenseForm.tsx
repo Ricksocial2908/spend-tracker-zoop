@@ -106,6 +106,7 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
             <SelectItem value="software">Software</SelectItem>
             <SelectItem value="hardware">Hardware</SelectItem>
             <SelectItem value="service">Service</SelectItem>
+            <SelectItem value="hosting">Hosting</SelectItem>
             <SelectItem value="other">Other</SelectItem>
           </SelectContent>
         </Select>
