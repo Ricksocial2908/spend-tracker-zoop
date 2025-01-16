@@ -131,6 +131,7 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
           <SelectContent>
             <SelectItem value="monthly">Monthly</SelectItem>
             <SelectItem value="yearly">Yearly</SelectItem>
+            <SelectItem value="once-off">Once-off</SelectItem>
           </SelectContent>
         </Select>
         <Select value={status} onValueChange={setStatus}>
