@@ -84,7 +84,7 @@ export const EditExpenseDialog = ({
           date,
           name,
           frequency,
-          status,
+          status: status.toLowerCase(), // Ensure status is lowercase to match database constraint
         })
         .eq("id", expense.id);
 
@@ -157,8 +157,8 @@ export const EditExpenseDialog = ({
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Keep">Keep</SelectItem>
-                <SelectItem value="Cancel">Cancel</SelectItem>
+                <SelectItem value="keep">Keep</SelectItem>
+                <SelectItem value="cancel">Cancel</SelectItem>
               </SelectContent>
             </Select>
           </div>
