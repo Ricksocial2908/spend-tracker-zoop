@@ -267,7 +267,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                   />
                   <div className={`text-sm font-semibold ${isOverBudget(internalCost, Number(internalPaidAmount)) ? 'text-red-600' : 'text-gray-900'}`}>
                     Paid: €{Number(internalPaidAmount).toLocaleString()}
-                    {isOverBudget(internalCost, Number(internalPaidAmount)) && ' (Exceeded Budget)'}
+                    {isOverBudget(internalCost, Number(internalPaidAmount)) && ` (Exceeded Budget by €${(Number(internalPaidAmount) - internalCost).toLocaleString()})`}
                   </div>
                 </div>
               </div>
@@ -297,9 +297,9 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                     onChange={(e) => setExternalPaidAmount(e.target.value)}
                     className="flex-1"
                   />
-                  <div className="text-sm font-semibold ${isOverBudget(Number(externalCost), Number(externalPaidAmount)) ? 'text-red-600' : 'text-gray-900'}">
+                  <div className={`text-sm font-semibold ${isOverBudget(Number(externalCost), Number(externalPaidAmount)) ? 'text-red-600' : 'text-gray-900'}`}>
                     Paid: €{Number(externalPaidAmount).toLocaleString()}
-                    {isOverBudget(Number(externalCost), Number(externalPaidAmount)) && ' (Exceeded Budget)'}
+                    {isOverBudget(Number(externalCost), Number(externalPaidAmount)) && ` (Exceeded Budget by €${(Number(externalPaidAmount) - Number(externalCost)).toLocaleString()})`}
                   </div>
                 </div>
               </div>
@@ -331,7 +331,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                   />
                   <div className={`text-sm font-semibold ${isOverBudget(Number(softwareCost), Number(softwarePaidAmount)) ? 'text-red-600' : 'text-gray-900'}`}>
                     Paid: €{Number(softwarePaidAmount).toLocaleString()}
-                    {isOverBudget(Number(softwareCost), Number(softwarePaidAmount)) && ' (Exceeded Budget)'}
+                    {isOverBudget(Number(softwareCost), Number(softwarePaidAmount)) && ` (Exceeded Budget by €${(Number(softwarePaidAmount) - Number(softwareCost)).toLocaleString()})`}
                   </div>
                 </div>
               </div>
@@ -363,7 +363,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                   />
                   <div className={`text-sm font-semibold ${isOverBudget(Number(vrDevelopmentCost), Number(vrDevelopmentPaidAmount)) ? 'text-red-600' : 'text-gray-900'}`}>
                     Paid: €{Number(vrDevelopmentPaidAmount).toLocaleString()}
-                    {isOverBudget(Number(vrDevelopmentCost), Number(vrDevelopmentPaidAmount)) && ' (Exceeded Budget)'}
+                    {isOverBudget(Number(vrDevelopmentCost), Number(vrDevelopmentPaidAmount)) && ` (Exceeded Budget by €${(Number(vrDevelopmentPaidAmount) - Number(vrDevelopmentCost)).toLocaleString()})`}
                   </div>
                 </div>
               </div>
@@ -395,7 +395,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                   />
                   <div className={`text-sm font-semibold ${isOverBudget(Number(softwareDevelopmentCost), Number(softwareDevelopmentPaidAmount)) ? 'text-red-600' : 'text-gray-900'}`}>
                     Paid: €{Number(softwareDevelopmentPaidAmount).toLocaleString()}
-                    {isOverBudget(Number(softwareDevelopmentCost), Number(softwareDevelopmentPaidAmount)) && ' (Exceeded Budget)'}
+                    {isOverBudget(Number(softwareDevelopmentCost), Number(softwareDevelopmentPaidAmount)) && ` (Exceeded Budget by €${(Number(softwareDevelopmentPaidAmount) - Number(softwareDevelopmentCost)).toLocaleString()})`}
                   </div>
                 </div>
               </div>
@@ -427,7 +427,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                   />
                   <div className={`text-sm font-semibold ${isOverBudget(Number(designCost), Number(designPaidAmount)) ? 'text-red-600' : 'text-gray-900'}`}>
                     Paid: €{Number(designPaidAmount).toLocaleString()}
-                    {isOverBudget(Number(designCost), Number(designPaidAmount)) && ' (Exceeded Budget)'}
+                    {isOverBudget(Number(designCost), Number(designPaidAmount)) && ` (Exceeded Budget by €${(Number(designPaidAmount) - Number(designCost)).toLocaleString()})`}
                   </div>
                 </div>
               </div>
@@ -459,7 +459,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                   />
                   <div className={`text-sm font-semibold ${isOverBudget(Number(modeling3dCost), Number(modeling3dPaidAmount)) ? 'text-red-600' : 'text-gray-900'}`}>
                     Paid: €{Number(modeling3dPaidAmount).toLocaleString()}
-                    {isOverBudget(Number(modeling3dCost), Number(modeling3dPaidAmount)) && ' (Exceeded Budget)'}
+                    {isOverBudget(Number(modeling3dCost), Number(modeling3dPaidAmount)) && ` (Exceeded Budget by €${(Number(modeling3dPaidAmount) - Number(modeling3dCost)).toLocaleString()})`}
                   </div>
                 </div>
               </div>
@@ -491,7 +491,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                   />
                   <div className={`text-sm font-semibold ${isOverBudget(Number(renderingCost), Number(renderingPaidAmount)) ? 'text-red-600' : 'text-gray-900'}`}>
                     Paid: €{Number(renderingPaidAmount).toLocaleString()}
-                    {isOverBudget(Number(renderingCost), Number(renderingPaidAmount)) && ' (Exceeded Budget)'}
+                    {isOverBudget(Number(renderingCost), Number(renderingPaidAmount)) && ` (Exceeded Budget by €${(Number(renderingPaidAmount) - Number(renderingCost)).toLocaleString()})`}
                   </div>
                 </div>
               </div>
@@ -510,7 +510,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
               <label className="block text-sm font-medium text-gray-700 mb-2">Total Paid Amount</label>
               <div className={`text-lg font-bold ${totalPaidAmount > totalCost ? 'text-red-600' : 'text-gray-900'}`}>
                 €{totalPaidAmount.toLocaleString()}
-                {totalPaidAmount > totalCost && ' (Exceeded Total Budget)'}
+                {totalPaidAmount > totalCost && ` (Exceeded Total Budget by €${(totalPaidAmount - totalCost).toLocaleString()})`}
               </div>
             </div>
 
