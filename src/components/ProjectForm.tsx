@@ -116,36 +116,88 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
 
         if (result.error) throw result.error;
         
-        // Create or update project payment record
-        const paymentData = {
-          project_id: initialData.id,
-          amount: totalCost,
-          paid_amount: totalPaidAmount,
-          payment_date: new Date().toISOString().split('T')[0],
-          payment_type: 'contractor',
-          invoice_reference: `INV-${initialData.id}-${new Date().getTime()}`
-        };
+        // Create or update project payment records for each cost type
+        const paymentRecords = [
+          {
+            project_id: initialData.id,
+            amount: internalCost,
+            paid_amount: Number(internalPaidHours) * CREATIVE_DIRECTOR_RATE,
+            payment_date: new Date().toISOString().split('T')[0],
+            payment_type: 'contractor',
+            invoice_reference: `INV-INT-${initialData.id}-${Date.now()}`
+          },
+          {
+            project_id: initialData.id,
+            amount: Number(externalCost),
+            paid_amount: Number(externalPaidAmount),
+            payment_date: new Date().toISOString().split('T')[0],
+            payment_type: 'contractor',
+            invoice_reference: `INV-EXT-${initialData.id}-${Date.now()}`
+          },
+          {
+            project_id: initialData.id,
+            amount: Number(softwareCost),
+            paid_amount: Number(softwarePaidAmount),
+            payment_date: new Date().toISOString().split('T')[0],
+            payment_type: 'contractor',
+            invoice_reference: `INV-SW-${initialData.id}-${Date.now()}`
+          },
+          {
+            project_id: initialData.id,
+            amount: Number(vrDevelopmentCost),
+            paid_amount: Number(vrDevelopmentPaidAmount),
+            payment_date: new Date().toISOString().split('T')[0],
+            payment_type: 'contractor',
+            invoice_reference: `INV-VR-${initialData.id}-${Date.now()}`
+          },
+          {
+            project_id: initialData.id,
+            amount: Number(softwareDevelopmentCost),
+            paid_amount: Number(softwareDevelopmentPaidAmount),
+            payment_date: new Date().toISOString().split('T')[0],
+            payment_type: 'contractor',
+            invoice_reference: `INV-SWD-${initialData.id}-${Date.now()}`
+          },
+          {
+            project_id: initialData.id,
+            amount: Number(designCost),
+            paid_amount: Number(designPaidAmount),
+            payment_date: new Date().toISOString().split('T')[0],
+            payment_type: 'contractor',
+            invoice_reference: `INV-DES-${initialData.id}-${Date.now()}`
+          },
+          {
+            project_id: initialData.id,
+            amount: Number(modeling3dCost),
+            paid_amount: Number(modeling3dPaidAmount),
+            payment_date: new Date().toISOString().split('T')[0],
+            payment_type: 'contractor',
+            invoice_reference: `INV-3D-${initialData.id}-${Date.now()}`
+          },
+          {
+            project_id: initialData.id,
+            amount: Number(renderingCost),
+            paid_amount: Number(renderingPaidAmount),
+            payment_date: new Date().toISOString().split('T')[0],
+            payment_type: 'contractor',
+            invoice_reference: `INV-REN-${initialData.id}-${Date.now()}`
+          }
+        ];
 
-        const { data: existingPayment } = await supabase
+        // Delete existing payment records for this project
+        const { error: deleteError } = await supabase
           .from('project_payments')
-          .select()
-          .eq('project_id', initialData.id)
-          .maybeSingle();
+          .delete()
+          .eq('project_id', initialData.id);
 
-        if (existingPayment) {
-          const { error: paymentError } = await supabase
-            .from('project_payments')
-            .update(paymentData)
-            .eq('id', existingPayment.id);
+        if (deleteError) throw deleteError;
 
-          if (paymentError) throw paymentError;
-        } else {
-          const { error: paymentError } = await supabase
-            .from('project_payments')
-            .insert(paymentData);
+        // Insert new payment records
+        const { error: insertError } = await supabase
+          .from('project_payments')
+          .insert(paymentRecords);
 
-          if (paymentError) throw paymentError;
-        }
+        if (insertError) throw insertError;
 
         toast.success("Project updated successfully");
       } else {
@@ -157,18 +209,77 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
         if (result.error) throw result.error;
 
         if (result.data && result.data[0]) {
-          const paymentData = {
-            project_id: result.data[0].id,
-            amount: totalCost,
-            paid_amount: totalPaidAmount,
-            payment_date: new Date().toISOString().split('T')[0],
-            payment_type: 'contractor',
-            invoice_reference: `INV-${result.data[0].id}-${new Date().getTime()}`
-          };
+          const projectId = result.data[0].id;
+          const paymentRecords = [
+            {
+              project_id: projectId,
+              amount: internalCost,
+              paid_amount: Number(internalPaidHours) * CREATIVE_DIRECTOR_RATE,
+              payment_date: new Date().toISOString().split('T')[0],
+              payment_type: 'contractor',
+              invoice_reference: `INV-INT-${projectId}-${Date.now()}`
+            },
+            {
+              project_id: projectId,
+              amount: Number(externalCost),
+              paid_amount: Number(externalPaidAmount),
+              payment_date: new Date().toISOString().split('T')[0],
+              payment_type: 'contractor',
+              invoice_reference: `INV-EXT-${projectId}-${Date.now()}`
+            },
+            {
+              project_id: projectId,
+              amount: Number(softwareCost),
+              paid_amount: Number(softwarePaidAmount),
+              payment_date: new Date().toISOString().split('T')[0],
+              payment_type: 'contractor',
+              invoice_reference: `INV-SW-${projectId}-${Date.now()}`
+            },
+            {
+              project_id: projectId,
+              amount: Number(vrDevelopmentCost),
+              paid_amount: Number(vrDevelopmentPaidAmount),
+              payment_date: new Date().toISOString().split('T')[0],
+              payment_type: 'contractor',
+              invoice_reference: `INV-VR-${projectId}-${Date.now()}`
+            },
+            {
+              project_id: projectId,
+              amount: Number(softwareDevelopmentCost),
+              paid_amount: Number(softwareDevelopmentPaidAmount),
+              payment_date: new Date().toISOString().split('T')[0],
+              payment_type: 'contractor',
+              invoice_reference: `INV-SWD-${projectId}-${Date.now()}`
+            },
+            {
+              project_id: projectId,
+              amount: Number(designCost),
+              paid_amount: Number(designPaidAmount),
+              payment_date: new Date().toISOString().split('T')[0],
+              payment_type: 'contractor',
+              invoice_reference: `INV-DES-${projectId}-${Date.now()}`
+            },
+            {
+              project_id: projectId,
+              amount: Number(modeling3dCost),
+              paid_amount: Number(modeling3dPaidAmount),
+              payment_date: new Date().toISOString().split('T')[0],
+              payment_type: 'contractor',
+              invoice_reference: `INV-3D-${projectId}-${Date.now()}`
+            },
+            {
+              project_id: projectId,
+              amount: Number(renderingCost),
+              paid_amount: Number(renderingPaidAmount),
+              payment_date: new Date().toISOString().split('T')[0],
+              payment_type: 'contractor',
+              invoice_reference: `INV-REN-${projectId}-${Date.now()}`
+            }
+          ];
 
           const { error: paymentError } = await supabase
             .from('project_payments')
-            .insert(paymentData);
+            .insert(paymentRecords);
 
           if (paymentError) throw paymentError;
         }
