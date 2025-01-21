@@ -178,7 +178,12 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      payment_type_enum:
+        | "internal"
+        | "contractor"
+        | "services"
+        | "software"
+        | "stock"
     }
     CompositeTypes: {
       [_ in never]: never

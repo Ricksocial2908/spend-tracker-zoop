@@ -326,6 +326,54 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
 
   const isOverBudget = (cost: number, paid: number) => paid > cost;
 
+  useEffect(() => {
+    const loadProjectPayments = async () => {
+      if (mode === 'edit' && initialData?.id) {
+        try {
+          const { data: payments, error } = await supabase
+            .from('project_payments')
+            .select('*')
+            .eq('project_id', initialData.id);
+
+          if (error) throw error;
+
+          if (payments) {
+            payments.forEach(payment => {
+              switch(payment.payment_type) {
+                case 'internal':
+                  setInternalPaidHours(String(Math.round(payment.paid_amount / CREATIVE_DIRECTOR_RATE)));
+                  break;
+                case 'contractor':
+                  if (payment.invoice_reference.includes('EXT')) {
+                    setExternalPaidAmount(String(payment.paid_amount));
+                  } else if (payment.invoice_reference.includes('VR')) {
+                    setVrDevelopmentPaidAmount(String(payment.paid_amount));
+                  } else if (payment.invoice_reference.includes('SWD')) {
+                    setSoftwareDevelopmentPaidAmount(String(payment.paid_amount));
+                  } else if (payment.invoice_reference.includes('DES')) {
+                    setDesignPaidAmount(String(payment.paid_amount));
+                  } else if (payment.invoice_reference.includes('3D')) {
+                    setModeling3dPaidAmount(String(payment.paid_amount));
+                  } else if (payment.invoice_reference.includes('REN')) {
+                    setRenderingPaidAmount(String(payment.paid_amount));
+                  }
+                  break;
+                case 'software':
+                  setSoftwarePaidAmount(String(payment.paid_amount));
+                  break;
+              }
+            });
+          }
+        } catch (error) {
+          console.error('Error loading project payments:', error);
+          toast.error('Failed to load project payments');
+        }
+      }
+    };
+
+    loadProjectPayments();
+  }, [mode, initialData?.id]);
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-gray-200">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
