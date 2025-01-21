@@ -48,6 +48,7 @@ export type Database = {
       project_payments: {
         Row: {
           amount: number
+          contractor_name: string | null
           created_at: string
           id: number
           invoice_reference: string
@@ -58,6 +59,7 @@ export type Database = {
         }
         Insert: {
           amount: number
+          contractor_name?: string | null
           created_at?: string
           id?: never
           invoice_reference: string
@@ -68,6 +70,7 @@ export type Database = {
         }
         Update: {
           amount?: number
+          contractor_name?: string | null
           created_at?: string
           id?: never
           invoice_reference?: string

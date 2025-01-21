@@ -19,6 +19,7 @@ export const ProjectPaymentForm = ({ projectId, onPaymentAdded, onCancel }: Proj
   const [invoiceReference, setInvoiceReference] = useState("");
   const [paymentDate, setPaymentDate] = useState("");
   const [paymentType, setPaymentType] = useState<'contractor' | 'fiverr' | 'company'>('contractor');
+  const [contractorName, setContractorName] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +39,7 @@ export const ProjectPaymentForm = ({ projectId, onPaymentAdded, onCancel }: Proj
           payment_date: paymentDate,
           invoice_reference: invoiceReference,
           payment_type: paymentType,
+          contractor_name: contractorName || null,
         });
 
       if (error) throw error;
@@ -97,6 +99,19 @@ export const ProjectPaymentForm = ({ projectId, onPaymentAdded, onCancel }: Proj
                   <SelectItem value="company">Company</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="contractorName">
+                {paymentType === 'company' ? 'Company Name' : 'Contractor Name'}
+              </Label>
+              <Input
+                id="contractorName"
+                type="text"
+                placeholder={paymentType === 'company' ? 'Enter company name' : 'Enter contractor name'}
+                value={contractorName}
+                onChange={(e) => setContractorName(e.target.value)}
+                className="bg-white/80 backdrop-blur-sm"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="invoiceRef">Invoice Reference</Label>
