@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ProjectPaymentFormProps {
   projectId: number;
@@ -46,45 +48,71 @@ export const ProjectPaymentForm = ({ projectId, onPaymentAdded, onCancel }: Proj
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200">
-      <h3 className="text-lg font-semibold">Add Payment</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Input
-          type="number"
-          placeholder="Total Amount"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          className="bg-white/80 backdrop-blur-sm"
-        />
-        <Input
-          type="number"
-          placeholder="Paid Amount"
-          value={paidAmount}
-          onChange={(e) => setPaidAmount(e.target.value)}
-          className="bg-white/80 backdrop-blur-sm"
-        />
-        <Input
-          type="text"
-          placeholder="Invoice Reference"
-          value={invoiceReference}
-          onChange={(e) => setInvoiceReference(e.target.value)}
-          className="bg-white/80 backdrop-blur-sm"
-        />
-        <Input
-          type="date"
-          value={paymentDate}
-          onChange={(e) => setPaymentDate(e.target.value)}
-          className="bg-white/80 backdrop-blur-sm"
-        />
-      </div>
-      <div className="flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={onCancel}>
-          Cancel
-        </Button>
-        <Button type="submit">
-          Add Payment
-        </Button>
-      </div>
-    </form>
+    <Card className="w-full max-w-2xl mx-auto">
+      <CardHeader>
+        <CardTitle>Add Payment</CardTitle>
+        <CardDescription>Record a new payment for this project</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="amount">Total Amount</Label>
+              <Input
+                id="amount"
+                type="number"
+                placeholder="0.00"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                className="bg-white/80 backdrop-blur-sm"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="paidAmount">Paid Amount</Label>
+              <Input
+                id="paidAmount"
+                type="number"
+                placeholder="0.00"
+                value={paidAmount}
+                onChange={(e) => setPaidAmount(e.target.value)}
+                className="bg-white/80 backdrop-blur-sm"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="invoiceRef">Invoice Reference</Label>
+              <Input
+                id="invoiceRef"
+                type="text"
+                placeholder="INV-001"
+                value={invoiceReference}
+                onChange={(e) => setInvoiceReference(e.target.value)}
+                className="bg-white/80 backdrop-blur-sm"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="paymentDate">Payment Date</Label>
+              <Input
+                id="paymentDate"
+                type="date"
+                value={paymentDate}
+                onChange={(e) => setPaymentDate(e.target.value)}
+                className="bg-white/80 backdrop-blur-sm"
+                required
+              />
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline" onClick={onCancel}>
+              Cancel
+            </Button>
+            <Button type="submit">
+              Add Payment
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
