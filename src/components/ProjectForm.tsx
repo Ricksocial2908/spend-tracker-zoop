@@ -101,22 +101,75 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
         design_cost: Number(designCost) || 0,
         modeling_3d_cost: Number(modeling3dCost) || 0,
         rendering_cost: Number(renderingCost) || 0,
+        status: initialData?.status || 'pending'
       };
 
+      let result;
+      
       if (mode === 'edit' && initialData?.id) {
-        const { error } = await supabase
+        result = await supabase
           .from("projects")
           .update(projectData)
-          .eq('id', initialData.id);
+          .eq('id', initialData.id)
+          .select();
 
-        if (error) throw error;
+        if (result.error) throw result.error;
+        
+        // Create or update project payment record
+        const paymentData = {
+          project_id: initialData.id,
+          amount: totalCost,
+          paid_amount: totalPaidAmount,
+          payment_date: new Date().toISOString().split('T')[0],
+          payment_type: 'internal'
+        };
+
+        const { data: existingPayment } = await supabase
+          .from('project_payments')
+          .select()
+          .eq('project_id', initialData.id)
+          .single();
+
+        if (existingPayment) {
+          const { error: paymentError } = await supabase
+            .from('project_payments')
+            .update(paymentData)
+            .eq('id', existingPayment.id);
+
+          if (paymentError) throw paymentError;
+        } else {
+          const { error: paymentError } = await supabase
+            .from('project_payments')
+            .insert(paymentData);
+
+          if (paymentError) throw paymentError;
+        }
+
         toast.success("Project updated successfully");
       } else {
-        const { error } = await supabase
+        result = await supabase
           .from("projects")
-          .insert(projectData);
+          .insert(projectData)
+          .select();
 
-        if (error) throw error;
+        if (result.error) throw result.error;
+
+        if (result.data && result.data[0]) {
+          const paymentData = {
+            project_id: result.data[0].id,
+            amount: totalCost,
+            paid_amount: totalPaidAmount,
+            payment_date: new Date().toISOString().split('T')[0],
+            payment_type: 'internal'
+          };
+
+          const { error: paymentError } = await supabase
+            .from('project_payments')
+            .insert(paymentData);
+
+          if (paymentError) throw paymentError;
+        }
+
         toast.success("Project added successfully");
       }
 
