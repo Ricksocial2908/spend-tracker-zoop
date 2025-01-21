@@ -56,103 +56,71 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
     return totalAmount - totalPaid;
   };
 
-  const totalPotentialSales = projects.reduce((sum, project) => sum + Number(project.sales_price), 0);
-  const confirmedSales = projects
-    .filter(project => project.status === 'active')
-    .reduce((sum, project) => sum + Number(project.sales_price), 0);
-  
-  const totalSalesValue = projects.reduce((sum, project) => sum + Number(project.sales_price), 0);
-  const totalUnpaidCosts = projects.reduce((sum, project) => sum + calculateUnpaidAmount(project), 0);
-  const totalUnpaid = projects.reduce((sum, project) => sum + calculateUnpaidAmount(project), 0);
-  const grossProfit = totalSalesValue - totalUnpaidCosts;
-  const grossMargin = totalSalesValue ? (grossProfit / totalSalesValue) * 100 : 0;
+  // Get potential projects (pending and awaiting_po)
+  const potentialProjects = projects.filter(project => 
+    ['pending', 'awaiting_po'].includes(project.status)
+  );
+  const potentialSalesValue = potentialProjects.reduce(
+    (sum, project) => sum + Number(project.sales_price), 
+    0
+  );
 
-  const activeProjects = projects.filter(project => 
-    ['active', 'pending', 'awaiting_po'].includes(project.status)
-  ).length;
+  // Get active projects
+  const activeProjects = projects.filter(project => project.status === 'active');
+  const activeSalesValue = activeProjects.reduce(
+    (sum, project) => sum + Number(project.sales_price), 
+    0
+  );
+
+  // Calculate total unpaid costs
+  const totalUnpaidCosts = projects.reduce(
+    (sum, project) => sum + calculateUnpaidAmount(project), 
+    0
+  );
 
   const statuses = ['active', 'pending', 'awaiting_po', 'nearing_completion', 'completed'];
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-        {/* New Sales Overview Card */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Potential Projects Card */}
         <Card className="bg-white/80 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Sales Overview</CardTitle>
+            <CardTitle className="text-sm font-medium">Potential Projects</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">€{confirmedSales.toLocaleString()}</div>
+            <div className="text-2xl font-bold">€{potentialSalesValue.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
-              Potential: €{totalPotentialSales.toLocaleString()}
+              {potentialProjects.length} projects in pipeline
             </p>
           </CardContent>
         </Card>
 
-        {/* Projects in Progress Card */}
+        {/* Active Projects Card */}
         <Card className="bg-white/80 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Projects</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{activeProjects}</div>
+            <div className="text-2xl font-bold">€{activeSalesValue.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
-              In progress
+              {activeProjects.length} projects in progress
             </p>
           </CardContent>
         </Card>
 
-        {/* Existing Financial Overview Cards */}
+        {/* Total Unpaid Costs Card */}
         <Card className="bg-white/80 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Sales Value</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">€{totalSalesValue.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              Gross Margin: {grossMargin.toFixed(1)}%
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white/80 backdrop-blur-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Unpaid Costs</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Unpaid Costs</CardTitle>
             <ChartBar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">€{totalUnpaidCosts.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
-              Gross Profit: €{grossProfit.toLocaleString()}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white/80 backdrop-blur-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Unpaid Amount</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">€{totalUnpaid.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
               Outstanding payments
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-white/80 backdrop-blur-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
-            <Database className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{projects.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Across all statuses
             </p>
           </CardContent>
         </Card>
