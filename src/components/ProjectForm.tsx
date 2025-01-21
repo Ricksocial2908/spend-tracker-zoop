@@ -62,6 +62,16 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
   const [modeling3dCost, setModeling3dCost] = useState(String(initialData?.modeling_3d_cost || ""));
   const [renderingCost, setRenderingCost] = useState(String(initialData?.rendering_cost || ""));
 
+  // Add new state for paid amounts
+  const [internalPaidAmount, setInternalPaidAmount] = useState("0");
+  const [externalPaidAmount, setExternalPaidAmount] = useState("0");
+  const [softwarePaidAmount, setSoftwarePaidAmount] = useState("0");
+  const [vrDevelopmentPaidAmount, setVrDevelopmentPaidAmount] = useState("0");
+  const [softwareDevelopmentPaidAmount, setSoftwareDevelopmentPaidAmount] = useState("0");
+  const [designPaidAmount, setDesignPaidAmount] = useState("0");
+  const [modeling3dPaidAmount, setModeling3dPaidAmount] = useState("0");
+  const [renderingPaidAmount, setRenderingPaidAmount] = useState("0");
+
   // Calculate internal cost based on hours and rate
   const internalCost = Number(creativeDirectorHours) * CREATIVE_DIRECTOR_RATE;
 
@@ -136,6 +146,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
   return (
     <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-gray-200">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Left column - Project Details */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900">Project Details</h3>
           <Input
@@ -213,22 +224,37 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
           />
         </div>
 
+        {/* Right column - Cost Breakdown */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900">Cost Breakdown</h3>
           <div className="grid grid-cols-1 gap-6">
             {/* Creative Director Hours and Internal Cost */}
             <div className="p-4 border rounded-lg bg-white/50">
               <label className="block text-sm font-medium text-gray-700 mb-2">Creative Director Hours (€{CREATIVE_DIRECTOR_RATE}/hour)</label>
-              <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  placeholder="Hours"
-                  value={creativeDirectorHours}
-                  onChange={(e) => setCreativeDirectorHours(e.target.value)}
-                  className="flex-1"
-                />
-                <div className="text-sm font-semibold text-gray-900">
-                  €{internalCost.toLocaleString()}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Hours"
+                    value={creativeDirectorHours}
+                    onChange={(e) => setCreativeDirectorHours(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-sm font-semibold text-gray-900">
+                    €{internalCost.toLocaleString()}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Paid Amount"
+                    value={internalPaidAmount}
+                    onChange={(e) => setInternalPaidAmount(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-sm font-semibold text-gray-900">
+                    Paid: €{Number(internalPaidAmount).toLocaleString()}
+                  </div>
                 </div>
               </div>
             </div>
@@ -236,117 +262,221 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
             {/* External Cost */}
             <div className="p-4 border rounded-lg bg-white/50">
               <label className="block text-sm font-medium text-gray-700 mb-2">External Cost</label>
-              <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  placeholder="External Cost"
-                  value={externalCost}
-                  onChange={(e) => setExternalCost(e.target.value)}
-                  className="flex-1"
-                />
-                <div className="text-sm font-semibold text-gray-900">
-                  €{Number(externalCost || 0).toLocaleString()}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="External Cost"
+                    value={externalCost}
+                    onChange={(e) => setExternalCost(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-sm font-semibold text-gray-900">
+                    €{Number(externalCost || 0).toLocaleString()}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Paid Amount"
+                    value={externalPaidAmount}
+                    onChange={(e) => setExternalPaidAmount(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-sm font-semibold text-gray-900">
+                    Paid: €{Number(externalPaidAmount).toLocaleString()}
+                  </div>
                 </div>
               </div>
             </div>
 
+            {/* Software Cost */}
             <div className="p-4 border rounded-lg bg-white/50">
               <label className="block text-sm font-medium text-gray-700 mb-2">Software Cost</label>
-              <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  placeholder="Software Cost"
-                  value={softwareCost}
-                  onChange={(e) => setSoftwareCost(e.target.value)}
-                  className="flex-1"
-                />
-                <div className="text-sm font-semibold text-gray-900">
-                  €{Number(softwareCost || 0).toLocaleString()}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Software Cost"
+                    value={softwareCost}
+                    onChange={(e) => setSoftwareCost(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-sm font-semibold text-gray-900">
+                    €{Number(softwareCost || 0).toLocaleString()}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Paid Amount"
+                    value={softwarePaidAmount}
+                    onChange={(e) => setSoftwarePaidAmount(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-sm font-semibold text-gray-900">
+                    Paid: €{Number(softwarePaidAmount).toLocaleString()}
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* New development costs */}
+            {/* VR Development Cost */}
             <div className="p-4 border rounded-lg bg-white/50">
               <label className="block text-sm font-medium text-gray-700 mb-2">VR Development Cost</label>
-              <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  placeholder="VR Development Cost"
-                  value={vrDevelopmentCost}
-                  onChange={(e) => setVrDevelopmentCost(e.target.value)}
-                  className="flex-1"
-                />
-                <div className="text-sm font-semibold text-gray-900">
-                  €{Number(vrDevelopmentCost || 0).toLocaleString()}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="VR Development Cost"
+                    value={vrDevelopmentCost}
+                    onChange={(e) => setVrDevelopmentCost(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-sm font-semibold text-gray-900">
+                    €{Number(vrDevelopmentCost || 0).toLocaleString()}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Paid Amount"
+                    value={vrDevelopmentPaidAmount}
+                    onChange={(e) => setVrDevelopmentPaidAmount(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-sm font-semibold text-gray-900">
+                    Paid: €{Number(vrDevelopmentPaidAmount).toLocaleString()}
+                  </div>
                 </div>
               </div>
             </div>
 
+            {/* Software Development Cost */}
             <div className="p-4 border rounded-lg bg-white/50">
               <label className="block text-sm font-medium text-gray-700 mb-2">Software Development Cost</label>
-              <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  placeholder="Software Development Cost"
-                  value={softwareDevelopmentCost}
-                  onChange={(e) => setSoftwareDevelopmentCost(e.target.value)}
-                  className="flex-1"
-                />
-                <div className="text-sm font-semibold text-gray-900">
-                  €{Number(softwareDevelopmentCost || 0).toLocaleString()}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Software Development Cost"
+                    value={softwareDevelopmentCost}
+                    onChange={(e) => setSoftwareDevelopmentCost(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-sm font-semibold text-gray-900">
+                    €{Number(softwareDevelopmentCost || 0).toLocaleString()}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Paid Amount"
+                    value={softwareDevelopmentPaidAmount}
+                    onChange={(e) => setSoftwareDevelopmentPaidAmount(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-sm font-semibold text-gray-900">
+                    Paid: €{Number(softwareDevelopmentPaidAmount).toLocaleString()}
+                  </div>
                 </div>
               </div>
             </div>
 
+            {/* Design Cost */}
             <div className="p-4 border rounded-lg bg-white/50">
               <label className="block text-sm font-medium text-gray-700 mb-2">Design Cost</label>
-              <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  placeholder="Design Cost"
-                  value={designCost}
-                  onChange={(e) => setDesignCost(e.target.value)}
-                  className="flex-1"
-                />
-                <div className="text-sm font-semibold text-gray-900">
-                  €{Number(designCost || 0).toLocaleString()}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Design Cost"
+                    value={designCost}
+                    onChange={(e) => setDesignCost(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-sm font-semibold text-gray-900">
+                    €{Number(designCost || 0).toLocaleString()}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Paid Amount"
+                    value={designPaidAmount}
+                    onChange={(e) => setDesignPaidAmount(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-sm font-semibold text-gray-900">
+                    Paid: €{Number(designPaidAmount).toLocaleString()}
+                  </div>
                 </div>
               </div>
             </div>
 
+            {/* 3D Modeling Cost */}
             <div className="p-4 border rounded-lg bg-white/50">
               <label className="block text-sm font-medium text-gray-700 mb-2">3D Modeling Cost</label>
-              <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  placeholder="3D Modeling Cost"
-                  value={modeling3dCost}
-                  onChange={(e) => setModeling3dCost(e.target.value)}
-                  className="flex-1"
-                />
-                <div className="text-sm font-semibold text-gray-900">
-                  €{Number(modeling3dCost || 0).toLocaleString()}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="3D Modeling Cost"
+                    value={modeling3dCost}
+                    onChange={(e) => setModeling3dCost(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-sm font-semibold text-gray-900">
+                    €{Number(modeling3dCost || 0).toLocaleString()}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Paid Amount"
+                    value={modeling3dPaidAmount}
+                    onChange={(e) => setModeling3dPaidAmount(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-sm font-semibold text-gray-900">
+                    Paid: €{Number(modeling3dPaidAmount).toLocaleString()}
+                  </div>
                 </div>
               </div>
             </div>
 
+            {/* Rendering Cost */}
             <div className="p-4 border rounded-lg bg-white/50">
               <label className="block text-sm font-medium text-gray-700 mb-2">Rendering Cost</label>
-              <div className="flex items-center gap-2">
-                <Input
-                  type="number"
-                  placeholder="Rendering Cost"
-                  value={renderingCost}
-                  onChange={(e) => setRenderingCost(e.target.value)}
-                  className="flex-1"
-                />
-                <div className="text-sm font-semibold text-gray-900">
-                  €{Number(renderingCost || 0).toLocaleString()}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Rendering Cost"
+                    value={renderingCost}
+                    onChange={(e) => setRenderingCost(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-sm font-semibold text-gray-900">
+                    €{Number(renderingCost || 0).toLocaleString()}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Paid Amount"
+                    value={renderingPaidAmount}
+                    onChange={(e) => setRenderingPaidAmount(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-sm font-semibold text-gray-900">
+                    Paid: €{Number(renderingPaidAmount).toLocaleString()}
+                  </div>
                 </div>
               </div>
             </div>
 
+            {/* Total Cost and Profit Calculations */}
             <div className="p-4 border rounded-lg bg-white/50">
               <label className="block text-sm font-medium text-gray-700 mb-2">Total Expected Cost</label>
               <div className="text-lg font-bold text-gray-900">
