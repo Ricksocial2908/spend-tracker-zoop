@@ -15,10 +15,12 @@ import { Badge } from "@/components/ui/badge";
 interface Project {
   id: number;
   name: string;
-  category: string;
   internal_cost: number;
   external_cost: number;
   software_cost: number;
+  internal_cost_category: string;
+  external_cost_category: string;
+  software_cost_category: string;
   project_payments: {
     amount: number;
     paid_amount: number;
@@ -30,7 +32,7 @@ interface ProjectListProps {
   onProjectUpdated: () => void;
 }
 
-type SortField = 'name' | 'category' | 'internal_cost' | 'external_cost' | 'software_cost' | 'unpaid';
+type SortField = 'name' | 'internal_cost' | 'external_cost' | 'software_cost' | 'unpaid';
 type SortDirection = 'asc' | 'desc';
 
 const getCategoryColor = (category: string) => {
@@ -106,8 +108,6 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
     switch (sortField) {
       case 'name':
         return a.name.localeCompare(b.name) * multiplier;
-      case 'category':
-        return a.category.localeCompare(b.category) * multiplier;
       case 'internal_cost':
         return (Number(a.internal_cost) - Number(b.internal_cost)) * multiplier;
       case 'external_cost':
@@ -153,17 +153,17 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
                 <SortButton field="name" label="Project Name" />
               </TableHead>
               <TableHead>
-                <SortButton field="category" label="Category" />
-              </TableHead>
-              <TableHead>
                 <SortButton field="internal_cost" label="Internal Cost" />
               </TableHead>
+              <TableHead>Category</TableHead>
               <TableHead>
                 <SortButton field="external_cost" label="External Cost" />
               </TableHead>
+              <TableHead>Category</TableHead>
               <TableHead>
                 <SortButton field="software_cost" label="Software Cost" />
               </TableHead>
+              <TableHead>Category</TableHead>
               <TableHead>Total Paid</TableHead>
               <TableHead>
                 <SortButton field="unpaid" label="Unpaid Amount" />
@@ -181,14 +181,24 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
                 }`}
               >
                 <TableCell>{project.name}</TableCell>
+                <TableCell>€{Number(project.internal_cost).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
                 <TableCell>
-                  <Badge className={getCategoryColor(project.category)}>
-                    {project.category.charAt(0).toUpperCase() + project.category.slice(1)}
+                  <Badge className={getCategoryColor(project.internal_cost_category)}>
+                    {project.internal_cost_category.charAt(0).toUpperCase() + project.internal_cost_category.slice(1)}
                   </Badge>
                 </TableCell>
-                <TableCell>€{Number(project.internal_cost).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
                 <TableCell>€{Number(project.external_cost).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
+                <TableCell>
+                  <Badge className={getCategoryColor(project.external_cost_category)}>
+                    {project.external_cost_category.charAt(0).toUpperCase() + project.external_cost_category.slice(1)}
+                  </Badge>
+                </TableCell>
                 <TableCell>€{Number(project.software_cost).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
+                <TableCell>
+                  <Badge className={getCategoryColor(project.software_cost_category)}>
+                    {project.software_cost_category.charAt(0).toUpperCase() + project.software_cost_category.slice(1)}
+                  </Badge>
+                </TableCell>
                 <TableCell>€{calculateTotalPaid(project).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
                 <TableCell>€{calculateUnpaidAmount(project).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
                 <TableCell>
@@ -215,7 +225,7 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
             ))}
             {projects.length === 0 && (
               <TableRow>
-                <TableCell colSpan={8} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={10} className="text-center py-8 text-gray-500">
                   No projects found
                 </TableCell>
               </TableRow>

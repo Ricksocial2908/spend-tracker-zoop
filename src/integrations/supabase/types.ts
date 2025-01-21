@@ -85,31 +85,37 @@ export type Database = {
       }
       projects: {
         Row: {
-          category: string
           created_at: string
           external_cost: number
+          external_cost_category: string
           id: number
           internal_cost: number
+          internal_cost_category: string
           name: string
           software_cost: number
+          software_cost_category: string
         }
         Insert: {
-          category?: string
           created_at?: string
           external_cost?: number
+          external_cost_category?: string
           id?: never
           internal_cost?: number
+          internal_cost_category?: string
           name: string
           software_cost?: number
+          software_cost_category?: string
         }
         Update: {
-          category?: string
           created_at?: string
           external_cost?: number
+          external_cost_category?: string
           id?: never
           internal_cost?: number
+          internal_cost_category?: string
           name?: string
           software_cost?: number
+          software_cost_category?: string
         }
         Relationships: []
       }

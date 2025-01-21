@@ -18,7 +18,9 @@ export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
   const [internalCost, setInternalCost] = useState("");
   const [externalCost, setExternalCost] = useState("");
   const [softwareCost, setSoftwareCost] = useState("");
-  const [category, setCategory] = useState<typeof CATEGORIES[number]>("internal");
+  const [internalCostCategory, setInternalCostCategory] = useState<typeof CATEGORIES[number]>("internal");
+  const [externalCostCategory, setExternalCostCategory] = useState<typeof CATEGORIES[number]>("contractor");
+  const [softwareCostCategory, setSoftwareCostCategory] = useState<typeof CATEGORIES[number]>("software");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +38,9 @@ export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
           internal_cost: Number(internalCost) || 0,
           external_cost: Number(externalCost) || 0,
           software_cost: Number(softwareCost) || 0,
-          category,
+          internal_cost_category: internalCostCategory,
+          external_cost_category: externalCostCategory,
+          software_cost_category: softwareCostCategory,
         });
 
       if (error) throw error;
@@ -45,7 +49,9 @@ export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
       setInternalCost("");
       setExternalCost("");
       setSoftwareCost("");
-      setCategory("internal");
+      setInternalCostCategory("internal");
+      setExternalCostCategory("contractor");
+      setSoftwareCostCategory("software");
       
       onProjectAdded();
       toast.success("Project added successfully");
@@ -66,42 +72,80 @@ export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
           onChange={(e) => setName(e.target.value)}
           className="bg-white/80 backdrop-blur-sm"
         />
-        <Select
-          value={category}
-          onValueChange={(value: typeof CATEGORIES[number]) => setCategory(value)}
-        >
-          <SelectTrigger className="bg-white/80 backdrop-blur-sm">
-            <SelectValue placeholder="Select category" />
-          </SelectTrigger>
-          <SelectContent>
-            {CATEGORIES.map((cat) => (
-              <SelectItem key={cat} value={cat}>
-                {cat.charAt(0).toUpperCase() + cat.slice(1)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Input
-          type="number"
-          placeholder="Internal Cost"
-          value={internalCost}
-          onChange={(e) => setInternalCost(e.target.value)}
-          className="bg-white/80 backdrop-blur-sm"
-        />
-        <Input
-          type="number"
-          placeholder="External Cost"
-          value={externalCost}
-          onChange={(e) => setExternalCost(e.target.value)}
-          className="bg-white/80 backdrop-blur-sm"
-        />
-        <Input
-          type="number"
-          placeholder="Software Cost"
-          value={softwareCost}
-          onChange={(e) => setSoftwareCost(e.target.value)}
-          className="bg-white/80 backdrop-blur-sm"
-        />
+        <div className="space-y-4">
+          <div className="flex gap-4">
+            <Input
+              type="number"
+              placeholder="Internal Cost"
+              value={internalCost}
+              onChange={(e) => setInternalCost(e.target.value)}
+              className="bg-white/80 backdrop-blur-sm"
+            />
+            <Select
+              value={internalCostCategory}
+              onValueChange={(value: typeof CATEGORIES[number]) => setInternalCostCategory(value)}
+            >
+              <SelectTrigger className="bg-white/80 backdrop-blur-sm">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                {CATEGORIES.map((cat) => (
+                  <SelectItem key={cat} value={cat}>
+                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex gap-4">
+            <Input
+              type="number"
+              placeholder="External Cost"
+              value={externalCost}
+              onChange={(e) => setExternalCost(e.target.value)}
+              className="bg-white/80 backdrop-blur-sm"
+            />
+            <Select
+              value={externalCostCategory}
+              onValueChange={(value: typeof CATEGORIES[number]) => setExternalCostCategory(value)}
+            >
+              <SelectTrigger className="bg-white/80 backdrop-blur-sm">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                {CATEGORIES.map((cat) => (
+                  <SelectItem key={cat} value={cat}>
+                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex gap-4">
+            <Input
+              type="number"
+              placeholder="Software Cost"
+              value={softwareCost}
+              onChange={(e) => setSoftwareCost(e.target.value)}
+              className="bg-white/80 backdrop-blur-sm"
+            />
+            <Select
+              value={softwareCostCategory}
+              onValueChange={(value: typeof CATEGORIES[number]) => setSoftwareCostCategory(value)}
+            >
+              <SelectTrigger className="bg-white/80 backdrop-blur-sm">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                {CATEGORIES.map((cat) => (
+                  <SelectItem key={cat} value={cat}>
+                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
       </div>
       <div className="flex gap-2 justify-end">
         <Button type="button" variant="outline" onClick={onCancel}>
