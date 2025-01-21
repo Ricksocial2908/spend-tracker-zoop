@@ -217,7 +217,7 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
                       size="sm"
                       onClick={() => handleAddPayment(project.id)}
                     >
-                      <PlusIcon className="h-4 w-4" />
+                      <PlusIcon className="h-4 w-4 mr-1" />
                       Payments
                     </Button>
                   </div>
