@@ -567,6 +567,23 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                 </div>
               </div>
             </div>
+
+            <div className="p-4 border rounded-lg bg-blue-50">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Expected Gross Profit (Based on Expected Costs)</label>
+                  <div className={`text-sm font-bold ${(Number(salesPrice) - totalCost) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    €{(Number(salesPrice) - totalCost).toLocaleString()}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Expected Gross Profit Margin</label>
+                  <div className={`text-sm font-bold ${(Number(salesPrice) - totalCost) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {Number(salesPrice) ? (((Number(salesPrice) - totalCost) / Number(salesPrice)) * 100).toFixed(1) : '0'}%
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
