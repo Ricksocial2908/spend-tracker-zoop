@@ -213,12 +213,12 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
                       <EditIcon className="h-4 w-4" />
                     </Button>
                     <Button
-                      variant="ghost"
-                      size="icon"
+                      variant="outline"
+                      size="sm"
                       onClick={() => handleAddPayment(project.id)}
-                      title="Add Payment"
                     >
                       <PlusIcon className="h-4 w-4" />
+                      Payments
                     </Button>
                   </div>
                 </TableCell>
