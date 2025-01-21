@@ -44,18 +44,6 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
     );
   };
 
-  const calculateUnpaidAmount = (project: Project) => {
-    const totalAmount = project.project_payments?.reduce(
-      (sum, payment) => sum + Number(payment.amount),
-      0
-    ) || 0;
-    const totalPaid = project.project_payments?.reduce(
-      (sum, payment) => sum + Number(payment.paid_amount),
-      0
-    ) || 0;
-    return totalAmount - totalPaid;
-  };
-
   // Get potential projects (pending and awaiting_po)
   const potentialProjects = projects.filter(project => 
     ['pending', 'awaiting_po'].includes(project.status)
@@ -69,12 +57,6 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
   const activeProjects = projects.filter(project => project.status === 'active');
   const activeSalesValue = activeProjects.reduce(
     (sum, project) => sum + Number(project.sales_price), 
-    0
-  );
-
-  // Calculate total unpaid costs from outstanding payments only
-  const totalUnpaidCosts = projects.reduce(
-    (sum, project) => sum + calculateUnpaidAmount(project),
     0
   );
 
@@ -107,20 +89,6 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
             <div className="text-2xl font-bold">€{activeSalesValue.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
               {activeProjects.length} projects in progress
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Total Unpaid Costs Card */}
-        <Card className="bg-white/80 backdrop-blur-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Unpaid Costs</CardTitle>
-            <ChartBar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">€{totalUnpaidCosts.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
-              Outstanding payments and costs
             </p>
           </CardContent>
         </Card>
@@ -159,10 +127,6 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
                     <div className="flex justify-between">
                       <span>Sales Price:</span>
                       <span>€{Number(project.sales_price).toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between font-medium">
-                      <span>Outstanding:</span>
-                      <span>€{calculateUnpaidAmount(project).toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
