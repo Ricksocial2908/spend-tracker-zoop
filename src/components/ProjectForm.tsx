@@ -122,7 +122,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
           amount: totalCost,
           paid_amount: totalPaidAmount,
           payment_date: new Date().toISOString().split('T')[0],
-          payment_type: 'internal',
+          payment_type: 'contractor',
           invoice_reference: `INV-${initialData.id}-${new Date().getTime()}`
         };
 
@@ -130,7 +130,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
           .from('project_payments')
           .select()
           .eq('project_id', initialData.id)
-          .single();
+          .maybeSingle();
 
         if (existingPayment) {
           const { error: paymentError } = await supabase
@@ -162,7 +162,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
             amount: totalCost,
             paid_amount: totalPaidAmount,
             payment_date: new Date().toISOString().split('T')[0],
-            payment_type: 'internal',
+            payment_type: 'contractor',
             invoice_reference: `INV-${result.data[0].id}-${new Date().getTime()}`
           };
 
