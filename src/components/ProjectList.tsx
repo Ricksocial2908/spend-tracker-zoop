@@ -21,6 +21,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { EditProjectForm } from "./EditProjectForm";
+import { ProjectProfitAnalysis } from "./ProjectProfitAnalysis";
 
 interface Project {
   id: number;
@@ -69,6 +70,7 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const handleRowClick = (projectId: number) => {
     setHighlightedIds(prev => {
@@ -156,6 +158,10 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
         />
       )}
       
+      {selectedProject && (
+        <ProjectProfitAnalysis project={selectedProject} />
+      )}
+
       <div className="rounded-xl bg-white/80 backdrop-blur-sm border border-gray-200 animate-fade-in">
         <Table>
           <TableHeader>
@@ -177,7 +183,10 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
             {sortedProjects.map((project) => (
               <TableRow 
                 key={project.id}
-                onClick={() => handleRowClick(project.id)}
+                onClick={() => {
+                  handleRowClick(project.id);
+                  setSelectedProject(selectedProject?.id === project.id ? null : project);
+                }}
                 className={`cursor-pointer transition-colors ${
                   highlightedIds.includes(project.id) ? "bg-blue-200 hover:bg-blue-300" : "hover:bg-muted/50"
                 }`}
