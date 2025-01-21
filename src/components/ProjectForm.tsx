@@ -139,9 +139,22 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
     Number(modeling3dCost || 0) +
     Number(renderingCost || 0);
 
-  // Calculate gross profit and margin
-  const grossProfit = Number(salesPrice || 0) - totalCost;
+  // Calculate total paid amount
+  const totalPaidAmount = 
+    Number(internalPaidAmount || 0) +
+    Number(externalPaidAmount || 0) +
+    Number(softwarePaidAmount || 0) +
+    Number(vrDevelopmentPaidAmount || 0) +
+    Number(softwareDevelopmentPaidAmount || 0) +
+    Number(designPaidAmount || 0) +
+    Number(modeling3dPaidAmount || 0) +
+    Number(renderingPaidAmount || 0);
+
+  // Calculate gross profit considering paid amounts
+  const grossProfit = Number(salesPrice || 0) - totalPaidAmount;
   const grossProfitMargin = Number(salesPrice) ? (grossProfit / Number(salesPrice) * 100) : 0;
+
+  const isOverBudget = (cost: number, paid: number) => paid > cost;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-gray-200">
@@ -252,8 +265,9 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                     onChange={(e) => setInternalPaidAmount(e.target.value)}
                     className="flex-1"
                   />
-                  <div className="text-sm font-semibold text-gray-900">
+                  <div className={`text-sm font-semibold ${isOverBudget(internalCost, Number(internalPaidAmount)) ? 'text-red-600' : 'text-gray-900'}`}>
                     Paid: €{Number(internalPaidAmount).toLocaleString()}
+                    {isOverBudget(internalCost, Number(internalPaidAmount)) && ' (Exceeded Budget)'}
                   </div>
                 </div>
               </div>
@@ -283,8 +297,9 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                     onChange={(e) => setExternalPaidAmount(e.target.value)}
                     className="flex-1"
                   />
-                  <div className="text-sm font-semibold text-gray-900">
+                  <div className="text-sm font-semibold ${isOverBudget(Number(externalCost), Number(externalPaidAmount)) ? 'text-red-600' : 'text-gray-900'}">
                     Paid: €{Number(externalPaidAmount).toLocaleString()}
+                    {isOverBudget(Number(externalCost), Number(externalPaidAmount)) && ' (Exceeded Budget)'}
                   </div>
                 </div>
               </div>
@@ -314,8 +329,9 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                     onChange={(e) => setSoftwarePaidAmount(e.target.value)}
                     className="flex-1"
                   />
-                  <div className="text-sm font-semibold text-gray-900">
+                  <div className={`text-sm font-semibold ${isOverBudget(Number(softwareCost), Number(softwarePaidAmount)) ? 'text-red-600' : 'text-gray-900'}`}>
                     Paid: €{Number(softwarePaidAmount).toLocaleString()}
+                    {isOverBudget(Number(softwareCost), Number(softwarePaidAmount)) && ' (Exceeded Budget)'}
                   </div>
                 </div>
               </div>
@@ -345,8 +361,9 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                     onChange={(e) => setVrDevelopmentPaidAmount(e.target.value)}
                     className="flex-1"
                   />
-                  <div className="text-sm font-semibold text-gray-900">
+                  <div className={`text-sm font-semibold ${isOverBudget(Number(vrDevelopmentCost), Number(vrDevelopmentPaidAmount)) ? 'text-red-600' : 'text-gray-900'}`}>
                     Paid: €{Number(vrDevelopmentPaidAmount).toLocaleString()}
+                    {isOverBudget(Number(vrDevelopmentCost), Number(vrDevelopmentPaidAmount)) && ' (Exceeded Budget)'}
                   </div>
                 </div>
               </div>
@@ -376,8 +393,9 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                     onChange={(e) => setSoftwareDevelopmentPaidAmount(e.target.value)}
                     className="flex-1"
                   />
-                  <div className="text-sm font-semibold text-gray-900">
+                  <div className={`text-sm font-semibold ${isOverBudget(Number(softwareDevelopmentCost), Number(softwareDevelopmentPaidAmount)) ? 'text-red-600' : 'text-gray-900'}`}>
                     Paid: €{Number(softwareDevelopmentPaidAmount).toLocaleString()}
+                    {isOverBudget(Number(softwareDevelopmentCost), Number(softwareDevelopmentPaidAmount)) && ' (Exceeded Budget)'}
                   </div>
                 </div>
               </div>
@@ -407,8 +425,9 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                     onChange={(e) => setDesignPaidAmount(e.target.value)}
                     className="flex-1"
                   />
-                  <div className="text-sm font-semibold text-gray-900">
+                  <div className={`text-sm font-semibold ${isOverBudget(Number(designCost), Number(designPaidAmount)) ? 'text-red-600' : 'text-gray-900'}`}>
                     Paid: €{Number(designPaidAmount).toLocaleString()}
+                    {isOverBudget(Number(designCost), Number(designPaidAmount)) && ' (Exceeded Budget)'}
                   </div>
                 </div>
               </div>
@@ -438,8 +457,9 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                     onChange={(e) => setModeling3dPaidAmount(e.target.value)}
                     className="flex-1"
                   />
-                  <div className="text-sm font-semibold text-gray-900">
+                  <div className={`text-sm font-semibold ${isOverBudget(Number(modeling3dCost), Number(modeling3dPaidAmount)) ? 'text-red-600' : 'text-gray-900'}`}>
                     Paid: €{Number(modeling3dPaidAmount).toLocaleString()}
+                    {isOverBudget(Number(modeling3dCost), Number(modeling3dPaidAmount)) && ' (Exceeded Budget)'}
                   </div>
                 </div>
               </div>
@@ -469,8 +489,9 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                     onChange={(e) => setRenderingPaidAmount(e.target.value)}
                     className="flex-1"
                   />
-                  <div className="text-sm font-semibold text-gray-900">
+                  <div className={`text-sm font-semibold ${isOverBudget(Number(renderingCost), Number(renderingPaidAmount)) ? 'text-red-600' : 'text-gray-900'}`}>
                     Paid: €{Number(renderingPaidAmount).toLocaleString()}
+                    {isOverBudget(Number(renderingCost), Number(renderingPaidAmount)) && ' (Exceeded Budget)'}
                   </div>
                 </div>
               </div>
@@ -484,11 +505,20 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
               </div>
             </div>
 
+            {/* Total Paid Amount */}
+            <div className="p-4 border rounded-lg bg-white/50">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Total Paid Amount</label>
+              <div className={`text-lg font-bold ${totalPaidAmount > totalCost ? 'text-red-600' : 'text-gray-900'}`}>
+                €{totalPaidAmount.toLocaleString()}
+                {totalPaidAmount > totalCost && ' (Exceeded Total Budget)'}
+              </div>
+            </div>
+
             {/* Profit Calculations */}
             <div className="p-4 border rounded-lg bg-green-50">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Gross Profit</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Gross Profit (Based on Paid Amount)</label>
                   <div className={`text-lg font-bold ${grossProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     €{grossProfit.toLocaleString()}
                   </div>
