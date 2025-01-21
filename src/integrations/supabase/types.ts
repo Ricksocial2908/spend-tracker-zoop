@@ -53,6 +53,7 @@ export type Database = {
           invoice_reference: string
           paid_amount: number
           payment_date: string
+          payment_type: string
           project_id: number
         }
         Insert: {
@@ -62,6 +63,7 @@ export type Database = {
           invoice_reference: string
           paid_amount?: number
           payment_date: string
+          payment_type?: string
           project_id: number
         }
         Update: {
@@ -71,6 +73,7 @@ export type Database = {
           invoice_reference?: string
           paid_amount?: number
           payment_date?: string
+          payment_type?: string
           project_id?: number
         }
         Relationships: [
