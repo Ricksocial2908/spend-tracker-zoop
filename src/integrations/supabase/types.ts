@@ -85,37 +85,61 @@ export type Database = {
       }
       projects: {
         Row: {
+          billable_rate: number | null
+          budget: number | null
+          client: string | null
           created_at: string
+          end_date: string | null
           external_cost: number
           external_cost_category: string
           id: number
           internal_cost: number
           internal_cost_category: string
           name: string
+          notes: string | null
+          project_code: string | null
+          project_type: string | null
           software_cost: number
           software_cost_category: string
+          start_date: string | null
         }
         Insert: {
+          billable_rate?: number | null
+          budget?: number | null
+          client?: string | null
           created_at?: string
+          end_date?: string | null
           external_cost?: number
           external_cost_category?: string
           id?: never
           internal_cost?: number
           internal_cost_category?: string
           name: string
+          notes?: string | null
+          project_code?: string | null
+          project_type?: string | null
           software_cost?: number
           software_cost_category?: string
+          start_date?: string | null
         }
         Update: {
+          billable_rate?: number | null
+          budget?: number | null
+          client?: string | null
           created_at?: string
+          end_date?: string | null
           external_cost?: number
           external_cost_category?: string
           id?: never
           internal_cost?: number
           internal_cost_category?: string
           name?: string
+          notes?: string | null
+          project_code?: string | null
+          project_type?: string | null
           software_cost?: number
           software_cost_category?: string
+          start_date?: string | null
         }
         Relationships: []
       }
