@@ -90,6 +90,9 @@ export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
     }
   };
 
+  // Calculate total cost
+  const totalCost = Number(internalCost || 0) + Number(externalCost || 0) + Number(softwareCost || 0);
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-gray-200">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -218,6 +221,13 @@ export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
                 <div className="text-sm font-semibold text-gray-900">
                   ${Number(softwareCost || 0).toLocaleString()}
                 </div>
+              </div>
+            </div>
+
+            <div className="p-4 border rounded-lg bg-white/50">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Total Expected Cost</label>
+              <div className="text-lg font-bold text-gray-900">
+                ${totalCost.toLocaleString()}
               </div>
             </div>
           </div>
