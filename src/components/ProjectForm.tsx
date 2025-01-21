@@ -25,6 +25,11 @@ interface ProjectFormProps {
     external_cost: number;
     software_cost: number;
     sales_price: number;
+    vr_development_cost: number;
+    software_development_cost: number;
+    design_cost: number;
+    modeling_3d_cost: number;
+    rendering_cost: number;
   };
   mode?: 'create' | 'edit';
 }
@@ -48,6 +53,11 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
   const [externalCost, setExternalCost] = useState(String(initialData?.external_cost || ""));
   const [softwareCost, setSoftwareCost] = useState(String(initialData?.software_cost || ""));
   const [salesPrice, setSalesPrice] = useState(String(initialData?.sales_price || ""));
+  const [vrDevelopmentCost, setVrDevelopmentCost] = useState(String(initialData?.vr_development_cost || ""));
+  const [softwareDevelopmentCost, setSoftwareDevelopmentCost] = useState(String(initialData?.software_development_cost || ""));
+  const [designCost, setDesignCost] = useState(String(initialData?.design_cost || ""));
+  const [modeling3dCost, setModeling3dCost] = useState(String(initialData?.modeling_3d_cost || ""));
+  const [renderingCost, setRenderingCost] = useState(String(initialData?.rendering_cost || ""));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,6 +82,11 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
         external_cost: Number(externalCost) || 0,
         software_cost: Number(softwareCost) || 0,
         sales_price: Number(salesPrice) || 0,
+        vr_development_cost: Number(vrDevelopmentCost) || 0,
+        software_development_cost: Number(softwareDevelopmentCost) || 0,
+        design_cost: Number(designCost) || 0,
+        modeling_3d_cost: Number(modeling3dCost) || 0,
+        rendering_cost: Number(renderingCost) || 0,
       };
 
       if (mode === 'edit' && initialData?.id) {
@@ -98,8 +113,15 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
     }
   };
 
-  // Calculate total cost
-  const totalCost = Number(internalCost || 0) + Number(externalCost || 0) + Number(softwareCost || 0);
+  // Calculate total cost including new categories
+  const totalCost = Number(internalCost || 0) + 
+    Number(externalCost || 0) + 
+    Number(softwareCost || 0) +
+    Number(vrDevelopmentCost || 0) +
+    Number(softwareDevelopmentCost || 0) +
+    Number(designCost || 0) +
+    Number(modeling3dCost || 0) +
+    Number(renderingCost || 0);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-gray-200">
@@ -184,6 +206,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900">Cost Breakdown</h3>
           <div className="grid grid-cols-1 gap-6">
+            {/* Original costs */}
             <div className="p-4 border rounded-lg bg-white/50">
               <label className="block text-sm font-medium text-gray-700 mb-2">Internal Cost</label>
               <div className="flex items-center gap-2">
@@ -195,7 +218,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                   className="flex-1"
                 />
                 <div className="text-sm font-semibold text-gray-900">
-                  ${Number(internalCost || 0).toLocaleString()}
+                  €{Number(internalCost || 0).toLocaleString()}
                 </div>
               </div>
             </div>
@@ -211,7 +234,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                   className="flex-1"
                 />
                 <div className="text-sm font-semibold text-gray-900">
-                  ${Number(externalCost || 0).toLocaleString()}
+                  €{Number(externalCost || 0).toLocaleString()}
                 </div>
               </div>
             </div>
@@ -227,7 +250,88 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                   className="flex-1"
                 />
                 <div className="text-sm font-semibold text-gray-900">
-                  ${Number(softwareCost || 0).toLocaleString()}
+                  €{Number(softwareCost || 0).toLocaleString()}
+                </div>
+              </div>
+            </div>
+
+            {/* New development costs */}
+            <div className="p-4 border rounded-lg bg-white/50">
+              <label className="block text-sm font-medium text-gray-700 mb-2">VR Development Cost</label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  placeholder="VR Development Cost"
+                  value={vrDevelopmentCost}
+                  onChange={(e) => setVrDevelopmentCost(e.target.value)}
+                  className="flex-1"
+                />
+                <div className="text-sm font-semibold text-gray-900">
+                  €{Number(vrDevelopmentCost || 0).toLocaleString()}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 border rounded-lg bg-white/50">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Software Development Cost</label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  placeholder="Software Development Cost"
+                  value={softwareDevelopmentCost}
+                  onChange={(e) => setSoftwareDevelopmentCost(e.target.value)}
+                  className="flex-1"
+                />
+                <div className="text-sm font-semibold text-gray-900">
+                  €{Number(softwareDevelopmentCost || 0).toLocaleString()}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 border rounded-lg bg-white/50">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Design Cost</label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  placeholder="Design Cost"
+                  value={designCost}
+                  onChange={(e) => setDesignCost(e.target.value)}
+                  className="flex-1"
+                />
+                <div className="text-sm font-semibold text-gray-900">
+                  €{Number(designCost || 0).toLocaleString()}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 border rounded-lg bg-white/50">
+              <label className="block text-sm font-medium text-gray-700 mb-2">3D Modeling Cost</label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  placeholder="3D Modeling Cost"
+                  value={modeling3dCost}
+                  onChange={(e) => setModeling3dCost(e.target.value)}
+                  className="flex-1"
+                />
+                <div className="text-sm font-semibold text-gray-900">
+                  €{Number(modeling3dCost || 0).toLocaleString()}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 border rounded-lg bg-white/50">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Rendering Cost</label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  placeholder="Rendering Cost"
+                  value={renderingCost}
+                  onChange={(e) => setRenderingCost(e.target.value)}
+                  className="flex-1"
+                />
+                <div className="text-sm font-semibold text-gray-900">
+                  €{Number(renderingCost || 0).toLocaleString()}
                 </div>
               </div>
             </div>
@@ -235,7 +339,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
             <div className="p-4 border rounded-lg bg-white/50">
               <label className="block text-sm font-medium text-gray-700 mb-2">Total Expected Cost</label>
               <div className="text-lg font-bold text-gray-900">
-                ${totalCost.toLocaleString()}
+                €{totalCost.toLocaleString()}
               </div>
             </div>
           </div>

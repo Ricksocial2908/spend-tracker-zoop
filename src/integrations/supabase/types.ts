@@ -95,63 +95,78 @@ export type Database = {
           budget: number | null
           client: string | null
           created_at: string
+          design_cost: number
           end_date: string | null
           external_cost: number
           external_cost_category: string
           id: number
           internal_cost: number
           internal_cost_category: string
+          modeling_3d_cost: number
           name: string
           notes: string | null
           project_code: string | null
           project_type: string | null
+          rendering_cost: number
           sales_price: number
           software_cost: number
           software_cost_category: string
+          software_development_cost: number
           start_date: string | null
           status: string
+          vr_development_cost: number
         }
         Insert: {
           billable_rate?: number | null
           budget?: number | null
           client?: string | null
           created_at?: string
+          design_cost?: number
           end_date?: string | null
           external_cost?: number
           external_cost_category?: string
           id?: never
           internal_cost?: number
           internal_cost_category?: string
+          modeling_3d_cost?: number
           name: string
           notes?: string | null
           project_code?: string | null
           project_type?: string | null
+          rendering_cost?: number
           sales_price?: number
           software_cost?: number
           software_cost_category?: string
+          software_development_cost?: number
           start_date?: string | null
           status?: string
+          vr_development_cost?: number
         }
         Update: {
           billable_rate?: number | null
           budget?: number | null
           client?: string | null
           created_at?: string
+          design_cost?: number
           end_date?: string | null
           external_cost?: number
           external_cost_category?: string
           id?: never
           internal_cost?: number
           internal_cost_category?: string
+          modeling_3d_cost?: number
           name?: string
           notes?: string | null
           project_code?: string | null
           project_type?: string | null
+          rendering_cost?: number
           sales_price?: number
           software_cost?: number
           software_cost_category?: string
+          software_development_cost?: number
           start_date?: string | null
           status?: string
+          vr_development_cost?: number
         }
         Relationships: []
       }
