@@ -85,6 +85,7 @@ export type Database = {
       }
       projects: {
         Row: {
+          category: string
           created_at: string
           external_cost: number
           id: number
@@ -93,6 +94,7 @@ export type Database = {
           software_cost: number
         }
         Insert: {
+          category?: string
           created_at?: string
           external_cost?: number
           id?: never
@@ -101,6 +103,7 @@ export type Database = {
           software_cost?: number
         }
         Update: {
+          category?: string
           created_at?: string
           external_cost?: number
           id?: never

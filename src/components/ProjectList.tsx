@@ -10,10 +10,12 @@ import { Button } from "@/components/ui/button";
 import { EditIcon, ArrowUpDown, PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { ProjectPaymentForm } from "./ProjectPaymentForm";
+import { Badge } from "@/components/ui/badge";
 
 interface Project {
   id: number;
   name: string;
+  category: string;
   internal_cost: number;
   external_cost: number;
   software_cost: number;
@@ -28,8 +30,19 @@ interface ProjectListProps {
   onProjectUpdated: () => void;
 }
 
-type SortField = 'name' | 'internal_cost' | 'external_cost' | 'software_cost' | 'unpaid';
+type SortField = 'name' | 'category' | 'internal_cost' | 'external_cost' | 'software_cost' | 'unpaid';
 type SortDirection = 'asc' | 'desc';
+
+const getCategoryColor = (category: string) => {
+  const colors = {
+    internal: "bg-blue-100 text-blue-800",
+    contractor: "bg-purple-100 text-purple-800",
+    services: "bg-green-100 text-green-800",
+    software: "bg-yellow-100 text-yellow-800",
+    stock: "bg-pink-100 text-pink-800",
+  } as const;
+  return colors[category as keyof typeof colors] || "bg-gray-100 text-gray-800";
+};
 
 export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) => {
   const [highlightedIds, setHighlightedIds] = useState<number[]>([]);
@@ -93,6 +106,8 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
     switch (sortField) {
       case 'name':
         return a.name.localeCompare(b.name) * multiplier;
+      case 'category':
+        return a.category.localeCompare(b.category) * multiplier;
       case 'internal_cost':
         return (Number(a.internal_cost) - Number(b.internal_cost)) * multiplier;
       case 'external_cost':
@@ -138,6 +153,9 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
                 <SortButton field="name" label="Project Name" />
               </TableHead>
               <TableHead>
+                <SortButton field="category" label="Category" />
+              </TableHead>
+              <TableHead>
                 <SortButton field="internal_cost" label="Internal Cost" />
               </TableHead>
               <TableHead>
@@ -163,6 +181,11 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
                 }`}
               >
                 <TableCell>{project.name}</TableCell>
+                <TableCell>
+                  <Badge className={getCategoryColor(project.category)}>
+                    {project.category.charAt(0).toUpperCase() + project.category.slice(1)}
+                  </Badge>
+                </TableCell>
                 <TableCell>€{Number(project.internal_cost).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
                 <TableCell>€{Number(project.external_cost).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
                 <TableCell>€{Number(project.software_cost).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
@@ -192,7 +215,7 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
             ))}
             {projects.length === 0 && (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={8} className="text-center py-8 text-gray-500">
                   No projects found
                 </TableCell>
               </TableRow>

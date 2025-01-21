@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { PlusIcon, XIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,11 +11,14 @@ interface ProjectFormProps {
   onCancel?: () => void;
 }
 
+const CATEGORIES = ['internal', 'contractor', 'services', 'software', 'stock'] as const;
+
 export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
   const [name, setName] = useState("");
   const [internalCost, setInternalCost] = useState("");
   const [externalCost, setExternalCost] = useState("");
   const [softwareCost, setSoftwareCost] = useState("");
+  const [category, setCategory] = useState<typeof CATEGORIES[number]>("internal");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +36,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
           internal_cost: Number(internalCost) || 0,
           external_cost: Number(externalCost) || 0,
           software_cost: Number(softwareCost) || 0,
+          category,
         });
 
       if (error) throw error;
@@ -40,6 +45,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
       setInternalCost("");
       setExternalCost("");
       setSoftwareCost("");
+      setCategory("internal");
       
       onProjectAdded();
       toast.success("Project added successfully");
@@ -60,6 +66,21 @@ export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
           onChange={(e) => setName(e.target.value)}
           className="bg-white/80 backdrop-blur-sm"
         />
+        <Select
+          value={category}
+          onValueChange={(value: typeof CATEGORIES[number]) => setCategory(value)}
+        >
+          <SelectTrigger className="bg-white/80 backdrop-blur-sm">
+            <SelectValue placeholder="Select category" />
+          </SelectTrigger>
+          <SelectContent>
+            {CATEGORIES.map((cat) => (
+              <SelectItem key={cat} value={cat}>
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Input
           type="number"
           placeholder="Internal Cost"
