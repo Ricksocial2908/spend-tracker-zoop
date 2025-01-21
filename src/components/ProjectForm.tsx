@@ -141,7 +141,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
             amount: Number(softwareCost),
             paid_amount: Number(softwarePaidAmount),
             payment_date: new Date().toISOString().split('T')[0],
-            payment_type: 'contractor',
+            payment_type: 'software',
             invoice_reference: `INV-SW-${initialData.id}-${Date.now()}`
           },
           {
@@ -234,7 +234,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
               amount: Number(softwareCost),
               paid_amount: Number(softwarePaidAmount),
               payment_date: new Date().toISOString().split('T')[0],
-              payment_type: 'contractor',
+              payment_type: 'software',
               invoice_reference: `INV-SW-${projectId}-${Date.now()}`
             },
             {
