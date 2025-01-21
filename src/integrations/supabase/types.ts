@@ -45,6 +45,71 @@ export type Database = {
         }
         Relationships: []
       }
+      project_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: number
+          invoice_reference: string
+          paid_amount: number
+          payment_date: string
+          project_id: number
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: never
+          invoice_reference: string
+          paid_amount?: number
+          payment_date: string
+          project_id: number
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: never
+          invoice_reference?: string
+          paid_amount?: number
+          payment_date?: string
+          project_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_payments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          created_at: string
+          external_cost: number
+          id: number
+          internal_cost: number
+          name: string
+          software_cost: number
+        }
+        Insert: {
+          created_at?: string
+          external_cost?: number
+          id?: never
+          internal_cost?: number
+          name: string
+          software_cost?: number
+        }
+        Update: {
+          created_at?: string
+          external_cost?: number
+          id?: never
+          internal_cost?: number
+          name?: string
+          software_cost?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
