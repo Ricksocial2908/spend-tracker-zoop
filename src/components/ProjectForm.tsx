@@ -63,14 +63,16 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
   const [modeling3dCost, setModeling3dCost] = useState(String(initialData?.modeling_3d_cost || ""));
   const [renderingCost, setRenderingCost] = useState(String(initialData?.rendering_cost || ""));
 
-  const [internalPaidHours, setInternalPaidHours] = useState("0");
-  const [externalPaidAmount, setExternalPaidAmount] = useState("0");
-  const [softwarePaidAmount, setSoftwarePaidAmount] = useState("0");
-  const [vrDevelopmentPaidAmount, setVrDevelopmentPaidAmount] = useState("0");
-  const [softwareDevelopmentPaidAmount, setSoftwareDevelopmentPaidAmount] = useState("0");
-  const [designPaidAmount, setDesignPaidAmount] = useState("0");
-  const [modeling3dPaidAmount, setModeling3dPaidAmount] = useState("0");
-  const [renderingPaidAmount, setRenderingPaidAmount] = useState("0");
+  const [internalPaidHours, setInternalPaidHours] = useState(
+    initialData ? String(Math.round((initialData?.internal_cost || 0) / CREATIVE_DIRECTOR_RATE)) : "0"
+  );
+  const [externalPaidAmount, setExternalPaidAmount] = useState(String(initialData?.external_cost || "0"));
+  const [softwarePaidAmount, setSoftwarePaidAmount] = useState(String(initialData?.software_cost || "0"));
+  const [vrDevelopmentPaidAmount, setVrDevelopmentPaidAmount] = useState(String(initialData?.vr_development_cost || "0"));
+  const [softwareDevelopmentPaidAmount, setSoftwareDevelopmentPaidAmount] = useState(String(initialData?.software_development_cost || "0"));
+  const [designPaidAmount, setDesignPaidAmount] = useState(String(initialData?.design_cost || "0"));
+  const [modeling3dPaidAmount, setModeling3dPaidAmount] = useState(String(initialData?.modeling_3d_cost || "0"));
+  const [renderingPaidAmount, setRenderingPaidAmount] = useState(String(initialData?.rendering_cost || "0"));
 
   const internalCost = Number(creativeDirectorHours) * CREATIVE_DIRECTOR_RATE;
 
