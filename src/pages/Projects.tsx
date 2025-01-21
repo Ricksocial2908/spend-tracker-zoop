@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ProjectList } from "@/components/ProjectList";
 import { ProjectCard } from "@/components/ProjectCard";
+import { ProjectForm } from "@/components/ProjectForm";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
@@ -12,6 +13,7 @@ export default function Projects() {
   const [totalExternalCost, setTotalExternalCost] = useState(0);
   const [totalSoftwareCost, setTotalSoftwareCost] = useState(0);
   const [totalUnpaidAmount, setTotalUnpaidAmount] = useState(0);
+  const [showForm, setShowForm] = useState(false);
 
   const fetchProjects = async () => {
     try {
@@ -64,15 +66,27 @@ export default function Projects() {
     fetchProjects();
   }, []);
 
+  const handleProjectAdded = () => {
+    setShowForm(false);
+    fetchProjects();
+  };
+
   return (
-    <div className="container mx-auto p-4 space-y-6">
+    <div className="container mx-auto space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Projects</h1>
-        <Button>
+        <Button onClick={() => setShowForm(true)}>
           <PlusIcon className="w-4 h-4 mr-2" />
           Add Project
         </Button>
       </div>
+
+      {showForm && (
+        <ProjectForm
+          onProjectAdded={handleProjectAdded}
+          onCancel={() => setShowForm(false)}
+        />
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <ProjectCard
