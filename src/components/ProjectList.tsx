@@ -216,6 +216,7 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
                       variant="ghost"
                       size="icon"
                       onClick={() => handleAddPayment(project.id)}
+                      title="Add Payment"
                     >
                       <PlusIcon className="h-4 w-4" />
                     </Button>
