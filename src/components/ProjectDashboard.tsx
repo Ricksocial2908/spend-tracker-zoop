@@ -72,11 +72,12 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
     0
   );
 
-  // Calculate total unpaid costs
-  const totalUnpaidCosts = projects.reduce(
-    (sum, project) => sum + calculateUnpaidAmount(project), 
-    0
-  );
+  // Calculate total unpaid costs (now including project costs and payment amounts)
+  const totalUnpaidCosts = projects.reduce((sum, project) => {
+    const totalCost = calculateTotalCost(project);
+    const unpaidPayments = calculateUnpaidAmount(project);
+    return sum + totalCost + unpaidPayments;
+  }, 0);
 
   const statuses = ['active', 'pending', 'awaiting_po', 'nearing_completion', 'completed'];
 
@@ -120,7 +121,7 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
           <CardContent>
             <div className="text-2xl font-bold">€{totalUnpaidCosts.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
-              Outstanding payments
+              Outstanding payments and costs
             </p>
           </CardContent>
         </Card>
