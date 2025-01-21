@@ -34,6 +34,7 @@ interface ProjectFormProps {
   mode?: 'create' | 'edit';
 }
 
+const CREATIVE_DIRECTOR_RATE = 43;
 const CATEGORIES = ['internal', 'contractor', 'services', 'software', 'stock'] as const;
 const PROJECT_TYPES = ['fixed_fee', 'time_and_materials', 'retainer'] as const;
 
@@ -49,7 +50,9 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
   const [budget, setBudget] = useState(String(initialData?.budget || ""));
   const [billableRate, setBillableRate] = useState(String(initialData?.billable_rate || ""));
   const [notes, setNotes] = useState(initialData?.notes || "");
-  const [internalCost, setInternalCost] = useState(String(initialData?.internal_cost || ""));
+  const [creativeDirectorHours, setCreativeDirectorHours] = useState(
+    String(Math.round((initialData?.internal_cost || 0) / CREATIVE_DIRECTOR_RATE)) || "0"
+  );
   const [externalCost, setExternalCost] = useState(String(initialData?.external_cost || ""));
   const [softwareCost, setSoftwareCost] = useState(String(initialData?.software_cost || ""));
   const [salesPrice, setSalesPrice] = useState(String(initialData?.sales_price || ""));
@@ -58,6 +61,9 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
   const [designCost, setDesignCost] = useState(String(initialData?.design_cost || ""));
   const [modeling3dCost, setModeling3dCost] = useState(String(initialData?.modeling_3d_cost || ""));
   const [renderingCost, setRenderingCost] = useState(String(initialData?.rendering_cost || ""));
+
+  // Calculate internal cost based on hours and rate
+  const internalCost = Number(creativeDirectorHours) * CREATIVE_DIRECTOR_RATE;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,7 +84,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
         budget: Number(budget) || 0,
         billable_rate: Number(billableRate) || 0,
         notes,
-        internal_cost: Number(internalCost) || 0,
+        internal_cost: internalCost,
         external_cost: Number(externalCost) || 0,
         software_cost: Number(softwareCost) || 0,
         sales_price: Number(salesPrice) || 0,
@@ -114,7 +120,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
   };
 
   // Calculate total cost including new categories
-  const totalCost = Number(internalCost || 0) + 
+  const totalCost = internalCost + 
     Number(externalCost || 0) + 
     Number(softwareCost || 0) +
     Number(vrDevelopmentCost || 0) +
@@ -206,23 +212,24 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900">Cost Breakdown</h3>
           <div className="grid grid-cols-1 gap-6">
-            {/* Original costs */}
+            {/* Creative Director Hours and Internal Cost */}
             <div className="p-4 border rounded-lg bg-white/50">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Internal Cost</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Creative Director Hours (€{CREATIVE_DIRECTOR_RATE}/hour)</label>
               <div className="flex items-center gap-2">
                 <Input
                   type="number"
-                  placeholder="Internal Cost"
-                  value={internalCost}
-                  onChange={(e) => setInternalCost(e.target.value)}
+                  placeholder="Hours"
+                  value={creativeDirectorHours}
+                  onChange={(e) => setCreativeDirectorHours(e.target.value)}
                   className="flex-1"
                 />
                 <div className="text-sm font-semibold text-gray-900">
-                  €{Number(internalCost || 0).toLocaleString()}
+                  €{internalCost.toLocaleString()}
                 </div>
               </div>
             </div>
 
+            {/* External Cost */}
             <div className="p-4 border rounded-lg bg-white/50">
               <label className="block text-sm font-medium text-gray-700 mb-2">External Cost</label>
               <div className="flex items-center gap-2">

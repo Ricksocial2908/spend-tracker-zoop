@@ -17,6 +17,11 @@ interface EditProjectFormProps {
     external_cost: number;
     software_cost: number;
     sales_price: number;
+    vr_development_cost: number;
+    software_development_cost: number;
+    design_cost: number;
+    modeling_3d_cost: number;
+    rendering_cost: number;
   };
   open: boolean;
   onClose: () => void;
