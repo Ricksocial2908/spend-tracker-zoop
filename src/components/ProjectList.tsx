@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { EditProjectForm } from "./EditProjectForm";
 
 interface Project {
   id: number;
@@ -29,6 +30,14 @@ interface Project {
   software_cost: number;
   sales_price: number;
   status: string;
+  project_code: string | null;
+  client: string | null;
+  project_type: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  budget: number | null;
+  billable_rate: number | null;
+  notes: string | null;
   project_payments: {
     amount: number;
     paid_amount: number;
@@ -59,6 +68,7 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
 
   const handleRowClick = (projectId: number) => {
     setHighlightedIds(prev => {
@@ -123,6 +133,15 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
     }
   };
 
+  const handleEdit = (project: Project) => {
+    setEditingProject(project);
+  };
+
+  const handleEditComplete = () => {
+    setEditingProject(null);
+    onProjectUpdated();
+  };
+
   const sortedProjects = [...projects].sort((a, b) => {
     const multiplier = sortDirection === 'asc' ? 1 : -1;
     
@@ -161,6 +180,15 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
             setShowPaymentForm(false);
             setSelectedProjectId(null);
           }}
+        />
+      )}
+
+      {editingProject && (
+        <EditProjectForm
+          project={editingProject}
+          open={true}
+          onClose={() => setEditingProject(null)}
+          onProjectUpdated={handleEditComplete}
         />
       )}
       
@@ -227,9 +255,7 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => {
-                        // Handle edit
-                      }}
+                      onClick={() => handleEdit(project)}
                     >
                       <EditIcon className="h-4 w-4" />
                     </Button>

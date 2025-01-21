@@ -1,37 +1,53 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { PlusIcon, XIcon } from "lucide-react";
+import { PlusIcon, XIcon, SaveIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface ProjectFormProps {
   onProjectAdded: () => void;
   onCancel?: () => void;
+  initialData?: {
+    id?: number;
+    name: string;
+    project_code: string | null;
+    client: string | null;
+    project_type: string | null;
+    start_date: string | null;
+    end_date: string | null;
+    budget: number | null;
+    billable_rate: number | null;
+    notes: string | null;
+    internal_cost: number;
+    external_cost: number;
+    software_cost: number;
+    sales_price: number;
+  };
+  mode?: 'create' | 'edit';
 }
 
 const CATEGORIES = ['internal', 'contractor', 'services', 'software', 'stock'] as const;
 const PROJECT_TYPES = ['fixed_fee', 'time_and_materials', 'retainer'] as const;
 
-export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
-  const [name, setName] = useState("");
-  const [projectCode, setProjectCode] = useState("");
-  const [client, setClient] = useState("");
-  const [projectType, setProjectType] = useState<typeof PROJECT_TYPES[number]>("fixed_fee");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [budget, setBudget] = useState("");
-  const [billableRate, setBillableRate] = useState("");
-  const [notes, setNotes] = useState("");
-  const [internalCost, setInternalCost] = useState("");
-  const [externalCost, setExternalCost] = useState("");
-  const [softwareCost, setSoftwareCost] = useState("");
-  const [salesPrice, setSalesPrice] = useState("");
-  const [internalCostCategory, setInternalCostCategory] = useState<typeof CATEGORIES[number]>("internal");
-  const [externalCostCategory, setExternalCostCategory] = useState<typeof CATEGORIES[number]>("contractor");
-  const [softwareCostCategory, setSoftwareCostCategory] = useState<typeof CATEGORIES[number]>("software");
+export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'create' }: ProjectFormProps) => {
+  const [name, setName] = useState(initialData?.name || "");
+  const [projectCode, setProjectCode] = useState(initialData?.project_code || "");
+  const [client, setClient] = useState(initialData?.client || "");
+  const [projectType, setProjectType] = useState<typeof PROJECT_TYPES[number]>(
+    (initialData?.project_type as typeof PROJECT_TYPES[number]) || "fixed_fee"
+  );
+  const [startDate, setStartDate] = useState(initialData?.start_date || "");
+  const [endDate, setEndDate] = useState(initialData?.end_date || "");
+  const [budget, setBudget] = useState(String(initialData?.budget || ""));
+  const [billableRate, setBillableRate] = useState(String(initialData?.billable_rate || ""));
+  const [notes, setNotes] = useState(initialData?.notes || "");
+  const [internalCost, setInternalCost] = useState(String(initialData?.internal_cost || ""));
+  const [externalCost, setExternalCost] = useState(String(initialData?.external_cost || ""));
+  const [softwareCost, setSoftwareCost] = useState(String(initialData?.software_cost || ""));
+  const [salesPrice, setSalesPrice] = useState(String(initialData?.sales_price || ""));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,51 +58,43 @@ export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
     }
 
     try {
-      const { error } = await supabase
-        .from("projects")
-        .insert({
-          name,
-          project_code: projectCode,
-          client,
-          project_type: projectType,
-          start_date: startDate || null,
-          end_date: endDate || null,
-          budget: Number(budget) || 0,
-          billable_rate: Number(billableRate) || 0,
-          notes,
-          internal_cost: Number(internalCost) || 0,
-          external_cost: Number(externalCost) || 0,
-          software_cost: Number(softwareCost) || 0,
-          sales_price: Number(salesPrice) || 0,
-          internal_cost_category: internalCostCategory,
-          external_cost_category: externalCostCategory,
-          software_cost_category: softwareCostCategory,
-        });
+      const projectData = {
+        name,
+        project_code: projectCode,
+        client,
+        project_type: projectType,
+        start_date: startDate || null,
+        end_date: endDate || null,
+        budget: Number(budget) || 0,
+        billable_rate: Number(billableRate) || 0,
+        notes,
+        internal_cost: Number(internalCost) || 0,
+        external_cost: Number(externalCost) || 0,
+        software_cost: Number(softwareCost) || 0,
+        sales_price: Number(salesPrice) || 0,
+      };
 
-      if (error) throw error;
+      if (mode === 'edit' && initialData?.id) {
+        const { error } = await supabase
+          .from("projects")
+          .update(projectData)
+          .eq('id', initialData.id);
 
-      setName("");
-      setProjectCode("");
-      setClient("");
-      setProjectType("fixed_fee");
-      setStartDate("");
-      setEndDate("");
-      setBudget("");
-      setBillableRate("");
-      setNotes("");
-      setInternalCost("");
-      setExternalCost("");
-      setSoftwareCost("");
-      setSalesPrice("");
-      setInternalCostCategory("internal");
-      setExternalCostCategory("contractor");
-      setSoftwareCostCategory("software");
-      
+        if (error) throw error;
+        toast.success("Project updated successfully");
+      } else {
+        const { error } = await supabase
+          .from("projects")
+          .insert(projectData);
+
+        if (error) throw error;
+        toast.success("Project added successfully");
+      }
+
       onProjectAdded();
-      toast.success("Project added successfully");
     } catch (error) {
-      console.error("Error adding project:", error);
-      toast.error("Failed to add project");
+      console.error("Error saving project:", error);
+      toast.error(`Failed to ${mode === 'edit' ? 'update' : 'add'} project`);
     }
   };
 
@@ -240,8 +248,17 @@ export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
           Cancel
         </Button>
         <Button type="submit">
-          <PlusIcon className="w-4 h-4 mr-2" />
-          Add Project
+          {mode === 'edit' ? (
+            <>
+              <SaveIcon className="w-4 h-4 mr-2" />
+              Save Changes
+            </>
+          ) : (
+            <>
+              <PlusIcon className="w-4 h-4 mr-2" />
+              Add Project
+            </>
+          )}
         </Button>
       </div>
     </form>
