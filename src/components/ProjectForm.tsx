@@ -149,6 +149,12 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
   const grossProfit = Number(salesPrice || 0) - totalPaidAmount;
   const grossProfitMargin = Number(salesPrice) ? (grossProfit / Number(salesPrice) * 100) : 0;
 
+  const expectedGrossProfit = Number(salesPrice || 0) - totalCost;
+  const expectedGrossProfitMargin = Number(salesPrice) ? (expectedGrossProfit / Number(salesPrice) * 100) : 0;
+
+  const profitMarginDifference = grossProfitMargin - expectedGrossProfitMargin;
+  const profitDifference = grossProfit - expectedGrossProfit;
+
   const isOverBudget = (cost: number, paid: number) => paid > cost;
 
   return (
@@ -580,6 +586,44 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                   <label className="block text-sm font-medium text-gray-700 mb-2">Expected Gross Profit Margin</label>
                   <div className={`text-sm font-bold ${(Number(salesPrice) - totalCost) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {Number(salesPrice) ? (((Number(salesPrice) - totalCost) / Number(salesPrice)) * 100).toFixed(1) : '0'}%
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6">
+        <div className="p-4 border rounded-lg bg-blue-50">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Profit Margin Analysis</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Expected Profit Margins (Based on Costs)</label>
+                <div className={`text-sm font-bold ${expectedGrossProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <div>Gross Profit: €{expectedGrossProfit.toLocaleString()}</div>
+                  <div>Margin: {expectedGrossProfitMargin.toFixed(1)}%</div>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Actual Profit Margins (Based on Paid)</label>
+                <div className={`text-sm font-bold ${grossProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <div>Gross Profit: €{grossProfit.toLocaleString()}</div>
+                  <div>Margin: {grossProfitMargin.toFixed(1)}%</div>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Profit Difference Analysis</label>
+                <div className={`text-sm font-bold ${profitDifference >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <div>Profit Difference: €{profitDifference.toLocaleString()}</div>
+                  <div>Margin Difference: {profitMarginDifference.toFixed(1)}%</div>
+                  <div className="text-xs text-gray-600 mt-1">
+                    {profitDifference >= 0 
+                      ? "Actual profit is higher than expected" 
+                      : "Actual profit is lower than expected"}
                   </div>
                 </div>
               </div>
