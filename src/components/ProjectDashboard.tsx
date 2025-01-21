@@ -58,7 +58,7 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
 
   const totalPotentialSales = projects.reduce((sum, project) => sum + Number(project.sales_price), 0);
   const confirmedSales = projects
-    .filter(project => project.status === 'active' || project.status === 'completed')
+    .filter(project => project.status === 'active')
     .reduce((sum, project) => sum + Number(project.sales_price), 0);
   
   const totalSalesValue = projects.reduce((sum, project) => sum + Number(project.sales_price), 0);
