@@ -44,6 +44,10 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
     );
   };
 
+  const calculateTotalPaid = (project: Project) => {
+    return project.project_payments.reduce((sum, payment) => sum + Number(payment.paid_amount), 0);
+  };
+
   // Get potential projects (pending and awaiting_po)
   const potentialProjects = projects.filter(project => 
     ['pending', 'awaiting_po'].includes(project.status)
@@ -57,6 +61,11 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
   const activeProjects = projects.filter(project => project.status === 'active');
   const activeSalesValue = activeProjects.reduce(
     (sum, project) => sum + Number(project.sales_price), 
+    0
+  );
+
+  const activePaidValue = activeProjects.reduce(
+    (sum, project) => sum + calculateTotalPaid(project),
     0
   );
 
@@ -87,7 +96,10 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">€{activeSalesValue.toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-sm text-muted-foreground">
+              Paid: €{activePaidValue.toLocaleString()}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
               {activeProjects.length} projects in progress
             </p>
           </CardContent>
@@ -127,6 +139,10 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
                     <div className="flex justify-between">
                       <span>Sales Price:</span>
                       <span>€{Number(project.sales_price).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span>Paid:</span>
+                      <span>€{calculateTotalPaid(project).toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
