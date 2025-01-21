@@ -172,25 +172,54 @@ export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
 
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900">Cost Breakdown</h3>
-          <div className="space-y-4">
-            <Input
-              type="number"
-              placeholder="Internal Cost"
-              value={internalCost}
-              onChange={(e) => setInternalCost(e.target.value)}
-            />
-            <Input
-              type="number"
-              placeholder="External Cost"
-              value={externalCost}
-              onChange={(e) => setExternalCost(e.target.value)}
-            />
-            <Input
-              type="number"
-              placeholder="Software Cost"
-              value={softwareCost}
-              onChange={(e) => setSoftwareCost(e.target.value)}
-            />
+          <div className="grid grid-cols-1 gap-6">
+            <div className="p-4 border rounded-lg bg-white/50">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Internal Cost</label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  placeholder="Internal Cost"
+                  value={internalCost}
+                  onChange={(e) => setInternalCost(e.target.value)}
+                  className="flex-1"
+                />
+                <div className="text-sm font-semibold text-gray-900">
+                  ${Number(internalCost || 0).toLocaleString()}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 border rounded-lg bg-white/50">
+              <label className="block text-sm font-medium text-gray-700 mb-2">External Cost</label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  placeholder="External Cost"
+                  value={externalCost}
+                  onChange={(e) => setExternalCost(e.target.value)}
+                  className="flex-1"
+                />
+                <div className="text-sm font-semibold text-gray-900">
+                  ${Number(externalCost || 0).toLocaleString()}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 border rounded-lg bg-white/50">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Software Cost</label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  placeholder="Software Cost"
+                  value={softwareCost}
+                  onChange={(e) => setSoftwareCost(e.target.value)}
+                  className="flex-1"
+                />
+                <div className="text-sm font-semibold text-gray-900">
+                  ${Number(softwareCost || 0).toLocaleString()}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
