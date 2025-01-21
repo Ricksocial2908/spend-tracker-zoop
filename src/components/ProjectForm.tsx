@@ -27,14 +27,12 @@ export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
     try {
       const { error } = await supabase
         .from("projects")
-        .insert([
-          {
-            name,
-            internal_cost: internalCost || 0,
-            external_cost: externalCost || 0,
-            software_cost: softwareCost || 0,
-          },
-        ]);
+        .insert({
+          name,
+          internal_cost: Number(internalCost) || 0,
+          external_cost: Number(externalCost) || 0,
+          software_cost: Number(softwareCost) || 0,
+        });
 
       if (error) throw error;
 

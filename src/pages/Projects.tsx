@@ -13,6 +13,7 @@ export default function Projects() {
   const [totalExternalCost, setTotalExternalCost] = useState(0);
   const [totalSoftwareCost, setTotalSoftwareCost] = useState(0);
   const [totalUnpaidAmount, setTotalUnpaidAmount] = useState(0);
+  const [totalPaidAmount, setTotalPaidAmount] = useState(0);
   const [showForm, setShowForm] = useState(false);
 
   const fetchProjects = async () => {
@@ -42,19 +43,26 @@ export default function Projects() {
         setTotalSoftwareCost(
           projectsData.reduce((sum, project) => sum + Number(project.software_cost), 0)
         );
-        setTotalUnpaidAmount(
-          projectsData.reduce((sum, project) => {
-            const totalAmount = project.project_payments?.reduce(
-              (pSum: number, payment: any) => pSum + Number(payment.amount),
-              0
-            ) || 0;
-            const totalPaid = project.project_payments?.reduce(
-              (pSum: number, payment: any) => pSum + Number(payment.paid_amount),
-              0
-            ) || 0;
-            return sum + (totalAmount - totalPaid);
-          }, 0)
-        );
+
+        let totalPaid = 0;
+        let totalUnpaid = 0;
+
+        projectsData.forEach(project => {
+          const totalAmount = project.project_payments?.reduce(
+            (pSum: number, payment: any) => pSum + Number(payment.amount),
+            0
+          ) || 0;
+          const paidAmount = project.project_payments?.reduce(
+            (pSum: number, payment: any) => pSum + Number(payment.paid_amount),
+            0
+          ) || 0;
+          
+          totalPaid += paidAmount;
+          totalUnpaid += (totalAmount - paidAmount);
+        });
+
+        setTotalPaidAmount(totalPaid);
+        setTotalUnpaidAmount(totalUnpaid);
       }
     } catch (error) {
       console.error("Error fetching projects:", error);
@@ -88,7 +96,7 @@ export default function Projects() {
         />
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <ProjectCard
           title="Total Internal Cost"
           amount={totalInternalCost}
@@ -103,6 +111,11 @@ export default function Projects() {
           title="Total Software Cost"
           amount={totalSoftwareCost}
           className="bg-purple-50"
+        />
+        <ProjectCard
+          title="Total Paid Amount"
+          amount={totalPaidAmount}
+          className="bg-emerald-50"
         />
         <ProjectCard
           title="Total Unpaid Amount"
