@@ -44,6 +44,10 @@ interface Project {
   design_cost: number;
   modeling_3d_cost: number;
   rendering_cost: number;
+  project_payments: {
+    amount: number;
+    paid_amount: number;
+  }[];
 }
 
 interface ProjectListProps {
