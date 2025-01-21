@@ -129,6 +129,10 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
     Number(modeling3dCost || 0) +
     Number(renderingCost || 0);
 
+  // Calculate gross profit and margin
+  const grossProfit = Number(salesPrice || 0) - totalCost;
+  const grossProfitMargin = Number(salesPrice) ? (grossProfit / Number(salesPrice) * 100) : 0;
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-gray-200">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -347,6 +351,24 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
               <label className="block text-sm font-medium text-gray-700 mb-2">Total Expected Cost</label>
               <div className="text-lg font-bold text-gray-900">
                 €{totalCost.toLocaleString()}
+              </div>
+            </div>
+
+            {/* Profit Calculations */}
+            <div className="p-4 border rounded-lg bg-green-50">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Gross Profit</label>
+                  <div className={`text-lg font-bold ${grossProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    €{grossProfit.toLocaleString()}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Gross Profit Margin</label>
+                  <div className={`text-lg font-bold ${grossProfitMargin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {grossProfitMargin.toFixed(1)}%
+                  </div>
+                </div>
               </div>
             </div>
           </div>
