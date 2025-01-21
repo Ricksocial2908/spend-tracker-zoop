@@ -1,7 +1,7 @@
 import { ProjectCard } from "@/components/ProjectCard";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, ChartBar, CreditCard, Database } from "lucide-react";
+import { DollarSign, ChartBar, CreditCard, Database, TrendingUp } from "lucide-react";
 
 interface Project {
   id: number;
@@ -56,6 +56,11 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
     return totalAmount - totalPaid;
   };
 
+  const totalPotentialSales = projects.reduce((sum, project) => sum + Number(project.sales_price), 0);
+  const confirmedSales = projects
+    .filter(project => project.status === 'active' || project.status === 'completed')
+    .reduce((sum, project) => sum + Number(project.sales_price), 0);
+  
   const totalSalesValue = projects.reduce((sum, project) => sum + Number(project.sales_price), 0);
   const totalUnpaidCosts = projects.reduce((sum, project) => sum + calculateUnpaidAmount(project), 0);
   const totalUnpaid = projects.reduce((sum, project) => sum + calculateUnpaidAmount(project), 0);
@@ -66,8 +71,22 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Financial Overview Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        {/* New Sales Overview Card */}
+        <Card className="bg-white/80 backdrop-blur-sm">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Sales Overview</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">€{confirmedSales.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground">
+              Potential: €{totalPotentialSales.toLocaleString()}
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Existing Financial Overview Cards */}
         <Card className="bg-white/80 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Sales Value</CardTitle>
