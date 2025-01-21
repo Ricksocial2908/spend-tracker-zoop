@@ -63,6 +63,7 @@ const getStatusColor = (status: string) => {
     active: "bg-green-100 text-green-800",
     pending: "bg-yellow-100 text-yellow-800",
     awaiting_po: "bg-purple-100 text-purple-800",
+    nearing_completion: "bg-orange-100 text-orange-800",
     completed: "bg-blue-100 text-blue-800",
   } as const;
   return colors[status as keyof typeof colors] || "bg-gray-100 text-gray-800";
@@ -256,7 +257,7 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
                         </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
-                        {['active', 'pending', 'awaiting_po', 'completed'].map((status) => (
+                        {['active', 'pending', 'awaiting_po', 'nearing_completion', 'completed'].map((status) => (
                           <SelectItem key={status} value={status}>
                             <Badge className={getStatusColor(status)}>
                               {status.replace('_', ' ').charAt(0).toUpperCase() + status.slice(1)}

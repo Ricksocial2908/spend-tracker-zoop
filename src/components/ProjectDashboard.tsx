@@ -1,7 +1,7 @@
 import { ProjectCard } from "@/components/ProjectCard";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, ChartBar, CreditCard, Database, TrendingUp } from "lucide-react";
+import { DollarSign, ChartBar, CreditCard, Database, TrendingUp, Activity } from "lucide-react";
 
 interface Project {
   id: number;
@@ -67,11 +67,15 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
   const grossProfit = totalSalesValue - totalUnpaidCosts;
   const grossMargin = totalSalesValue ? (grossProfit / totalSalesValue) * 100 : 0;
 
-  const statuses = ['active', 'pending', 'awaiting_po', 'completed'];
+  const activeProjects = projects.filter(project => 
+    ['active', 'pending', 'awaiting_po'].includes(project.status)
+  ).length;
+
+  const statuses = ['active', 'pending', 'awaiting_po', 'nearing_completion', 'completed'];
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
         {/* New Sales Overview Card */}
         <Card className="bg-white/80 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -82,6 +86,20 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
             <div className="text-2xl font-bold">€{confirmedSales.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
               Potential: €{totalPotentialSales.toLocaleString()}
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Projects in Progress Card */}
+        <Card className="bg-white/80 backdrop-blur-sm">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Projects</CardTitle>
+            <Activity className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{activeProjects}</div>
+            <p className="text-xs text-muted-foreground">
+              In progress
             </p>
           </CardContent>
         </Card>
@@ -151,6 +169,7 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
                   status === 'active' ? 'default' :
                   status === 'pending' ? 'secondary' :
                   status === 'awaiting_po' ? 'outline' :
+                  status === 'nearing_completion' ? 'outline' :
                   'secondary'
                 }>
                   {getProjectsByStatus(status).length}
