@@ -7,9 +7,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { EditIcon, ArrowUpDown, PlusIcon } from "lucide-react";
+import { EditIcon, ArrowUpDown } from "lucide-react";
 import { useState } from "react";
-import { ProjectPaymentForm } from "./ProjectPaymentForm";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
@@ -44,10 +43,6 @@ interface Project {
   design_cost: number;
   modeling_3d_cost: number;
   rendering_cost: number;
-  project_payments: {
-    amount: number;
-    paid_amount: number;
-  }[];
 }
 
 interface ProjectListProps {
@@ -55,7 +50,7 @@ interface ProjectListProps {
   onProjectUpdated: () => void;
 }
 
-type SortField = 'name' | 'total_cost' | 'sales_price' | 'unpaid';
+type SortField = 'name' | 'total_cost' | 'sales_price';
 type SortDirection = 'asc' | 'desc';
 
 const getStatusColor = (status: string) => {
@@ -73,10 +68,7 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
   const [highlightedIds, setHighlightedIds] = useState<number[]>([]);
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
-  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
-  const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
-  const [manualOutstanding, setManualOutstanding] = useState<{ [key: number]: string }>({});
 
   const handleRowClick = (projectId: number) => {
     setHighlightedIds(prev => {
@@ -99,42 +91,6 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
 
   const calculateTotalCost = (project: Project) => {
     return Number(project.internal_cost) + Number(project.external_cost) + Number(project.software_cost);
-  };
-
-  const calculateUnpaidAmount = (project: Project) => {
-    // If there's a manual entry for this project, use it
-    if (manualOutstanding[project.id] !== undefined) {
-      return Number(manualOutstanding[project.id]) || 0;
-    }
-
-    // Otherwise calculate from payments
-    const totalAmount = project.project_payments?.reduce(
-      (sum, payment) => sum + Number(payment.amount),
-      0
-    ) || 0;
-    const totalPaid = project.project_payments?.reduce(
-      (sum, payment) => sum + Number(payment.paid_amount),
-      0
-    ) || 0;
-    return totalAmount - totalPaid;
-  };
-
-  const handleOutstandingChange = (projectId: number, value: string) => {
-    setManualOutstanding(prev => ({
-      ...prev,
-      [projectId]: value
-    }));
-  };
-
-  const handleAddPayment = (projectId: number) => {
-    setSelectedProjectId(projectId);
-    setShowPaymentForm(true);
-  };
-
-  const handlePaymentAdded = () => {
-    setShowPaymentForm(false);
-    setSelectedProjectId(null);
-    onProjectUpdated();
   };
 
   const handleStatusChange = async (projectId: number, newStatus: string) => {
@@ -173,8 +129,6 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
         return (calculateTotalCost(a) - calculateTotalCost(b)) * multiplier;
       case 'sales_price':
         return (Number(a.sales_price) - Number(b.sales_price)) * multiplier;
-      case 'unpaid':
-        return (calculateUnpaidAmount(a) - calculateUnpaidAmount(b)) * multiplier;
       default:
         return 0;
     }
@@ -193,17 +147,6 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
 
   return (
     <div className="space-y-4">
-      {showPaymentForm && selectedProjectId && (
-        <ProjectPaymentForm
-          projectId={selectedProjectId}
-          onPaymentAdded={handlePaymentAdded}
-          onCancel={() => {
-            setShowPaymentForm(false);
-            setSelectedProjectId(null);
-          }}
-        />
-      )}
-
       {editingProject && (
         <EditProjectForm
           project={editingProject}
@@ -227,10 +170,7 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
               <TableHead>
                 <SortButton field="sales_price" label="Sales Price" />
               </TableHead>
-              <TableHead>
-                <SortButton field="unpaid" label="Outstanding" />
-              </TableHead>
-              <TableHead className="w-[150px]">Actions</TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -271,16 +211,6 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
                 <TableCell>€{calculateTotalCost(project).toLocaleString()}</TableCell>
                 <TableCell>€{Number(project.sales_price).toLocaleString()}</TableCell>
                 <TableCell>
-                  <div onClick={(e) => e.stopPropagation()} className="flex items-center gap-2">
-                    <Input
-                      type="number"
-                      value={manualOutstanding[project.id] ?? calculateUnpaidAmount(project)}
-                      onChange={(e) => handleOutstandingChange(project.id, e.target.value)}
-                      className="w-32"
-                    />
-                  </div>
-                </TableCell>
-                <TableCell>
                   <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                     <Button
                       variant="ghost"
@@ -289,21 +219,13 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
                     >
                       <EditIcon className="h-4 w-4" />
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleAddPayment(project.id)}
-                    >
-                      <PlusIcon className="h-4 w-4 mr-1" />
-                      Payments
-                    </Button>
                   </div>
                 </TableCell>
               </TableRow>
             ))}
             {projects.length === 0 && (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={5} className="text-center py-8 text-gray-500">
                   No projects found
                 </TableCell>
               </TableRow>
