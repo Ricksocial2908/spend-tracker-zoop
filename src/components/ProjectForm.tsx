@@ -28,6 +28,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
   const [internalCost, setInternalCost] = useState("");
   const [externalCost, setExternalCost] = useState("");
   const [softwareCost, setSoftwareCost] = useState("");
+  const [salesPrice, setSalesPrice] = useState("");
   const [internalCostCategory, setInternalCostCategory] = useState<typeof CATEGORIES[number]>("internal");
   const [externalCostCategory, setExternalCostCategory] = useState<typeof CATEGORIES[number]>("contractor");
   const [softwareCostCategory, setSoftwareCostCategory] = useState<typeof CATEGORIES[number]>("software");
@@ -56,6 +57,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
           internal_cost: Number(internalCost) || 0,
           external_cost: Number(externalCost) || 0,
           software_cost: Number(softwareCost) || 0,
+          sales_price: Number(salesPrice) || 0,
           internal_cost_category: internalCostCategory,
           external_cost_category: externalCostCategory,
           software_cost_category: softwareCostCategory,
@@ -75,6 +77,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
       setInternalCost("");
       setExternalCost("");
       setSoftwareCost("");
+      setSalesPrice("");
       setInternalCostCategory("internal");
       setExternalCostCategory("contractor");
       setSoftwareCostCategory("software");
@@ -153,6 +156,12 @@ export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
               onChange={(e) => setBillableRate(e.target.value)}
             />
           </div>
+          <Input
+            type="number"
+            placeholder="Sales Price"
+            value={salesPrice}
+            onChange={(e) => setSalesPrice(e.target.value)}
+          />
           <Textarea
             placeholder="Project Notes"
             value={notes}
