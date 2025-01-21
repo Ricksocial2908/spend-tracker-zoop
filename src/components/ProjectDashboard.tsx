@@ -72,12 +72,11 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
     0
   );
 
-  // Calculate total unpaid costs (now including project costs and payment amounts)
-  const totalUnpaidCosts = projects.reduce((sum, project) => {
-    const totalCost = calculateTotalCost(project);
-    const unpaidPayments = calculateUnpaidAmount(project);
-    return sum + totalCost + unpaidPayments;
-  }, 0);
+  // Calculate total unpaid costs from outstanding payments only
+  const totalUnpaidCosts = projects.reduce(
+    (sum, project) => sum + calculateUnpaidAmount(project),
+    0
+  );
 
   const statuses = ['active', 'pending', 'awaiting_po', 'nearing_completion', 'completed'];
 
