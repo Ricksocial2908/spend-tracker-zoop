@@ -11,6 +11,15 @@ import { EditIcon, ArrowUpDown, PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { ProjectPaymentForm } from "./ProjectPaymentForm";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface Project {
   id: number;
@@ -18,9 +27,8 @@ interface Project {
   internal_cost: number;
   external_cost: number;
   software_cost: number;
-  internal_cost_category: string;
-  external_cost_category: string;
-  software_cost_category: string;
+  sales_price: number;
+  status: string;
   project_payments: {
     amount: number;
     paid_amount: number;
@@ -32,18 +40,17 @@ interface ProjectListProps {
   onProjectUpdated: () => void;
 }
 
-type SortField = 'name' | 'internal_cost' | 'external_cost' | 'software_cost' | 'unpaid';
+type SortField = 'name' | 'total_cost' | 'sales_price' | 'unpaid';
 type SortDirection = 'asc' | 'desc';
 
-const getCategoryColor = (category: string) => {
+const getStatusColor = (status: string) => {
   const colors = {
-    internal: "bg-blue-100 text-blue-800",
-    contractor: "bg-purple-100 text-purple-800",
-    services: "bg-green-100 text-green-800",
-    software: "bg-yellow-100 text-yellow-800",
-    stock: "bg-pink-100 text-pink-800",
+    active: "bg-green-100 text-green-800",
+    pending: "bg-yellow-100 text-yellow-800",
+    awaiting_po: "bg-purple-100 text-purple-800",
+    completed: "bg-blue-100 text-blue-800",
   } as const;
-  return colors[category as keyof typeof colors] || "bg-gray-100 text-gray-800";
+  return colors[status as keyof typeof colors] || "bg-gray-100 text-gray-800";
 };
 
 export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) => {
@@ -72,6 +79,10 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
     }
   };
 
+  const calculateTotalCost = (project: Project) => {
+    return Number(project.internal_cost) + Number(project.external_cost) + Number(project.software_cost);
+  };
+
   const calculateUnpaidAmount = (project: Project) => {
     const totalAmount = project.project_payments?.reduce(
       (sum, payment) => sum + Number(payment.amount),
@@ -95,11 +106,21 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
     onProjectUpdated();
   };
 
-  const calculateTotalPaid = (project: Project) => {
-    return project.project_payments?.reduce(
-      (sum, payment) => sum + Number(payment.paid_amount),
-      0
-    ) || 0;
+  const handleStatusChange = async (projectId: number, newStatus: string) => {
+    try {
+      const { error } = await supabase
+        .from('projects')
+        .update({ status: newStatus })
+        .eq('id', projectId);
+
+      if (error) throw error;
+      
+      onProjectUpdated();
+      toast.success("Project status updated");
+    } catch (error) {
+      console.error("Error updating project status:", error);
+      toast.error("Failed to update project status");
+    }
   };
 
   const sortedProjects = [...projects].sort((a, b) => {
@@ -108,12 +129,10 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
     switch (sortField) {
       case 'name':
         return a.name.localeCompare(b.name) * multiplier;
-      case 'internal_cost':
-        return (Number(a.internal_cost) - Number(b.internal_cost)) * multiplier;
-      case 'external_cost':
-        return (Number(a.external_cost) - Number(b.external_cost)) * multiplier;
-      case 'software_cost':
-        return (Number(a.software_cost) - Number(b.software_cost)) * multiplier;
+      case 'total_cost':
+        return (calculateTotalCost(a) - calculateTotalCost(b)) * multiplier;
+      case 'sales_price':
+        return (Number(a.sales_price) - Number(b.sales_price)) * multiplier;
       case 'unpaid':
         return (calculateUnpaidAmount(a) - calculateUnpaidAmount(b)) * multiplier;
       default:
@@ -152,20 +171,15 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
               <TableHead>
                 <SortButton field="name" label="Project Name" />
               </TableHead>
+              <TableHead>Status</TableHead>
               <TableHead>
-                <SortButton field="internal_cost" label="Internal Cost" />
+                <SortButton field="total_cost" label="Total Cost" />
               </TableHead>
-              <TableHead>Category</TableHead>
               <TableHead>
-                <SortButton field="external_cost" label="External Cost" />
+                <SortButton field="sales_price" label="Sales Price" />
               </TableHead>
-              <TableHead>Category</TableHead>
               <TableHead>
-                <SortButton field="software_cost" label="Software Cost" />
-              </TableHead>
-              <TableHead>Total Paid</TableHead>
-              <TableHead>
-                <SortButton field="unpaid" label="Unpaid Amount" />
+                <SortButton field="unpaid" label="Outstanding" />
               </TableHead>
               <TableHead className="w-[150px]">Actions</TableHead>
             </TableRow>
@@ -180,21 +194,33 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
                 }`}
               >
                 <TableCell>{project.name}</TableCell>
-                <TableCell>€{Number(project.internal_cost).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
                 <TableCell>
-                  <Badge className={getCategoryColor(project.internal_cost_category)}>
-                    {project.internal_cost_category.charAt(0).toUpperCase() + project.internal_cost_category.slice(1)}
-                  </Badge>
+                  <Select
+                    value={project.status}
+                    onValueChange={(value) => handleStatusChange(project.id, value)}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue>
+                        <Badge className={getStatusColor(project.status)}>
+                          {project.status.replace('_', ' ').charAt(0).toUpperCase() + project.status.slice(1)}
+                        </Badge>
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {['active', 'pending', 'awaiting_po', 'completed'].map((status) => (
+                        <SelectItem key={status} value={status}>
+                          <Badge className={getStatusColor(status)}>
+                            {status.replace('_', ' ').charAt(0).toUpperCase() + status.slice(1)}
+                          </Badge>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </TableCell>
-                <TableCell>€{Number(project.external_cost).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
-                <TableCell>
-                  <Badge className={getCategoryColor(project.external_cost_category)}>
-                    {project.external_cost_category.charAt(0).toUpperCase() + project.external_cost_category.slice(1)}
-                  </Badge>
-                </TableCell>
-                <TableCell>€{Number(project.software_cost).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
-                <TableCell>€{calculateTotalPaid(project).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
-                <TableCell>€{calculateUnpaidAmount(project).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
+                <TableCell>€{calculateTotalCost(project).toLocaleString()}</TableCell>
+                <TableCell>€{Number(project.sales_price).toLocaleString()}</TableCell>
+                <TableCell>€{calculateUnpaidAmount(project).toLocaleString()}</TableCell>
                 <TableCell>
                   <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                     <Button
@@ -220,7 +246,7 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
             ))}
             {projects.length === 0 && (
               <TableRow>
-                <TableCell colSpan={9} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={6} className="text-center py-8 text-gray-500">
                   No projects found
                 </TableCell>
               </TableRow>

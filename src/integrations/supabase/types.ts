@@ -99,9 +99,11 @@ export type Database = {
           notes: string | null
           project_code: string | null
           project_type: string | null
+          sales_price: number
           software_cost: number
           software_cost_category: string
           start_date: string | null
+          status: string
         }
         Insert: {
           billable_rate?: number | null
@@ -118,9 +120,11 @@ export type Database = {
           notes?: string | null
           project_code?: string | null
           project_type?: string | null
+          sales_price?: number
           software_cost?: number
           software_cost_category?: string
           start_date?: string | null
+          status?: string
         }
         Update: {
           billable_rate?: number | null
@@ -137,9 +141,11 @@ export type Database = {
           notes?: string | null
           project_code?: string | null
           project_type?: string | null
+          sales_price?: number
           software_cost?: number
           software_cost_category?: string
           start_date?: string | null
+          status?: string
         }
         Relationships: []
       }
