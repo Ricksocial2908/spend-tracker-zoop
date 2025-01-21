@@ -195,28 +195,29 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
               >
                 <TableCell>{project.name}</TableCell>
                 <TableCell>
-                  <Select
-                    value={project.status}
-                    onValueChange={(value) => handleStatusChange(project.id, value)}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <SelectTrigger className="w-[140px]">
-                      <SelectValue>
-                        <Badge className={getStatusColor(project.status)}>
-                          {project.status.replace('_', ' ').charAt(0).toUpperCase() + project.status.slice(1)}
-                        </Badge>
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {['active', 'pending', 'awaiting_po', 'completed'].map((status) => (
-                        <SelectItem key={status} value={status}>
-                          <Badge className={getStatusColor(status)}>
-                            {status.replace('_', ' ').charAt(0).toUpperCase() + status.slice(1)}
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <Select
+                      value={project.status}
+                      onValueChange={(value) => handleStatusChange(project.id, value)}
+                    >
+                      <SelectTrigger className="w-[140px]">
+                        <SelectValue>
+                          <Badge className={getStatusColor(project.status)}>
+                            {project.status.replace('_', ' ').charAt(0).toUpperCase() + project.status.slice(1)}
                           </Badge>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {['active', 'pending', 'awaiting_po', 'completed'].map((status) => (
+                          <SelectItem key={status} value={status}>
+                            <Badge className={getStatusColor(status)}>
+                              {status.replace('_', ' ').charAt(0).toUpperCase() + status.slice(1)}
+                            </Badge>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </TableCell>
                 <TableCell>€{calculateTotalCost(project).toLocaleString()}</TableCell>
                 <TableCell>€{Number(project.sales_price).toLocaleString()}</TableCell>

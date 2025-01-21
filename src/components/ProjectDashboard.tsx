@@ -53,8 +53,8 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
               <Badge variant={
                 status === 'active' ? 'default' :
                 status === 'pending' ? 'secondary' :
-                status === 'awaiting_po' ? 'warning' :
-                'success'
+                status === 'awaiting_po' ? 'outline' :
+                'secondary'
               }>
                 {getProjectsByStatus(status).length}
               </Badge>
