@@ -374,6 +374,36 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
     loadProjectPayments();
   }, [mode, initialData?.id]);
 
+  useEffect(() => {
+    const newTotalCost = internalCost + 
+      Number(externalCost || 0) + 
+      Number(softwareCost || 0) +
+      Number(vrDevelopmentCost || 0) +
+      Number(softwareDevelopmentCost || 0) +
+      Number(designCost || 0) +
+      Number(modeling3dCost || 0) +
+      Number(renderingCost || 0);
+
+    const newSalesPrice = Number(salesPrice || 0);
+    
+    // Update gross profit calculations based on new total cost and sales price
+    const newGrossProfit = newSalesPrice - totalPaidAmount;
+    const newGrossProfitMargin = newSalesPrice ? (newGrossProfit / newSalesPrice * 100) : 0;
+    const newExpectedGrossProfit = newSalesPrice - newTotalCost;
+    const newExpectedGrossProfitMargin = newSalesPrice ? (newExpectedGrossProfit / newSalesPrice * 100) : 0;
+  }, [
+    internalCost,
+    externalCost,
+    softwareCost,
+    vrDevelopmentCost,
+    softwareDevelopmentCost,
+    designCost,
+    modeling3dCost,
+    renderingCost,
+    salesPrice,
+    totalPaidAmount
+  ]);
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-gray-200">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
