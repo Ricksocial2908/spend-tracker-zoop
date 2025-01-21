@@ -57,9 +57,9 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
   };
 
   const totalSalesValue = projects.reduce((sum, project) => sum + Number(project.sales_price), 0);
-  const totalCosts = projects.reduce((sum, project) => sum + calculateTotalCost(project), 0);
+  const totalUnpaidCosts = projects.reduce((sum, project) => sum + calculateUnpaidAmount(project), 0);
   const totalUnpaid = projects.reduce((sum, project) => sum + calculateUnpaidAmount(project), 0);
-  const grossProfit = totalSalesValue - totalCosts;
+  const grossProfit = totalSalesValue - totalUnpaidCosts;
   const grossMargin = totalSalesValue ? (grossProfit / totalSalesValue) * 100 : 0;
 
   const statuses = ['active', 'pending', 'awaiting_po', 'completed'];
@@ -83,11 +83,11 @@ export const ProjectDashboard = ({ projects }: ProjectDashboardProps) => {
 
         <Card className="bg-white/80 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Costs</CardTitle>
+            <CardTitle className="text-sm font-medium">Unpaid Costs</CardTitle>
             <ChartBar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">€{totalCosts.toLocaleString()}</div>
+            <div className="text-2xl font-bold">€{totalUnpaidCosts.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
               Gross Profit: €{grossProfit.toLocaleString()}
             </p>
