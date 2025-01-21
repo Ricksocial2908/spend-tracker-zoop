@@ -11,6 +11,7 @@ import { EditIcon, ArrowUpDown, PlusIcon } from "lucide-react";
 import { useState } from "react";
 import { ProjectPaymentForm } from "./ProjectPaymentForm";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -69,6 +70,7 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
   const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [manualOutstanding, setManualOutstanding] = useState<{ [key: number]: string }>({});
 
   const handleRowClick = (projectId: number) => {
     setHighlightedIds(prev => {
@@ -94,6 +96,12 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
   };
 
   const calculateUnpaidAmount = (project: Project) => {
+    // If there's a manual entry for this project, use it
+    if (manualOutstanding[project.id] !== undefined) {
+      return Number(manualOutstanding[project.id]) || 0;
+    }
+
+    // Otherwise calculate from payments
     const totalAmount = project.project_payments?.reduce(
       (sum, payment) => sum + Number(payment.amount),
       0
@@ -103,6 +111,13 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
       0
     ) || 0;
     return totalAmount - totalPaid;
+  };
+
+  const handleOutstandingChange = (projectId: number, value: string) => {
+    setManualOutstanding(prev => ({
+      ...prev,
+      [projectId]: value
+    }));
   };
 
   const handleAddPayment = (projectId: number) => {
@@ -249,7 +264,16 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
                 </TableCell>
                 <TableCell>€{calculateTotalCost(project).toLocaleString()}</TableCell>
                 <TableCell>€{Number(project.sales_price).toLocaleString()}</TableCell>
-                <TableCell>€{calculateUnpaidAmount(project).toLocaleString()}</TableCell>
+                <TableCell>
+                  <div onClick={(e) => e.stopPropagation()} className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      value={manualOutstanding[project.id] ?? calculateUnpaidAmount(project)}
+                      onChange={(e) => handleOutstandingChange(project.id, e.target.value)}
+                      className="w-32"
+                    />
+                  </div>
+                </TableCell>
                 <TableCell>
                   <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                     <Button
