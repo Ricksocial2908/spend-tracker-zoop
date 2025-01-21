@@ -62,8 +62,8 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
   const [modeling3dCost, setModeling3dCost] = useState(String(initialData?.modeling_3d_cost || ""));
   const [renderingCost, setRenderingCost] = useState(String(initialData?.rendering_cost || ""));
 
-  // Add new state for paid amounts
-  const [internalPaidAmount, setInternalPaidAmount] = useState("0");
+  // Add new state for paid hours
+  const [internalPaidHours, setInternalPaidHours] = useState("0");
   const [externalPaidAmount, setExternalPaidAmount] = useState("0");
   const [softwarePaidAmount, setSoftwarePaidAmount] = useState("0");
   const [vrDevelopmentPaidAmount, setVrDevelopmentPaidAmount] = useState("0");
@@ -141,7 +141,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
 
   // Calculate total paid amount
   const totalPaidAmount = 
-    Number(internalPaidAmount || 0) +
+    Number(internalPaidHours || 0) * CREATIVE_DIRECTOR_RATE +
     Number(externalPaidAmount || 0) +
     Number(softwarePaidAmount || 0) +
     Number(vrDevelopmentPaidAmount || 0) +
@@ -260,14 +260,14 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                 <div className="flex items-center gap-2">
                   <Input
                     type="number"
-                    placeholder="Paid Amount"
-                    value={internalPaidAmount}
-                    onChange={(e) => setInternalPaidAmount(e.target.value)}
+                    placeholder="Paid Hours"
+                    value={internalPaidHours}
+                    onChange={(e) => setInternalPaidHours(e.target.value)}
                     className="flex-1"
                   />
-                  <div className={`text-sm font-semibold ${isOverBudget(internalCost, Number(internalPaidAmount)) ? 'text-red-600' : 'text-gray-900'}`}>
-                    Paid: €{Number(internalPaidAmount).toLocaleString()}
-                    {isOverBudget(internalCost, Number(internalPaidAmount)) && ` (Exceeded Budget by €${(Number(internalPaidAmount) - internalCost).toLocaleString()})`}
+                  <div className={`text-sm font-semibold ${isOverBudget(internalCost, Number(internalPaidHours) * CREATIVE_DIRECTOR_RATE) ? 'text-red-600' : 'text-gray-900'}`}>
+                    Paid: €{(Number(internalPaidHours) * CREATIVE_DIRECTOR_RATE).toLocaleString()} ({Number(internalPaidHours)} hours)
+                    {isOverBudget(internalCost, Number(internalPaidHours) * CREATIVE_DIRECTOR_RATE) && ` (Exceeded Budget by €${((Number(internalPaidHours) * CREATIVE_DIRECTOR_RATE) - internalCost).toLocaleString()} / ${(Number(internalPaidHours) - Number(creativeDirectorHours)).toFixed(1)} hours)`}
                   </div>
                 </div>
               </div>
