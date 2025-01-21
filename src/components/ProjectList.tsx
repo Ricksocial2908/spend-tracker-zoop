@@ -7,8 +7,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { EditIcon, ArrowUpDown } from "lucide-react";
+import { EditIcon, ArrowUpDown, PlusIcon } from "lucide-react";
 import { useState } from "react";
+import { ProjectPaymentForm } from "./ProjectPaymentForm";
 
 interface Project {
   id: number;
@@ -34,6 +35,8 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
   const [highlightedIds, setHighlightedIds] = useState<number[]>([]);
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
 
   const handleRowClick = (projectId: number) => {
     setHighlightedIds(prev => {
@@ -64,6 +67,24 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
       0
     ) || 0;
     return totalAmount - totalPaid;
+  };
+
+  const handleAddPayment = (projectId: number) => {
+    setSelectedProjectId(projectId);
+    setShowPaymentForm(true);
+  };
+
+  const handlePaymentAdded = () => {
+    setShowPaymentForm(false);
+    setSelectedProjectId(null);
+    onProjectUpdated();
+  };
+
+  const calculateTotalPaid = (project: Project) => {
+    return project.project_payments?.reduce(
+      (sum, payment) => sum + Number(payment.paid_amount),
+      0
+    ) || 0;
   };
 
   const sortedProjects = [...projects].sort((a, b) => {
@@ -97,65 +118,88 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
   );
 
   return (
-    <div className="rounded-xl bg-white/80 backdrop-blur-sm border border-gray-200 animate-fade-in">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>
-              <SortButton field="name" label="Project Name" />
-            </TableHead>
-            <TableHead>
-              <SortButton field="internal_cost" label="Internal Cost" />
-            </TableHead>
-            <TableHead>
-              <SortButton field="external_cost" label="External Cost" />
-            </TableHead>
-            <TableHead>
-              <SortButton field="software_cost" label="Software Cost" />
-            </TableHead>
-            <TableHead>
-              <SortButton field="unpaid" label="Unpaid Amount" />
-            </TableHead>
-            <TableHead className="w-[100px]">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {sortedProjects.map((project) => (
-            <TableRow 
-              key={project.id}
-              onClick={() => handleRowClick(project.id)}
-              className={`cursor-pointer transition-colors ${
-                highlightedIds.includes(project.id) ? "bg-blue-200 hover:bg-blue-300" : "hover:bg-muted/50"
-              }`}
-            >
-              <TableCell>{project.name}</TableCell>
-              <TableCell>€{Number(project.internal_cost).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
-              <TableCell>€{Number(project.external_cost).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
-              <TableCell>€{Number(project.software_cost).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
-              <TableCell>€{calculateUnpaidAmount(project).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
-              <TableCell>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    // Handle edit
-                  }}
-                >
-                  <EditIcon className="h-4 w-4" />
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-          {projects.length === 0 && (
+    <div className="space-y-4">
+      {showPaymentForm && selectedProjectId && (
+        <ProjectPaymentForm
+          projectId={selectedProjectId}
+          onPaymentAdded={handlePaymentAdded}
+          onCancel={() => {
+            setShowPaymentForm(false);
+            setSelectedProjectId(null);
+          }}
+        />
+      )}
+      
+      <div className="rounded-xl bg-white/80 backdrop-blur-sm border border-gray-200 animate-fade-in">
+        <Table>
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-8 text-gray-500">
-                No projects found
-              </TableCell>
+              <TableHead>
+                <SortButton field="name" label="Project Name" />
+              </TableHead>
+              <TableHead>
+                <SortButton field="internal_cost" label="Internal Cost" />
+              </TableHead>
+              <TableHead>
+                <SortButton field="external_cost" label="External Cost" />
+              </TableHead>
+              <TableHead>
+                <SortButton field="software_cost" label="Software Cost" />
+              </TableHead>
+              <TableHead>Total Paid</TableHead>
+              <TableHead>
+                <SortButton field="unpaid" label="Unpaid Amount" />
+              </TableHead>
+              <TableHead className="w-[150px]">Actions</TableHead>
             </TableRow>
-          )}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {sortedProjects.map((project) => (
+              <TableRow 
+                key={project.id}
+                onClick={() => handleRowClick(project.id)}
+                className={`cursor-pointer transition-colors ${
+                  highlightedIds.includes(project.id) ? "bg-blue-200 hover:bg-blue-300" : "hover:bg-muted/50"
+                }`}
+              >
+                <TableCell>{project.name}</TableCell>
+                <TableCell>€{Number(project.internal_cost).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
+                <TableCell>€{Number(project.external_cost).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
+                <TableCell>€{Number(project.software_cost).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
+                <TableCell>€{calculateTotalPaid(project).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
+                <TableCell>€{calculateUnpaidAmount(project).toLocaleString("en-US", { minimumFractionDigits: 2 })}</TableCell>
+                <TableCell>
+                  <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        // Handle edit
+                      }}
+                    >
+                      <EditIcon className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleAddPayment(project.id)}
+                    >
+                      <PlusIcon className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+            {projects.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                  No projects found
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };
