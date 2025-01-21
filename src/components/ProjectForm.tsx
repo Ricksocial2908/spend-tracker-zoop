@@ -30,6 +30,7 @@ interface ProjectFormProps {
     design_cost: number;
     modeling_3d_cost: number;
     rendering_cost: number;
+    status?: string;
   };
   mode?: 'create' | 'edit';
 }
@@ -121,7 +122,8 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
           amount: totalCost,
           paid_amount: totalPaidAmount,
           payment_date: new Date().toISOString().split('T')[0],
-          payment_type: 'internal'
+          payment_type: 'internal',
+          invoice_reference: `INV-${initialData.id}-${new Date().getTime()}`
         };
 
         const { data: existingPayment } = await supabase
@@ -160,7 +162,8 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
             amount: totalCost,
             paid_amount: totalPaidAmount,
             payment_date: new Date().toISOString().split('T')[0],
-            payment_type: 'internal'
+            payment_type: 'internal',
+            invoice_reference: `INV-${result.data[0].id}-${new Date().getTime()}`
           };
 
           const { error: paymentError } = await supabase
