@@ -39,6 +39,11 @@ interface Project {
   budget: number | null;
   billable_rate: number | null;
   notes: string | null;
+  vr_development_cost: number;
+  software_development_cost: number;
+  design_cost: number;
+  modeling_3d_cost: number;
+  rendering_cost: number;
   project_payments: {
     amount: number;
     paid_amount: number;
