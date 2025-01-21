@@ -173,75 +173,24 @@ export const ProjectForm = ({ onProjectAdded, onCancel }: ProjectFormProps) => {
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900">Cost Breakdown</h3>
           <div className="space-y-4">
-            <div className="flex gap-4">
-              <Input
-                type="number"
-                placeholder="Internal Cost"
-                value={internalCost}
-                onChange={(e) => setInternalCost(e.target.value)}
-              />
-              <Select
-                value={internalCostCategory}
-                onValueChange={(value: typeof CATEGORIES[number]) => setInternalCostCategory(value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {CATEGORIES.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex gap-4">
-              <Input
-                type="number"
-                placeholder="External Cost"
-                value={externalCost}
-                onChange={(e) => setExternalCost(e.target.value)}
-              />
-              <Select
-                value={externalCostCategory}
-                onValueChange={(value: typeof CATEGORIES[number]) => setExternalCostCategory(value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {CATEGORIES.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex gap-4">
-              <Input
-                type="number"
-                placeholder="Software Cost"
-                value={softwareCost}
-                onChange={(e) => setSoftwareCost(e.target.value)}
-              />
-              <Select
-                value={softwareCostCategory}
-                onValueChange={(value: typeof CATEGORIES[number]) => setSoftwareCostCategory(value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {CATEGORIES.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <Input
+              type="number"
+              placeholder="Internal Cost"
+              value={internalCost}
+              onChange={(e) => setInternalCost(e.target.value)}
+            />
+            <Input
+              type="number"
+              placeholder="External Cost"
+              value={externalCost}
+              onChange={(e) => setExternalCost(e.target.value)}
+            />
+            <Input
+              type="number"
+              placeholder="Software Cost"
+              value={softwareCost}
+              onChange={(e) => setSoftwareCost(e.target.value)}
+            />
           </div>
         </div>
       </div>
