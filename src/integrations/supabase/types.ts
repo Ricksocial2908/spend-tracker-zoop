@@ -51,6 +51,7 @@ export type Database = {
           contractor_name: string | null
           created_at: string
           id: number
+          import_batch_id: string | null
           invoice_reference: string
           paid_amount: number
           payment_date: string
@@ -62,6 +63,7 @@ export type Database = {
           contractor_name?: string | null
           created_at?: string
           id?: never
+          import_batch_id?: string | null
           invoice_reference: string
           paid_amount?: number
           payment_date: string
@@ -73,6 +75,7 @@ export type Database = {
           contractor_name?: string | null
           created_at?: string
           id?: never
+          import_batch_id?: string | null
           invoice_reference?: string
           paid_amount?: number
           payment_date?: string
