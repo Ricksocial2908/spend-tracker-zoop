@@ -96,7 +96,16 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
   };
 
   const calculateTotalCost = (project: Project) => {
-    return Number(project.internal_cost) + Number(project.external_cost) + Number(project.software_cost);
+    return (
+      Number(project.internal_cost) +
+      Number(project.external_cost) +
+      Number(project.software_cost) +
+      Number(project.vr_development_cost) +
+      Number(project.software_development_cost) +
+      Number(project.design_cost) +
+      Number(project.modeling_3d_cost) +
+      Number(project.rendering_cost)
+    );
   };
 
   const handleStatusChange = async (projectId: number, newStatus: string) => {
