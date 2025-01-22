@@ -10,6 +10,11 @@ interface Project {
   external_cost: number;
   software_cost: number;
   sales_price: number;
+  vr_development_cost: number;
+  software_development_cost: number;
+  design_cost: number;
+  modeling_3d_cost: number;
+  rendering_cost: number;
   project_payments: {
     amount: number;
     paid_amount: number;
@@ -29,7 +34,12 @@ export const ProjectStatusCards = ({ projects }: ProjectStatusCardsProps) => {
     return (
       Number(project.internal_cost) +
       Number(project.external_cost) +
-      Number(project.software_cost)
+      Number(project.software_cost) +
+      Number(project.vr_development_cost) +
+      Number(project.software_development_cost) +
+      Number(project.design_cost) +
+      Number(project.modeling_3d_cost) +
+      Number(project.rendering_cost)
     );
   };
 
