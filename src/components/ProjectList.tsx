@@ -55,7 +55,7 @@ interface ProjectListProps {
   onProjectUpdated: () => void;
 }
 
-type SortField = 'name' | 'total_cost' | 'sales_price';
+type SortField = 'name' | 'total_cost' | 'sales_price' | 'remaining_cost';
 type SortDirection = 'asc' | 'desc';
 
 const getStatusColor = (status: string) => {
@@ -108,6 +108,16 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
     );
   };
 
+  const calculateTotalPaidAmount = (project: Project) => {
+    return project.project_payments?.reduce((total, payment) => total + Number(payment.paid_amount), 0) || 0;
+  };
+
+  const calculateRemainingCost = (project: Project) => {
+    const totalCost = calculateTotalCost(project);
+    const totalPaid = calculateTotalPaidAmount(project);
+    return totalCost - totalPaid;
+  };
+
   const handleStatusChange = async (projectId: number, newStatus: string) => {
     try {
       const { error } = await supabase
@@ -144,6 +154,8 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
         return (calculateTotalCost(a) - calculateTotalCost(b)) * multiplier;
       case 'sales_price':
         return (Number(a.sales_price) - Number(b.sales_price)) * multiplier;
+      case 'remaining_cost':
+        return (calculateRemainingCost(a) - calculateRemainingCost(b)) * multiplier;
       default:
         return 0;
     }
@@ -185,6 +197,10 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
               <TableHead>Status</TableHead>
               <TableHead>
                 <SortButton field="total_cost" label="Total Cost" />
+              </TableHead>
+              <TableHead>Paid Amount</TableHead>
+              <TableHead>
+                <SortButton field="remaining_cost" label="Remaining Cost" />
               </TableHead>
               <TableHead>
                 <SortButton field="sales_price" label="Sales Price" />
@@ -231,6 +247,8 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
                   </div>
                 </TableCell>
                 <TableCell>€{calculateTotalCost(project).toLocaleString()}</TableCell>
+                <TableCell>€{calculateTotalPaidAmount(project).toLocaleString()}</TableCell>
+                <TableCell>€{calculateRemainingCost(project).toLocaleString()}</TableCell>
                 <TableCell>€{Number(project.sales_price).toLocaleString()}</TableCell>
                 <TableCell>
                   <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
@@ -247,7 +265,7 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
             ))}
             {projects.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={7} className="text-center py-8 text-gray-500">
                   No projects found
                 </TableCell>
               </TableRow>
