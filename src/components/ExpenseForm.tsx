@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -16,7 +16,6 @@ interface ExpenseFormProps {
     amount: number;
     client: string;
     type: string;
-    date: string;
     name: string;
     frequency: string;
     status: string;
@@ -28,23 +27,14 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
   const [amount, setAmount] = useState("");
   const [client, setClient] = useState("");
   const [type, setType] = useState("");
-  const [date, setDate] = useState("");
   const [name, setName] = useState("");
   const [frequency, setFrequency] = useState("");
   const [status, setStatus] = useState("keep");
 
-  // Set default date to today when component mounts
-  useEffect(() => {
-    if (!date) {
-      const today = new Date().toISOString().split('T')[0];
-      setDate(today);
-    }
-  }, []);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!amount || !client || !type || !date || !name || !frequency || !status) {
+    if (!amount || !client || !type || !name || !frequency || !status) {
       toast.error("Please fill in all fields");
       return;
     }
@@ -53,7 +43,6 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
       amount: parseFloat(amount),
       client,
       type,
-      date,
       name,
       frequency,
       status,
@@ -62,7 +51,6 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
     setAmount("");
     setClient("");
     setType("");
-    setDate("");
     setName("");
     setFrequency("");
     setStatus("keep");
@@ -74,7 +62,6 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
     setAmount("");
     setClient("");
     setType("");
-    setDate("");
     setName("");
     setFrequency("");
     setStatus("keep");
@@ -118,12 +105,6 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
             <SelectItem value="Other">Other</SelectItem>
           </SelectContent>
         </Select>
-        <Input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          className="bg-white/80 backdrop-blur-sm"
-        />
         <Select value={frequency} onValueChange={setFrequency}>
           <SelectTrigger className="bg-white/80 backdrop-blur-sm">
             <SelectValue placeholder="Frequency" />

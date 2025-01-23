@@ -14,10 +14,6 @@ interface ExpenseFiltersProps {
     client: string;
     type: string;
     name: string;
-    dateRange: {
-      start: string;
-      end: string;
-    };
     amountRange: {
       min: string;
       max: string;
@@ -88,32 +84,6 @@ export const ExpenseFilters = ({
               <SelectItem value="other">Other</SelectItem>
             </SelectContent>
           </Select>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Date Range</label>
-          <div className="grid grid-cols-2 gap-2">
-            <Input
-              type="date"
-              value={filters.dateRange.start}
-              onChange={(e) =>
-                onFilterChange({
-                  ...filters,
-                  dateRange: { ...filters.dateRange, start: e.target.value },
-                })
-              }
-            />
-            <Input
-              type="date"
-              value={filters.dateRange.end}
-              onChange={(e) =>
-                onFilterChange({
-                  ...filters,
-                  dateRange: { ...filters.dateRange, end: e.target.value },
-                })
-              }
-            />
-          </div>
         </div>
 
         <div className="space-y-2">

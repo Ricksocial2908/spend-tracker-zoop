@@ -23,7 +23,6 @@ interface Expense {
   amount: number;
   client: string;
   type: string;
-  date: string;
   name: string;
   frequency: string;
   status: string;
@@ -45,7 +44,6 @@ export const EditExpenseDialog = ({
   const [amount, setAmount] = useState("");
   const [client, setClient] = useState("");
   const [type, setType] = useState("");
-  const [date, setDate] = useState("");
   const [name, setName] = useState("");
   const [frequency, setFrequency] = useState("");
   const [status, setStatus] = useState("");
@@ -56,7 +54,6 @@ export const EditExpenseDialog = ({
       setAmount(expense.amount.toString());
       setClient(expense.client);
       setType(expense.type);
-      setDate(expense.date);
       setName(expense.name);
       setFrequency(expense.frequency);
       setStatus(expense.status);
@@ -67,7 +64,7 @@ export const EditExpenseDialog = ({
     e.preventDefault();
     if (!expense) return;
 
-    if (!amount || !client || !type || !date || !name || !frequency || !status) {
+    if (!amount || !client || !type || !name || !frequency || !status) {
       toast.error("Please fill in all fields");
       return;
     }
@@ -81,10 +78,9 @@ export const EditExpenseDialog = ({
           amount: parseFloat(amount),
           client,
           type,
-          date,
           name,
           frequency,
-          status: status.toLowerCase(), // Ensure status is lowercase to match database constraint
+          status: status.toLowerCase(),
         })
         .eq("id", expense.id);
 
@@ -137,11 +133,6 @@ export const EditExpenseDialog = ({
                 <SelectItem value="Other">Other</SelectItem>
               </SelectContent>
             </Select>
-            <Input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
             <Select value={frequency} onValueChange={setFrequency}>
               <SelectTrigger>
                 <SelectValue placeholder="Frequency" />
