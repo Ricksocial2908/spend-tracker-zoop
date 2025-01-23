@@ -14,7 +14,7 @@ export type Database = {
           amount: number
           client: string
           created_at: string
-          date: string
+          date: string | null
           frequency: string
           id: number
           name: string
@@ -25,7 +25,7 @@ export type Database = {
           amount: number
           client: string
           created_at?: string
-          date: string
+          date?: string | null
           frequency: string
           id?: number
           name: string
@@ -36,7 +36,7 @@ export type Database = {
           amount?: number
           client?: string
           created_at?: string
-          date?: string
+          date?: string | null
           frequency?: string
           id?: number
           name?: string
