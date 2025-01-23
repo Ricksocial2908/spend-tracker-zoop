@@ -159,8 +159,7 @@ const Index = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <ExpenseCard title="Total Monthly Expenses" amount={monthlyTotal} />
-          <ExpenseCard title="Total Yearly Expenses" amount={yearlyTotal} />
+          <ExpenseCard title="Total Active Expenses" amount={total} />
         </div>
 
         <ExpenseForm onAddExpense={handleAddExpense} />
