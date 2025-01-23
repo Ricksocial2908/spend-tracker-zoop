@@ -12,6 +12,7 @@ interface CSVExpense {
   type: string;
   date: string;
   frequency: string;
+  status: string;
 }
 
 interface ExpenseCSVUploadProps {
@@ -148,16 +149,35 @@ export const ExpenseCSVUpload = ({ onUploadComplete }: ExpenseCSVUploadProps) =>
   };
 
   const downloadTemplate = () => {
-    const headers = ["name", "amount", "client", "type", "date", "frequency"];
+    const headers = ["date", "name", "client", "type", "frequency", "amount", "status"];
     const sampleData = [
       {
-        name: "Office Supplies",
-        amount: "100.00",
-        client: "Internal",
-        type: "Operating",
-        date: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
+        date: "01/01/2025",
+        name: "Webworld",
+        client: "Keeco",
+        type: "hosting",
         frequency: "monthly",
+        amount: "65.92",
+        status: "keep",
       },
+      {
+        date: "01/01/2025",
+        name: "Fast Comet",
+        client: "INSS",
+        type: "hosting",
+        frequency: "monthly",
+        amount: "75.41",
+        status: "keep",
+      },
+      {
+        date: "01/01/2025",
+        name: "Paddle.net",
+        client: "All 3D based on this",
+        type: "Software",
+        frequency: "Monthly",
+        amount: "129.15",
+        status: "keep",
+      }
     ];
 
     const csv = Papa.unparse({
