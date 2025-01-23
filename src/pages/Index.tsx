@@ -116,40 +116,37 @@ const Index = () => {
     );
   });
 
-  const calculateMonthlyTotal = (expenses: Expense[]) => {
-    return expenses
-      .filter((expense) => {
-        const expenseDate = new Date(expense.date);
-        const currentDate = new Date();
-        return (
-          expenseDate.getMonth() === currentDate.getMonth() &&
-          expenseDate.getFullYear() === currentDate.getFullYear() &&
-          expense.frequency === "monthly" &&
-          expense.status === "keep"
-        );
-      })
-      .reduce((sum, expense) => sum + expense.amount, 0);
-  };
-
-  const calculateYearlyTotal = (expenses: Expense[]) => {
-    const currentYear = new Date().getFullYear();
-    
+  const calculateTotalMonthlyExpenses = (expenses: Expense[]) => {
     return expenses
       .filter(expense => expense.status === "keep")
-      .reduce((sum, expense) => {
+      .reduce((total, expense) => {
         if (expense.frequency === "monthly") {
-          // Monthly expenses are multiplied by 12 for yearly total
-          return sum + (expense.amount * 12);
+          return total + expense.amount;
         } else if (expense.frequency === "yearly") {
-          // Yearly expenses are added directly
-          return sum + expense.amount;
+          return total + (expense.amount / 12);
         }
-        return sum;
+        // For once-off expenses, we don't include them in monthly calculations
+        return total;
       }, 0);
   };
 
-  const monthlyTotal = calculateMonthlyTotal(filteredExpenses);
-  const yearlyTotal = calculateYearlyTotal(filteredExpenses);
+  const calculateTotalYearlyExpenses = (expenses: Expense[]) => {
+    return expenses
+      .filter(expense => expense.status === "keep")
+      .reduce((total, expense) => {
+        if (expense.frequency === "monthly") {
+          return total + (expense.amount * 12);
+        } else if (expense.frequency === "yearly") {
+          return total + expense.amount;
+        } else if (expense.frequency === "once-off") {
+          return total + expense.amount;
+        }
+        return total;
+      }, 0);
+  };
+
+  const monthlyTotal = calculateTotalMonthlyExpenses(filteredExpenses);
+  const yearlyTotal = calculateTotalYearlyExpenses(filteredExpenses);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
@@ -162,8 +159,8 @@ const Index = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <ExpenseCard title="Monthly Total" amount={monthlyTotal} />
-          <ExpenseCard title="Yearly Total" amount={yearlyTotal} />
+          <ExpenseCard title="Total Monthly Expenses" amount={monthlyTotal} />
+          <ExpenseCard title="Total Yearly Expenses" amount={yearlyTotal} />
         </div>
 
         <ExpenseForm onAddExpense={handleAddExpense} />
