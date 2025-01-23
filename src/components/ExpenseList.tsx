@@ -5,6 +5,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableFooter,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { EditIcon, CheckCircleIcon, XCircleIcon, ArrowUpDown } from "lucide-react";
@@ -99,6 +100,35 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
         return 0;
     }
   });
+
+  const calculateTotalMonthlyExpenses = (expenses: Expense[]) => {
+    return expenses
+      .filter(expense => expense.status === "keep")
+      .reduce((total, expense) => {
+        if (expense.frequency === "monthly") {
+          return total + expense.amount;
+        } else if (expense.frequency === "yearly") {
+          return total + (expense.amount / 12);
+        }
+        return total;
+      }, 0);
+  };
+
+  const calculateTotalYearlyExpenses = (expenses: Expense[]) => {
+    return expenses
+      .filter(expense => expense.status === "keep")
+      .reduce((total, expense) => {
+        if (expense.frequency === "monthly") {
+          return total + (expense.amount * 12);
+        } else if (expense.frequency === "yearly" || expense.frequency === "once-off") {
+          return total + expense.amount;
+        }
+        return total;
+      }, 0);
+  };
+
+  const monthlyTotal = calculateTotalMonthlyExpenses(sortedExpenses);
+  const yearlyTotal = calculateTotalYearlyExpenses(sortedExpenses);
 
   const SortButton = ({ field, label }: { field: SortField, label: string }) => (
     <Button
@@ -211,6 +241,26 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
               </TableRow>
             )}
           </TableBody>
+          <TableFooter className="bg-gray-50/50">
+            <TableRow>
+              <TableCell colSpan={5} className="text-right font-medium">
+                Monthly Total (Active Expenses):
+              </TableCell>
+              <TableCell className="text-right font-bold">
+                €{monthlyTotal.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+              </TableCell>
+              <TableCell colSpan={2}></TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell colSpan={5} className="text-right font-medium">
+                Yearly Total (Active Expenses):
+              </TableCell>
+              <TableCell className="text-right font-bold">
+                €{yearlyTotal.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+              </TableCell>
+              <TableCell colSpan={2}></TableCell>
+            </TableRow>
+          </TableFooter>
         </Table>
       </div>
       <EditExpenseDialog
