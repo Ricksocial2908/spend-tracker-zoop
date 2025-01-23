@@ -56,7 +56,7 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
       date,
       name,
       frequency,
-      status,
+      status: status.toLowerCase(), // Ensure status is lowercase when sending to database
     });
 
     setAmount("");
@@ -139,8 +139,8 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="Keep">Keep</SelectItem>
-            <SelectItem value="Cancel">Cancel</SelectItem>
+            <SelectItem value="keep">Keep</SelectItem>
+            <SelectItem value="cancel">Cancel</SelectItem>
           </SelectContent>
         </Select>
       </div>
