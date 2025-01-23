@@ -116,37 +116,13 @@ const Index = () => {
     );
   });
 
-  const calculateTotalMonthlyExpenses = (expenses: Expense[]) => {
+  const calculateTotalAmount = (expenses: Expense[]) => {
     return expenses
       .filter(expense => expense.status === "keep")
-      .reduce((total, expense) => {
-        if (expense.frequency === "monthly") {
-          return total + expense.amount;
-        } else if (expense.frequency === "yearly") {
-          return total + (expense.amount / 12);
-        }
-        // For once-off expenses, we don't include them in monthly calculations
-        return total;
-      }, 0);
+      .reduce((total, expense) => total + expense.amount, 0);
   };
 
-  const calculateTotalYearlyExpenses = (expenses: Expense[]) => {
-    return expenses
-      .filter(expense => expense.status === "keep")
-      .reduce((total, expense) => {
-        if (expense.frequency === "monthly") {
-          return total + (expense.amount * 12);
-        } else if (expense.frequency === "yearly") {
-          return total + expense.amount;
-        } else if (expense.frequency === "once-off") {
-          return total + expense.amount;
-        }
-        return total;
-      }, 0);
-  };
-
-  const monthlyTotal = calculateTotalMonthlyExpenses(filteredExpenses);
-  const yearlyTotal = calculateTotalYearlyExpenses(filteredExpenses);
+  const totalAmount = calculateTotalAmount(filteredExpenses);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
@@ -159,7 +135,7 @@ const Index = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <ExpenseCard title="Total Active Expenses" amount={total} />
+          <ExpenseCard title="Total Active Expenses" amount={totalAmount} />
         </div>
 
         <ExpenseForm onAddExpense={handleAddExpense} />
