@@ -24,12 +24,7 @@ export const ExpenseCard = ({ title, amount: propAmount, className }: ExpenseCar
         return;
       }
 
-      // Ensure we're handling numeric values correctly
-      const total = data.reduce((sum, expense) => {
-        const expenseAmount = parseFloat(expense.amount.toString());
-        return !isNaN(expenseAmount) ? sum + expenseAmount : sum;
-      }, 0);
-
+      const total = data.reduce((sum, expense) => sum + Number(expense.amount), 0);
       setMonthlyTotal(total);
     };
 
