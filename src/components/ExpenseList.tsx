@@ -8,11 +8,12 @@ import {
   TableFooter,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { EditIcon, CheckCircleIcon, XCircleIcon, ArrowUpDown } from "lucide-react";
+import { EditIcon, CheckCircleIcon, XCircleIcon, ArrowUpDown, DownloadIcon } from "lucide-react";
 import { useState } from "react";
 import { EditExpenseDialog } from "./EditExpenseDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import Papa from "papaparse";
 
 interface Expense {
   id: number;
@@ -109,6 +110,32 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
 
   const total = calculateTotalAmount(sortedExpenses);
 
+  const handleDownloadCSV = () => {
+    const csvData = expenses.map(expense => ({
+      Date: new Date(expense.date).toLocaleDateString(),
+      Name: expense.name,
+      Client: expense.client,
+      Type: expense.type,
+      Frequency: expense.frequency,
+      Amount: expense.amount.toLocaleString("en-US", { minimumFractionDigits: 2 }),
+      Status: expense.status
+    }));
+
+    const csv = Papa.unparse(csvData);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute("href", url);
+    link.setAttribute("download", `expenses-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast.success("CSV downloaded successfully");
+  };
+
   const SortButton = ({ field, label }: { field: SortField, label: string }) => (
     <Button
       variant="ghost"
@@ -123,6 +150,16 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
   return (
     <>
       <div className="rounded-xl bg-white/80 backdrop-blur-sm border border-gray-200 animate-fade-in">
+        <div className="flex justify-end p-4">
+          <Button
+            variant="outline"
+            onClick={handleDownloadCSV}
+            className="mb-4"
+          >
+            <DownloadIcon className="w-4 h-4 mr-2" />
+            Download CSV
+          </Button>
+        </div>
         <Table>
           <TableHeader>
             <TableRow>
