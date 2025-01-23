@@ -1,12 +1,39 @@
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ExpenseCardProps {
   title: string;
-  amount: number;
+  amount?: number;
   className?: string;
 }
 
-export const ExpenseCard = ({ title, amount, className }: ExpenseCardProps) => {
+export const ExpenseCard = ({ title, amount: propAmount, className }: ExpenseCardProps) => {
+  const [softwareTotal, setSoftwareTotal] = useState(0);
+
+  useEffect(() => {
+    const fetchSoftwareTotal = async () => {
+      const { data, error } = await supabase
+        .from("expenses")
+        .select("amount")
+        .eq("type", "software")
+        .eq("frequency", "monthly")
+        .eq("status", "keep");
+
+      if (error) {
+        console.error("Error fetching software expenses:", error);
+        return;
+      }
+
+      const total = data.reduce((sum, expense) => sum + Number(expense.amount), 0);
+      setSoftwareTotal(total);
+    };
+
+    fetchSoftwareTotal();
+  }, []);
+
+  const displayAmount = propAmount !== undefined ? propAmount : softwareTotal;
+
   return (
     <div
       className={cn(
@@ -16,7 +43,7 @@ export const ExpenseCard = ({ title, amount, className }: ExpenseCardProps) => {
     >
       <h3 className="text-sm font-medium text-gray-500 mb-2">{title}</h3>
       <p className="text-3xl font-semibold">
-        {amount.toLocaleString('en-US', {
+        {displayAmount.toLocaleString('en-US', {
           style: 'currency',
           currency: 'USD',
           minimumFractionDigits: 2,
