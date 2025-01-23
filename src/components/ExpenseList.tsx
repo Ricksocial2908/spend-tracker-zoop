@@ -18,6 +18,7 @@ interface Expense {
   amount: number;
   client: string;
   type: string;
+  date: string;
   name: string;
   frequency: string;
   status: string;
@@ -28,15 +29,15 @@ interface ExpenseListProps {
   onExpenseUpdated: () => void;
 }
 
-type SortField = 'amount' | 'name' | 'client' | 'frequency';
+type SortField = 'amount' | 'name' | 'client' | 'date' | 'frequency';
 type SortDirection = 'asc' | 'desc';
 
 export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) => {
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [highlightedIds, setHighlightedIds] = useState<number[]>([]);
-  const [sortField, setSortField] = useState<SortField>('name');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  const [sortField, setSortField] = useState<SortField>('date');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
   const handleEdit = (expense: Expense) => {
     setSelectedExpense(expense);
@@ -90,6 +91,8 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
         return a.name.localeCompare(b.name) * multiplier;
       case 'client':
         return a.client.localeCompare(b.client) * multiplier;
+      case 'date':
+        return (new Date(a.date).getTime() - new Date(b.date).getTime()) * multiplier;
       case 'frequency':
         return a.frequency.localeCompare(b.frequency) * multiplier;
       default:
@@ -114,6 +117,9 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>
+                <SortButton field="date" label="Date" />
+              </TableHead>
               <TableHead>
                 <SortButton field="name" label="Expense Name" />
               </TableHead>
@@ -140,6 +146,7 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
                   highlightedIds.includes(expense.id) ? "bg-blue-200 hover:bg-blue-300" : "hover:bg-muted/50"
                 }`}
               >
+                <TableCell>{new Date(expense.date).toLocaleDateString()}</TableCell>
                 <TableCell>{expense.name}</TableCell>
                 <TableCell>{expense.client}</TableCell>
                 <TableCell>
@@ -153,12 +160,7 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
                   </span>
                 </TableCell>
                 <TableCell className="text-right">
-                  {expense.amount.toLocaleString("en-US", { 
-                    style: 'currency', 
-                    currency: 'USD',
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2 
-                  })}
+                  €{expense.amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </TableCell>
                 <TableCell>
                   <span
@@ -203,7 +205,7 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
             ))}
             {expenses.length === 0 && (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={8} className="text-center py-8 text-gray-500">
                   No expenses found
                 </TableCell>
               </TableRow>

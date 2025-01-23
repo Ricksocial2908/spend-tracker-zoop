@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
+import { ExpenseCard } from "@/components/ExpenseCard";
 import { ExpenseForm } from "@/components/ExpenseForm";
 import { ExpenseFilters } from "@/components/ExpenseFilters";
 import { ExpenseList } from "@/components/ExpenseList";
 import { ExpenseCSVUpload } from "@/components/ExpenseCSVUpload";
-import { ExpenseTotalCard } from "@/components/ExpenseTotalCard";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Expense {
@@ -11,6 +11,7 @@ interface Expense {
   amount: number;
   client: string;
   type: string;
+  date: string;
   name: string;
   frequency: string;
   status: string;
@@ -22,6 +23,10 @@ const Index = () => {
     client: "",
     type: "",
     name: "",
+    dateRange: {
+      start: "",
+      end: "",
+    },
     amountRange: {
       min: "",
       max: "",
@@ -32,7 +37,8 @@ const Index = () => {
     try {
       const { data, error } = await supabase
         .from("expenses")
-        .select("*");
+        .select("*")
+        .order("date", { ascending: false });
 
       if (error) {
         console.error("Error fetching expenses:", error);
@@ -69,6 +75,10 @@ const Index = () => {
       client: "",
       type: "",
       name: "",
+      dateRange: {
+        start: "",
+        end: "",
+      },
       amountRange: {
         min: "",
         max: "",
@@ -84,6 +94,10 @@ const Index = () => {
     const matchesName =
       !filters.name ||
       expense.name.toLowerCase().includes(filters.name.toLowerCase());
+    const matchesDateStart =
+      !filters.dateRange.start || expense.date >= filters.dateRange.start;
+    const matchesDateEnd =
+      !filters.dateRange.end || expense.date <= filters.dateRange.end;
     const matchesMinAmount =
       !filters.amountRange.min ||
       expense.amount >= parseFloat(filters.amountRange.min);
@@ -95,6 +109,8 @@ const Index = () => {
       matchesClient &&
       matchesType &&
       matchesName &&
+      matchesDateStart &&
+      matchesDateEnd &&
       matchesMinAmount &&
       matchesMaxAmount
     );
@@ -102,19 +118,38 @@ const Index = () => {
 
   const calculateMonthlyTotal = (expenses: Expense[]) => {
     return expenses
+      .filter((expense) => {
+        const expenseDate = new Date(expense.date);
+        const currentDate = new Date();
+        return (
+          expenseDate.getMonth() === currentDate.getMonth() &&
+          expenseDate.getFullYear() === currentDate.getFullYear() &&
+          expense.frequency === "monthly" &&
+          expense.status === "keep"
+        );
+      })
+      .reduce((sum, expense) => sum + expense.amount, 0);
+  };
+
+  const calculateYearlyTotal = (expenses: Expense[]) => {
+    const currentYear = new Date().getFullYear();
+    
+    return expenses
       .filter(expense => expense.status === "keep")
       .reduce((sum, expense) => {
         if (expense.frequency === "monthly") {
-          return sum + Number(expense.amount);
+          // Monthly expenses are multiplied by 12 for yearly total
+          return sum + (expense.amount * 12);
         } else if (expense.frequency === "yearly") {
-          return sum + (Number(expense.amount) / 12);
+          // Yearly expenses are added directly
+          return sum + expense.amount;
         }
         return sum;
       }, 0);
   };
 
   const monthlyTotal = calculateMonthlyTotal(filteredExpenses);
-  const yearlyTotal = monthlyTotal * 12;
+  const yearlyTotal = calculateYearlyTotal(filteredExpenses);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
@@ -127,14 +162,8 @@ const Index = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <ExpenseTotalCard 
-            title="Monthly Total" 
-            amount={monthlyTotal}
-          />
-          <ExpenseTotalCard 
-            title="Yearly Total (Monthly × 12)" 
-            amount={yearlyTotal}
-          />
+          <ExpenseCard title="Monthly Total" amount={monthlyTotal} />
+          <ExpenseCard title="Yearly Total" amount={yearlyTotal} />
         </div>
 
         <ExpenseForm onAddExpense={handleAddExpense} />
@@ -145,10 +174,7 @@ const Index = () => {
           onClearFilters={handleClearFilters}
         />
 
-        <ExpenseList 
-          expenses={filteredExpenses} 
-          onExpenseUpdated={fetchExpenses} 
-        />
+        <ExpenseList expenses={filteredExpenses} onExpenseUpdated={fetchExpenses} />
       </div>
     </div>
   );

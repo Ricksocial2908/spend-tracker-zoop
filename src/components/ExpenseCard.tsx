@@ -1,12 +1,12 @@
 import { cn } from "@/lib/utils";
 
-interface ExpenseTotalCardProps {
+interface ExpenseCardProps {
   title: string;
   amount: number;
   className?: string;
 }
 
-export const ExpenseTotalCard = ({ title, amount, className }: ExpenseTotalCardProps) => {
+export const ExpenseCard = ({ title, amount, className }: ExpenseCardProps) => {
   return (
     <div
       className={cn(
@@ -15,11 +15,9 @@ export const ExpenseTotalCard = ({ title, amount, className }: ExpenseTotalCardP
       )}
     >
       <h3 className="text-sm font-medium text-gray-500 mb-2">{title}</h3>
-      <div className="space-y-1">
-        <p className="text-3xl font-semibold">
-          ${amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-        </p>
-      </div>
+      <p className="text-3xl font-semibold">
+        €{amount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+      </p>
     </div>
   );
 };
