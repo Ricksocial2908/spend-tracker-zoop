@@ -3,6 +3,7 @@ import { ExpenseForm } from "@/components/ExpenseForm";
 import { ExpenseFilters } from "@/components/ExpenseFilters";
 import { ExpenseList } from "@/components/ExpenseList";
 import { ExpenseCSVUpload } from "@/components/ExpenseCSVUpload";
+import { ExpenseTotalCard } from "@/components/ExpenseTotalCard";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Expense {
@@ -99,6 +100,22 @@ const Index = () => {
     );
   });
 
+  const calculateMonthlyTotal = (expenses: Expense[]) => {
+    return expenses
+      .filter(expense => expense.status === "keep")
+      .reduce((sum, expense) => {
+        if (expense.frequency === "monthly") {
+          return sum + Number(expense.amount);
+        } else if (expense.frequency === "yearly") {
+          return sum + (Number(expense.amount) / 12);
+        }
+        return sum;
+      }, 0);
+  };
+
+  const monthlyTotal = calculateMonthlyTotal(filteredExpenses);
+  const yearlyTotal = monthlyTotal * 12;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -107,6 +124,17 @@ const Index = () => {
             Expenses Tracker
           </h1>
           <ExpenseCSVUpload onUploadComplete={fetchExpenses} />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <ExpenseTotalCard 
+            title="Monthly Total" 
+            amount={monthlyTotal}
+          />
+          <ExpenseTotalCard 
+            title="Yearly Total (Monthly × 12)" 
+            amount={yearlyTotal}
+          />
         </div>
 
         <ExpenseForm onAddExpense={handleAddExpense} />
