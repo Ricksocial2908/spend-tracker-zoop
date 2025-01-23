@@ -9,30 +9,29 @@ interface ExpenseCardProps {
 }
 
 export const ExpenseCard = ({ title, amount: propAmount, className }: ExpenseCardProps) => {
-  const [softwareTotal, setSoftwareTotal] = useState(0);
+  const [monthlyTotal, setMonthlyTotal] = useState(0);
 
   useEffect(() => {
-    const fetchSoftwareTotal = async () => {
+    const fetchMonthlyTotal = async () => {
       const { data, error } = await supabase
         .from("expenses")
         .select("amount")
-        .eq("type", "software")
         .eq("frequency", "monthly")
         .eq("status", "keep");
 
       if (error) {
-        console.error("Error fetching software expenses:", error);
+        console.error("Error fetching monthly expenses:", error);
         return;
       }
 
       const total = data.reduce((sum, expense) => sum + Number(expense.amount), 0);
-      setSoftwareTotal(total);
+      setMonthlyTotal(total);
     };
 
-    fetchSoftwareTotal();
+    fetchMonthlyTotal();
   }, []);
 
-  const displayAmount = propAmount !== undefined ? propAmount : softwareTotal;
+  const displayAmount = propAmount !== undefined ? propAmount : monthlyTotal;
 
   return (
     <div
