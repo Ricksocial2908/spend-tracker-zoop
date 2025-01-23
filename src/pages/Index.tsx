@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { ExpenseCard } from "@/components/ExpenseCard";
 import { ExpenseForm } from "@/components/ExpenseForm";
 import { ExpenseFilters } from "@/components/ExpenseFilters";
 import { ExpenseList } from "@/components/ExpenseList";
@@ -100,28 +99,6 @@ const Index = () => {
     );
   });
 
-  const calculateMonthlyTotal = (expenses: Expense[]) => {
-    return expenses
-      .filter(expense => expense.status === "keep" && expense.frequency === "monthly")
-      .reduce((sum, expense) => sum + Number(expense.amount), 0);
-  };
-
-  const calculateYearlyTotal = (expenses: Expense[]) => {
-    return expenses
-      .filter(expense => expense.status === "keep")
-      .reduce((sum, expense) => {
-        if (expense.frequency === "monthly") {
-          return sum + (Number(expense.amount) * 12);
-        } else if (expense.frequency === "yearly") {
-          return sum + Number(expense.amount);
-        }
-        return sum;
-      }, 0);
-  };
-
-  const monthlyTotal = calculateMonthlyTotal(filteredExpenses);
-  const yearlyTotal = calculateYearlyTotal(filteredExpenses);
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
@@ -130,17 +107,6 @@ const Index = () => {
             Expenses Tracker
           </h1>
           <ExpenseCSVUpload onUploadComplete={fetchExpenses} />
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <ExpenseCard 
-            title="Monthly Recurring Total" 
-            amount={monthlyTotal} 
-          />
-          <ExpenseCard 
-            title="Yearly Total (Including Monthly × 12)" 
-            amount={yearlyTotal} 
-          />
         </div>
 
         <ExpenseForm onAddExpense={handleAddExpense} />
