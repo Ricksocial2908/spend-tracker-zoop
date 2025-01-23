@@ -117,18 +117,21 @@ const Index = () => {
   });
 
   const calculateMonthlyTotal = (expenses: Expense[]) => {
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    
     return expenses
       .filter((expense) => {
         const expenseDate = new Date(expense.date);
-        const currentDate = new Date();
         return (
-          expenseDate.getMonth() === currentDate.getMonth() &&
-          expenseDate.getFullYear() === currentDate.getFullYear() &&
+          expenseDate.getMonth() === currentMonth &&
+          expenseDate.getFullYear() === currentYear &&
           expense.frequency === "monthly" &&
           expense.status === "keep"
         );
       })
-      .reduce((sum, expense) => sum + expense.amount, 0);
+      .reduce((sum, expense) => sum + Number(expense.amount), 0);
   };
 
   const calculateYearlyTotal = (expenses: Expense[]) => {
@@ -137,12 +140,17 @@ const Index = () => {
     return expenses
       .filter(expense => expense.status === "keep")
       .reduce((sum, expense) => {
-        if (expense.frequency === "monthly") {
-          // Monthly expenses are multiplied by 12 for yearly total
-          return sum + (expense.amount * 12);
-        } else if (expense.frequency === "yearly") {
-          // Yearly expenses are added directly
-          return sum + expense.amount;
+        const expenseDate = new Date(expense.date);
+        if (expenseDate.getFullYear() === currentYear) {
+          if (expense.frequency === "monthly") {
+            // For monthly expenses, multiply by remaining months in the year
+            const currentMonth = new Date().getMonth();
+            const remainingMonths = 12 - currentMonth;
+            return sum + (Number(expense.amount) * remainingMonths);
+          } else if (expense.frequency === "yearly") {
+            // Yearly expenses are added directly
+            return sum + Number(expense.amount);
+          }
         }
         return sum;
       }, 0);
@@ -162,8 +170,14 @@ const Index = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <ExpenseCard title="Monthly Total" amount={monthlyTotal} />
-          <ExpenseCard title="Yearly Total" amount={yearlyTotal} />
+          <ExpenseCard 
+            title="Monthly Total (Current Month)" 
+            amount={calculateMonthlyTotal(filteredExpenses)} 
+          />
+          <ExpenseCard 
+            title="Projected Yearly Total" 
+            amount={calculateYearlyTotal(filteredExpenses)} 
+          />
         </div>
 
         <ExpenseForm onAddExpense={handleAddExpense} />
@@ -174,7 +188,10 @@ const Index = () => {
           onClearFilters={handleClearFilters}
         />
 
-        <ExpenseList expenses={filteredExpenses} onExpenseUpdated={fetchExpenses} />
+        <ExpenseList 
+          expenses={filteredExpenses} 
+          onExpenseUpdated={fetchExpenses} 
+        />
       </div>
     </div>
   );
