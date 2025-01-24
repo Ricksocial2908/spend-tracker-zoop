@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { ExpenseCard } from "@/components/ExpenseCard";
 import { ExpenseForm } from "@/components/ExpenseForm";
-import { ExpenseFilters } from "@/components/ExpenseFilters";
 import { ExpenseList } from "@/components/ExpenseList";
 import { ExpenseCSVUpload } from "@/components/ExpenseCSVUpload";
+import { ExpenseTypeFilter } from "@/components/ExpenseTypeFilter";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Expense {
@@ -19,19 +19,7 @@ interface Expense {
 
 const Index = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [filters, setFilters] = useState({
-    client: "",
-    type: "",
-    name: "",
-    dateRange: {
-      start: "",
-      end: "",
-    },
-    amountRange: {
-      min: "",
-      max: "",
-    },
-  });
+  const [selectedType, setSelectedType] = useState("");
 
   const fetchExpenses = async () => {
     try {
@@ -70,50 +58,9 @@ const Index = () => {
     }
   };
 
-  const handleClearFilters = () => {
-    setFilters({
-      client: "",
-      type: "",
-      name: "",
-      dateRange: {
-        start: "",
-        end: "",
-      },
-      amountRange: {
-        min: "",
-        max: "",
-      },
-    });
-  };
-
   const filteredExpenses = expenses.filter((expense) => {
-    const matchesClient =
-      !filters.client ||
-      expense.client.toLowerCase().includes(filters.client.toLowerCase());
-    const matchesType = !filters.type || expense.type === filters.type;
-    const matchesName =
-      !filters.name ||
-      expense.name.toLowerCase().includes(filters.name.toLowerCase());
-    const matchesDateStart =
-      !filters.dateRange.start || expense.date >= filters.dateRange.start;
-    const matchesDateEnd =
-      !filters.dateRange.end || expense.date <= filters.dateRange.end;
-    const matchesMinAmount =
-      !filters.amountRange.min ||
-      expense.amount >= parseFloat(filters.amountRange.min);
-    const matchesMaxAmount =
-      !filters.amountRange.max ||
-      expense.amount <= parseFloat(filters.amountRange.max);
-
-    return (
-      matchesClient &&
-      matchesType &&
-      matchesName &&
-      matchesDateStart &&
-      matchesDateEnd &&
-      matchesMinAmount &&
-      matchesMaxAmount
-    );
+    if (!selectedType) return true;
+    return expense.type.toLowerCase() === selectedType.toLowerCase();
   });
 
   const calculateTotalAmount = (expenses: Expense[]) => {
@@ -139,11 +86,10 @@ const Index = () => {
         </div>
 
         <ExpenseForm onAddExpense={handleAddExpense} />
-
-        <ExpenseFilters
-          filters={filters}
-          onFilterChange={setFilters}
-          onClearFilters={handleClearFilters}
+        
+        <ExpenseTypeFilter 
+          selectedType={selectedType} 
+          onTypeChange={setSelectedType} 
         />
 
         <ExpenseList expenses={filteredExpenses} onExpenseUpdated={fetchExpenses} />
