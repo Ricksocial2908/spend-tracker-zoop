@@ -6,17 +6,9 @@ import { ExpenseCSVUpload } from "@/components/ExpenseCSVUpload";
 import { ExpenseTypeFilter } from "@/components/ExpenseTypeFilter";
 import { ExpenseClientFilter } from "@/components/ExpenseClientFilter";
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
 
-interface Expense {
-  id: number;
-  amount: number;
-  client: string;
-  type: string;
-  date: string;
-  name: string;
-  frequency: string;
-  status: string;
-}
+type Expense = Database["public"]["Tables"]["expenses"]["Row"];
 
 const Index = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);

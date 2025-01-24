@@ -6,6 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { PlusIcon, XIcon, SaveIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
+
+type ProjectStatus = Database["public"]["Enums"]["project_status"];
 
 interface ProjectFormProps {
   onProjectAdded: () => void;
@@ -30,7 +33,7 @@ interface ProjectFormProps {
     design_cost: number;
     modeling_3d_cost: number;
     rendering_cost: number;
-    status?: string;
+    status?: ProjectStatus;
   };
   mode?: 'create' | 'edit';
 }
@@ -62,8 +65,8 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
   const [designCost, setDesignCost] = useState(String(initialData?.design_cost || ""));
   const [modeling3dCost, setModeling3dCost] = useState(String(initialData?.modeling_3d_cost || ""));
   const [renderingCost, setRenderingCost] = useState(String(initialData?.rendering_cost || ""));
-  const [status, setStatus] = useState<'pending' | 'active' | 'completed' | 'on_hold' | 'cancelled'>(
-    (initialData?.status || 'pending') as 'pending' | 'active' | 'completed' | 'on_hold' | 'cancelled'
+  const [status, setStatus] = useState<ProjectStatus>(
+    (initialData?.status || 'pending') as ProjectStatus
   );
 
   const [internalPaidHours, setInternalPaidHours] = useState(
@@ -107,7 +110,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
         design_cost: Number(designCost) || 0,
         modeling_3d_cost: Number(modeling3dCost) || 0,
         rendering_cost: Number(renderingCost) || 0,
-        status: status,
+        status: status as ProjectStatus,
         is_draft: false
       };
 
@@ -537,7 +540,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
           />
           <Select
             value={status}
-            onValueChange={(value: 'pending' | 'active' | 'completed' | 'on_hold' | 'cancelled') => setStatus(value)}
+            onValueChange={(value: ProjectStatus) => setStatus(value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Project Status" />
