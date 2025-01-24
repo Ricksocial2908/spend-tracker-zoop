@@ -4,6 +4,7 @@ import { ExpenseForm } from "@/components/ExpenseForm";
 import { ExpenseList } from "@/components/ExpenseList";
 import { ExpenseCSVUpload } from "@/components/ExpenseCSVUpload";
 import { ExpenseTypeFilter } from "@/components/ExpenseTypeFilter";
+import { ExpenseClientFilter } from "@/components/ExpenseClientFilter";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Expense {
@@ -20,6 +21,7 @@ interface Expense {
 const Index = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [selectedType, setSelectedType] = useState("all");
+  const [selectedClient, setSelectedClient] = useState("all");
 
   const fetchExpenses = async () => {
     try {
@@ -59,8 +61,9 @@ const Index = () => {
   };
 
   const filteredExpenses = expenses.filter((expense) => {
-    if (selectedType === "all") return true;
-    return expense.type.toLowerCase() === selectedType.toLowerCase();
+    const matchesType = selectedType === "all" || expense.type.toLowerCase() === selectedType.toLowerCase();
+    const matchesClient = selectedClient === "all" || expense.client.toLowerCase() === selectedClient.toLowerCase();
+    return matchesType && matchesClient;
   });
 
   const calculateTotalAmount = (expenses: Expense[]) => {
@@ -87,10 +90,17 @@ const Index = () => {
 
         <ExpenseForm onAddExpense={handleAddExpense} />
         
-        <ExpenseTypeFilter 
-          selectedType={selectedType} 
-          onTypeChange={setSelectedType} 
-        />
+        <div className="flex gap-4">
+          <ExpenseTypeFilter 
+            selectedType={selectedType} 
+            onTypeChange={setSelectedType} 
+          />
+          <ExpenseClientFilter 
+            selectedClient={selectedClient} 
+            onClientChange={setSelectedClient}
+            expenses={expenses}
+          />
+        </div>
 
         <ExpenseList expenses={filteredExpenses} onExpenseUpdated={fetchExpenses} />
       </div>
