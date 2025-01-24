@@ -6,7 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { PlusIcon, XIcon, SaveIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Database } from "@/integrations/supabase/types";
 
 type ProjectStatus = 'active' | 'pending' | 'awaiting_po' | 'nearing_completion' | 'completed';
 
@@ -38,8 +37,15 @@ interface ProjectFormProps {
   mode?: 'create' | 'edit';
 }
 
+const PROJECT_STATUSES: ProjectStatus[] = [
+  'active',
+  'pending',
+  'awaiting_po',
+  'nearing_completion',
+  'completed'
+];
+
 const CREATIVE_DIRECTOR_RATE = 43;
-const CATEGORIES = ['internal', 'contractor', 'services', 'software', 'stock'] as const;
 const PROJECT_TYPES = ['fixed_fee', 'time_and_materials', 'retainer'] as const;
 
 export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'create' }: ProjectFormProps) => {
@@ -546,11 +552,11 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
               <SelectValue placeholder="Project Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="awaiting_po">Awaiting PO</SelectItem>
-              <SelectItem value="nearing_completion">Nearing Completion</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
+              {PROJECT_STATUSES.map((statusOption) => (
+                <SelectItem key={statusOption} value={statusOption}>
+                  {statusOption.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
