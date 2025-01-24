@@ -108,6 +108,7 @@ export type Database = {
           id: number
           internal_cost: number
           internal_cost_category: string
+          is_draft: boolean
           modeling_3d_cost: number
           name: string
           notes: string | null
@@ -134,6 +135,7 @@ export type Database = {
           id?: never
           internal_cost?: number
           internal_cost_category?: string
+          is_draft?: boolean
           modeling_3d_cost?: number
           name: string
           notes?: string | null
@@ -160,6 +162,7 @@ export type Database = {
           id?: never
           internal_cost?: number
           internal_cost_category?: string
+          is_draft?: boolean
           modeling_3d_cost?: number
           name?: string
           notes?: string | null

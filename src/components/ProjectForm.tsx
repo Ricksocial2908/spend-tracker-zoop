@@ -296,6 +296,58 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
     }
   };
 
+  const handleSaveAsDraft = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    try {
+      const projectData = {
+        name: name || "Untitled Project",
+        project_code: projectCode,
+        client,
+        project_type: projectType,
+        start_date: startDate || null,
+        end_date: endDate || null,
+        budget: Number(budget) || 0,
+        billable_rate: Number(billableRate) || 0,
+        notes,
+        internal_cost: internalCost,
+        external_cost: Number(externalCost) || 0,
+        software_cost: Number(softwareCost) || 0,
+        sales_price: Number(salesPrice) || 0,
+        vr_development_cost: Number(vrDevelopmentCost) || 0,
+        software_development_cost: Number(softwareDevelopmentCost) || 0,
+        design_cost: Number(designCost) || 0,
+        modeling_3d_cost: Number(modeling3dCost) || 0,
+        rendering_cost: Number(renderingCost) || 0,
+        status: 'pending',
+        is_draft: true
+      };
+
+      let result;
+      
+      if (mode === 'edit' && initialData?.id) {
+        result = await supabase
+          .from("projects")
+          .update(projectData)
+          .eq('id', initialData.id)
+          .select();
+      } else {
+        result = await supabase
+          .from("projects")
+          .insert(projectData)
+          .select();
+      }
+
+      if (result.error) throw result.error;
+      
+      toast.success("Project saved as draft");
+      onProjectAdded();
+    } catch (error) {
+      console.error("Error saving project draft:", error);
+      toast.error("Failed to save project draft");
+    }
+  };
+
   const totalCost = internalCost + 
     Number(externalCost || 0) + 
     Number(softwareCost || 0) +
@@ -883,6 +935,10 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
         <Button type="button" variant="outline" onClick={onCancel}>
           <XIcon className="w-4 h-4 mr-2" />
           Cancel
+        </Button>
+        <Button type="button" variant="secondary" onClick={handleSaveAsDraft}>
+          <SaveIcon className="w-4 h-4 mr-2" />
+          Save as Draft
         </Button>
         <Button type="submit">
           {mode === 'edit' ? (
