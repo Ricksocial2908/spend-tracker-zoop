@@ -20,6 +20,7 @@ export type Database = {
           name: string
           status: string
           type: string
+          used_for: string
         }
         Insert: {
           amount: number
@@ -31,6 +32,7 @@ export type Database = {
           name: string
           status?: string
           type: string
+          used_for?: string
         }
         Update: {
           amount?: number
@@ -42,6 +44,7 @@ export type Database = {
           name?: string
           status?: string
           type?: string
+          used_for?: string
         }
         Relationships: []
       }

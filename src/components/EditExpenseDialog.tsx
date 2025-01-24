@@ -27,6 +27,7 @@ interface Expense {
   name: string;
   frequency: string;
   status: string;
+  used_for: string;
 }
 
 interface EditExpenseDialogProps {
@@ -49,6 +50,7 @@ export const EditExpenseDialog = ({
   const [name, setName] = useState("");
   const [frequency, setFrequency] = useState("");
   const [status, setStatus] = useState("");
+  const [usedFor, setUsedFor] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
@@ -60,6 +62,7 @@ export const EditExpenseDialog = ({
       setName(expense.name);
       setFrequency(expense.frequency);
       setStatus(expense.status);
+      setUsedFor(expense.used_for);
     }
   }, [expense]);
 
@@ -67,7 +70,7 @@ export const EditExpenseDialog = ({
     e.preventDefault();
     if (!expense) return;
 
-    if (!amount || !client || !type || !date || !name || !frequency || !status) {
+    if (!amount || !client || !type || !date || !name || !frequency || !status || !usedFor) {
       toast.error("Please fill in all fields");
       return;
     }
@@ -84,7 +87,8 @@ export const EditExpenseDialog = ({
           date,
           name,
           frequency,
-          status: status.toLowerCase(), // Ensure status is lowercase to match database constraint
+          status: status.toLowerCase(),
+          used_for: usedFor,
         })
         .eq("id", expense.id);
 
@@ -161,6 +165,11 @@ export const EditExpenseDialog = ({
                 <SelectItem value="cancel">Cancel</SelectItem>
               </SelectContent>
             </Select>
+            <Input
+              placeholder="Used For"
+              value={usedFor}
+              onChange={(e) => setUsedFor(e.target.value)}
+            />
           </div>
           <DialogFooter>
             <Button

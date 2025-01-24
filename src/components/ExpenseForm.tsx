@@ -20,6 +20,7 @@ interface ExpenseFormProps {
     name: string;
     frequency: string;
     status: string;
+    used_for: string;
   }) => void;
   onCancel?: () => void;
 }
@@ -32,8 +33,8 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
   const [name, setName] = useState("");
   const [frequency, setFrequency] = useState("");
   const [status, setStatus] = useState("keep");
+  const [usedFor, setUsedFor] = useState("");
 
-  // Set default date to today when component mounts
   useEffect(() => {
     if (!date) {
       const today = new Date().toISOString().split('T')[0];
@@ -44,7 +45,7 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!amount || !client || !type || !date || !name || !frequency || !status) {
+    if (!amount || !client || !type || !date || !name || !frequency || !status || !usedFor) {
       toast.error("Please fill in all fields");
       return;
     }
@@ -56,7 +57,8 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
       date,
       name,
       frequency,
-      status: status.toLowerCase(), // Ensure status is lowercase when sending to database
+      status: status.toLowerCase(),
+      used_for: usedFor,
     });
 
     setAmount("");
@@ -66,6 +68,7 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
     setName("");
     setFrequency("");
     setStatus("keep");
+    setUsedFor("");
     
     toast.success("Expense added successfully");
   };
@@ -78,6 +81,7 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
     setName("");
     setFrequency("");
     setStatus("keep");
+    setUsedFor("");
     onCancel?.();
   };
 
@@ -143,6 +147,13 @@ export const ExpenseForm = ({ onAddExpense, onCancel }: ExpenseFormProps) => {
             <SelectItem value="cancel">Cancel</SelectItem>
           </SelectContent>
         </Select>
+        <Input
+          type="text"
+          placeholder="Used For"
+          value={usedFor}
+          onChange={(e) => setUsedFor(e.target.value)}
+          className="bg-white/80 backdrop-blur-sm"
+        />
       </div>
       <div className="flex gap-2 justify-end">
         <Button type="button" variant="outline" onClick={handleCancel}>

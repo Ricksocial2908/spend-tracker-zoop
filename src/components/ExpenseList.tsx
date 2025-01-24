@@ -8,7 +8,7 @@ import {
   TableFooter,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { EditIcon, CheckCircleIcon, XCircleIcon, ArrowUpDown, DownloadIcon } from "lucide-react";
+import { EditIcon, CheckCircleIcon, XCircleIcon, ArrowUpDown, DownloadIcon, FileText } from "lucide-react";
 import { useState } from "react";
 import { EditExpenseDialog } from "./EditExpenseDialog";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,6 +24,7 @@ interface Expense {
   name: string;
   frequency: string;
   status: string;
+  used_for: string;
 }
 
 interface ExpenseListProps {
@@ -31,7 +32,7 @@ interface ExpenseListProps {
   onExpenseUpdated: () => void;
 }
 
-type SortField = 'amount' | 'name' | 'client' | 'date' | 'frequency';
+type SortField = 'amount' | 'name' | 'client' | 'date' | 'frequency' | 'used_for';
 type SortDirection = 'asc' | 'desc';
 
 export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) => {
@@ -97,6 +98,8 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
         return (new Date(a.date).getTime() - new Date(b.date).getTime()) * multiplier;
       case 'frequency':
         return a.frequency.localeCompare(b.frequency) * multiplier;
+      case 'used_for':
+        return a.used_for.localeCompare(b.used_for) * multiplier;
       default:
         return 0;
     }
@@ -176,6 +179,9 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
               <TableHead>
                 <SortButton field="frequency" label="Frequency" />
               </TableHead>
+              <TableHead>
+                <SortButton field="used_for" label="Used For" />
+              </TableHead>
               <TableHead className="text-right">
                 <SortButton field="amount" label="Amount" />
               </TableHead>
@@ -203,6 +209,12 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
                 <TableCell>
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                     {expense.frequency}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    <FileText className="h-3 w-3" />
+                    {expense.used_for}
                   </span>
                 </TableCell>
                 <TableCell className="text-right">
@@ -251,7 +263,7 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
             ))}
             {expenses.length === 0 && (
               <TableRow>
-                <TableCell colSpan={8} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={9} className="text-center py-8 text-gray-500">
                   No expenses found
                 </TableCell>
               </TableRow>
@@ -259,7 +271,7 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
           </TableBody>
           <TableFooter className="bg-gray-50/50">
             <TableRow>
-              <TableCell colSpan={5} className="text-right font-medium">
+              <TableCell colSpan={6} className="text-right font-medium">
                 Total Amount (Active Expenses):
               </TableCell>
               <TableCell className="text-right font-bold">
