@@ -24,6 +24,7 @@ interface Project {
   modeling_3d_cost: number;
   rendering_cost: number;
   is_draft: boolean;
+  status: 'pending' | 'active' | 'completed' | 'on_hold' | 'cancelled';
 }
 
 interface ProjectListProps {
@@ -34,9 +35,20 @@ interface ProjectListProps {
 export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) => {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
 
+  const getStatusColor = (status: Project['status']) => {
+    const colors = {
+      pending: 'text-yellow-700 bg-yellow-100',
+      active: 'text-green-700 bg-green-100',
+      completed: 'text-blue-700 bg-blue-100',
+      on_hold: 'text-orange-700 bg-orange-100',
+      cancelled: 'text-red-700 bg-red-100'
+    };
+    return colors[status] || colors.pending;
+  };
+
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         {projects.map((project) => (
           <div
             key={project.id}
@@ -51,11 +63,9 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
                       Draft
                     </span>
                   )}
-                  {!project.is_draft && (
-                    <span className="inline-block px-2 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full">
-                      Live
-                    </span>
-                  )}
+                  <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(project.status)}`}>
+                    {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                  </span>
                 </div>
               </div>
               <Button
@@ -66,24 +76,48 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
                 <EditIcon className="w-4 h-4" />
               </Button>
             </div>
-            <div className="space-y-2 text-sm text-gray-600">
-              {project.project_code && (
-                <p>Code: {project.project_code}</p>
-              )}
-              {project.client && (
-                <p>Client: {project.client}</p>
-              )}
-              <p>Sales Price: €{project.sales_price.toLocaleString()}</p>
-              <p>Total Cost: €{(
-                project.internal_cost +
-                project.external_cost +
-                project.software_cost +
-                project.vr_development_cost +
-                project.software_development_cost +
-                project.design_cost +
-                project.modeling_3d_cost +
-                project.rendering_cost
-              ).toLocaleString()}</p>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-gray-500">Project Details</p>
+                {project.project_code && (
+                  <p className="text-sm text-gray-600">Code: {project.project_code}</p>
+                )}
+                {project.client && (
+                  <p className="text-sm text-gray-600">Client: {project.client}</p>
+                )}
+                {project.project_type && (
+                  <p className="text-sm text-gray-600">Type: {project.project_type}</p>
+                )}
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-gray-500">Dates</p>
+                {project.start_date && (
+                  <p className="text-sm text-gray-600">Start: {new Date(project.start_date).toLocaleDateString()}</p>
+                )}
+                {project.end_date && (
+                  <p className="text-sm text-gray-600">End: {new Date(project.end_date).toLocaleDateString()}</p>
+                )}
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-gray-500">Financial Overview</p>
+                <p className="text-sm text-gray-600">Sales Price: €{project.sales_price.toLocaleString()}</p>
+                {project.budget && (
+                  <p className="text-sm text-gray-600">Budget: €{project.budget.toLocaleString()}</p>
+                )}
+                {project.billable_rate && (
+                  <p className="text-sm text-gray-600">Rate: €{project.billable_rate.toLocaleString()}/hr</p>
+                )}
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-gray-500">Costs Breakdown</p>
+                <p className="text-sm text-gray-600">Internal: €{project.internal_cost.toLocaleString()}</p>
+                <p className="text-sm text-gray-600">External: €{project.external_cost.toLocaleString()}</p>
+                <p className="text-sm text-gray-600">Software: €{project.software_cost.toLocaleString()}</p>
+              </div>
             </div>
           </div>
         ))}
