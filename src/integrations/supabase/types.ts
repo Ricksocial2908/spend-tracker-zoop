@@ -120,7 +120,7 @@ export type Database = {
           software_cost_category: string
           software_development_cost: number
           start_date: string | null
-          status: Database["public"]["Enums"]["project_status"] | null
+          status: 'active' | 'pending' | 'awaiting_po' | 'nearing_completion' | 'completed' | null
           vr_development_cost: number
         }
         Insert: {
@@ -147,7 +147,7 @@ export type Database = {
           software_cost_category?: string
           software_development_cost?: number
           start_date?: string | null
-          status?: Database["public"]["Enums"]["project_status"] | null
+          status?: 'active' | 'pending' | 'awaiting_po' | 'nearing_completion' | 'completed' | null
           vr_development_cost?: number
         }
         Update: {
@@ -174,7 +174,7 @@ export type Database = {
           software_cost_category?: string
           software_development_cost?: number
           start_date?: string | null
-          status?: Database["public"]["Enums"]["project_status"] | null
+          status?: 'active' | 'pending' | 'awaiting_po' | 'nearing_completion' | 'completed' | null
           vr_development_cost?: number
         }
         Relationships: []
@@ -194,11 +194,11 @@ export type Database = {
         | "software"
         | "stock"
       project_status:
-        | "pending"
         | "active"
+        | "pending"
+        | "awaiting_po"
+        | "nearing_completion"
         | "completed"
-        | "on_hold"
-        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
