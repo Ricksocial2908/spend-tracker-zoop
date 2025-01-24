@@ -24,7 +24,7 @@ export const ExpenseClientFilter = ({ selectedClient, onClientChange, expenses }
         <SelectContent>
           <SelectItem value="all">All Clients</SelectItem>
           {uniqueClients.map((client) => (
-            <SelectItem key={client} value={client.toLowerCase()}>
+            <SelectItem key={client} value={client}>
               {client}
             </SelectItem>
           ))}

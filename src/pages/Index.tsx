@@ -62,7 +62,7 @@ const Index = () => {
 
   const filteredExpenses = expenses.filter((expense) => {
     const matchesType = selectedType === "all" || expense.type.toLowerCase() === selectedType.toLowerCase();
-    const matchesClient = selectedClient === "all" || expense.client.toLowerCase() === selectedClient.toLowerCase();
+    const matchesClient = selectedClient === "all" || expense.client === selectedClient;
     return matchesType && matchesClient;
   });
 
