@@ -43,13 +43,20 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
             className="p-6 rounded-xl bg-white/80 backdrop-blur-sm border border-gray-200 shadow-sm transition-all duration-200 hover:shadow-md"
           >
             <div className="flex justify-between items-start mb-4">
-              <div>
+              <div className="space-y-1">
                 <h3 className="text-lg font-semibold text-gray-900">{project.name}</h3>
-                {project.is_draft && (
-                  <span className="inline-block px-2 py-1 text-xs font-medium text-yellow-700 bg-yellow-100 rounded-full">
-                    Draft
-                  </span>
-                )}
+                <div className="flex gap-2">
+                  {project.is_draft && (
+                    <span className="inline-block px-2 py-1 text-xs font-medium text-yellow-700 bg-yellow-100 rounded-full">
+                      Draft
+                    </span>
+                  )}
+                  {!project.is_draft && (
+                    <span className="inline-block px-2 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full">
+                      Live
+                    </span>
+                  )}
+                </div>
               </div>
               <Button
                 variant="ghost"

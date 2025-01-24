@@ -104,7 +104,8 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
         design_cost: Number(designCost) || 0,
         modeling_3d_cost: Number(modeling3dCost) || 0,
         rendering_cost: Number(renderingCost) || 0,
-        status: initialData?.status || 'pending'
+        status: initialData?.status || 'pending',
+        is_draft: false // Set is_draft to false when updating
       };
 
       let result;
@@ -201,7 +202,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
 
         if (insertError) throw insertError;
 
-        toast.success("Project updated successfully");
+        toast.success("Project updated and published successfully");
       } else {
         result = await supabase
           .from("projects")
