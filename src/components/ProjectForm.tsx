@@ -8,7 +8,7 @@ import { PlusIcon, XIcon, SaveIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 
-type ProjectStatus = Database["public"]["Enums"]["project_status"];
+type ProjectStatus = 'active' | 'pending' | 'awaiting_po' | 'nearing_completion' | 'completed';
 
 interface ProjectFormProps {
   onProjectAdded: () => void;
@@ -546,11 +546,11 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
               <SelectValue placeholder="Project Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="pending">Pending</SelectItem>
               <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="awaiting_po">Awaiting PO</SelectItem>
+              <SelectItem value="nearing_completion">Nearing Completion</SelectItem>
               <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="on_hold">On Hold</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
             </SelectContent>
           </Select>
         </div>
