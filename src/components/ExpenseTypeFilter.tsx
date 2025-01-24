@@ -13,7 +13,7 @@ export const ExpenseTypeFilter = ({ selectedType, onTypeChange }: ExpenseTypeFil
           <SelectValue placeholder="Filter by type" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">All Types</SelectItem>
+          <SelectItem value="all">All Types</SelectItem>
           <SelectItem value="software">Software</SelectItem>
           <SelectItem value="hardware">Hardware</SelectItem>
           <SelectItem value="service">Service</SelectItem>

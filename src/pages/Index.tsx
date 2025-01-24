@@ -19,7 +19,7 @@ interface Expense {
 
 const Index = () => {
   const [expenses, setExpenses] = useState<Expense[]>([]);
-  const [selectedType, setSelectedType] = useState("");
+  const [selectedType, setSelectedType] = useState("all");
 
   const fetchExpenses = async () => {
     try {
@@ -59,7 +59,7 @@ const Index = () => {
   };
 
   const filteredExpenses = expenses.filter((expense) => {
-    if (!selectedType) return true;
+    if (selectedType === "all") return true;
     return expense.type.toLowerCase() === selectedType.toLowerCase();
   });
 
