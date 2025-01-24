@@ -62,6 +62,9 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
   const [designCost, setDesignCost] = useState(String(initialData?.design_cost || ""));
   const [modeling3dCost, setModeling3dCost] = useState(String(initialData?.modeling_3d_cost || ""));
   const [renderingCost, setRenderingCost] = useState(String(initialData?.rendering_cost || ""));
+  const [status, setStatus] = useState<'pending' | 'active' | 'completed' | 'on_hold' | 'cancelled'>(
+    (initialData?.status || 'pending') as 'pending' | 'active' | 'completed' | 'on_hold' | 'cancelled'
+  );
 
   const [internalPaidHours, setInternalPaidHours] = useState(
     initialData ? String(Math.round((initialData?.internal_cost || 0) / CREATIVE_DIRECTOR_RATE)) : "0"
@@ -104,8 +107,8 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
         design_cost: Number(designCost) || 0,
         modeling_3d_cost: Number(modeling3dCost) || 0,
         rendering_cost: Number(renderingCost) || 0,
-        status: initialData?.status || 'pending',
-        is_draft: false // Set is_draft to false when updating
+        status: status,
+        is_draft: false
       };
 
       let result;
@@ -119,7 +122,6 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
 
         if (result.error) throw result.error;
         
-        // Create or update project payment records for each cost type
         const paymentRecords = [
           {
             project_id: initialData.id,
@@ -187,7 +189,6 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
           }
         ];
 
-        // Delete existing payment records for this project
         const { error: deleteError } = await supabase
           .from('project_payments')
           .delete()
@@ -195,7 +196,6 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
 
         if (deleteError) throw deleteError;
 
-        // Insert new payment records
         const { error: insertError } = await supabase
           .from('project_payments')
           .insert(paymentRecords);
@@ -535,6 +535,21 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
             onChange={(e) => setNotes(e.target.value)}
             className="h-[120px]"
           />
+          <Select
+            value={status}
+            onValueChange={(value: 'pending' | 'active' | 'completed' | 'on_hold' | 'cancelled') => setStatus(value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Project Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="on_hold">On Hold</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-4">
