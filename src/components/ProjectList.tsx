@@ -1,7 +1,19 @@
 import { useState } from "react";
 import { EditProjectForm } from "./EditProjectForm";
 import { Button } from "@/components/ui/button";
-import { EditIcon } from "lucide-react";
+import { EditIcon, Trash2Icon } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface Project {
   id: number;
@@ -34,6 +46,7 @@ interface ProjectListProps {
 
 export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) => {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
 
   const getStatusColor = (status: Project['status']) => {
     const colors = {
@@ -44,6 +57,36 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
       cancelled: 'text-red-700 bg-red-100'
     };
     return colors[status] || colors.pending;
+  };
+
+  const handleDeleteProject = async () => {
+    if (!projectToDelete) return;
+
+    try {
+      // First delete related project_payments
+      const { error: paymentsError } = await supabase
+        .from('project_payments')
+        .delete()
+        .eq('project_id', projectToDelete.id);
+
+      if (paymentsError) throw paymentsError;
+
+      // Then delete the project
+      const { error: projectError } = await supabase
+        .from('projects')
+        .delete()
+        .eq('id', projectToDelete.id);
+
+      if (projectError) throw projectError;
+
+      toast.success("Project deleted successfully");
+      onProjectUpdated();
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      toast.error("Failed to delete project");
+    } finally {
+      setProjectToDelete(null);
+    }
   };
 
   return (
@@ -68,13 +111,23 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
                   </span>
                 </div>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setEditingProject(project)}
-              >
-                <EditIcon className="w-4 h-4" />
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setEditingProject(project)}
+                >
+                  <EditIcon className="w-4 h-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setProjectToDelete(project)}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <Trash2Icon className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
@@ -131,6 +184,27 @@ export const ProjectList = ({ projects, onProjectUpdated }: ProjectListProps) =>
           onProjectUpdated={onProjectUpdated}
         />
       )}
+
+      <AlertDialog open={!!projectToDelete} onOpenChange={() => setProjectToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to delete this project?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the project
+              "{projectToDelete?.name}" and all associated data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteProject}
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            >
+              Delete Project
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
