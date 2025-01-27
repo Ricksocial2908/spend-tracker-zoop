@@ -6,8 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { PlusIcon, XIcon, SaveIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
 
-type ProjectStatus = 'active' | 'pending' | 'awaiting_po' | 'nearing_completion' | 'completed';
+type ProjectStatus = Database["public"]["Enums"]["project_status"];
 
 interface ProjectFormProps {
   onProjectAdded: () => void;
