@@ -1,4 +1,3 @@
-<lov-code>
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -72,7 +71,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
   const [softwareDevelopmentCost, setSoftwareDevelopmentCost] = useState(String(initialData?.software_development_cost || ""));
   const [designCost, setDesignCost] = useState(String(initialData?.design_cost || ""));
   const [modeling3dCost, setModeling3dCost] = useState(String(initialData?.modeling_3d_cost || ""));
-  const [renderingCost, setRenderingCost] = useState(String(initialData?.rendering_cost || ""));
+  const [renderingCost, setRenderingCost] = useState(String(initialData?.rendering_cost || "");
   const [status, setStatus] = useState<ProjectStatus>(
     (initialData?.status || 'pending') as ProjectStatus
   );
@@ -789,4 +788,4 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                     type="number"
                     placeholder="Paid Amount"
                     value={designPaidAmount}
-                    onChange={(e) => setDesign
+                    onChange={(e) => setDesignPaidAmount(e
