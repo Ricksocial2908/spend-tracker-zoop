@@ -118,7 +118,10 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
         modeling_3d_cost: Number(modeling3dCost) || 0,
         rendering_cost: Number(renderingCost) || 0,
         status: status as ProjectStatus,
-        is_draft: false
+        is_draft: false,
+        external_cost_category: 'contractor',
+        internal_cost_category: 'internal',
+        software_cost_category: 'software'
       };
 
       let result;
