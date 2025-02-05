@@ -66,7 +66,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
   );
   const [externalCost, setExternalCost] = useState(String(initialData?.external_cost || ""));
   const [softwareCost, setSoftwareCost] = useState(String(initialData?.software_cost || ""));
-  const [salesPrice, setSalesPrice] = useState(String(initialData?.sales_price || "");
+  const [salesPrice, setSalesPrice] = useState(String(initialData?.sales_price || ""));
   const [vrDevelopmentCost, setVrDevelopmentCost] = useState(String(initialData?.vr_development_cost || ""));
   const [softwareDevelopmentCost, setSoftwareDevelopmentCost] = useState(String(initialData?.software_development_cost || ""));
   const [designCost, setDesignCost] = useState(String(initialData?.design_cost || ""));
@@ -122,7 +122,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
         external_cost_category: 'contractor' as const,
         internal_cost_category: 'internal' as const,
         software_cost_category: 'software' as const
-      } satisfies Omit<Database['public']['Tables']['projects']['Insert'], 'id' | 'created_at'>;
+      } satisfies Database['public']['Tables']['projects']['Insert'];
 
       let result;
       
@@ -475,112 +475,101 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900">Project Details</h3>
-          
-          <div className="space-y-4">
+          <Input
+            type="text"
+            placeholder="Project Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            type="text"
+            placeholder="Project Code"
+            value={projectCode}
+            onChange={(e) => setProjectCode(e.target.value)}
+          />
+          <Input
+            type="text"
+            placeholder="Client"
+            value={client}
+            onChange={(e) => setClient(e.target.value)}
+          />
+          <Select
+            value={projectType}
+            onValueChange={(value: typeof PROJECT_TYPES[number]) => setProjectType(value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Project Type" />
+            </SelectTrigger>
+            <SelectContent>
+              {PROJECT_TYPES.map((type) => (
+                <SelectItem key={type} value={type}>
+                  {type.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <div className="grid grid-cols-2 gap-4">
             <Input
-              type="text"
-              placeholder="Project Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              type="date"
+              placeholder="Start Date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
             />
             <Input
-              type="text"
-              placeholder="Project Code"
-              value={projectCode}
-              onChange={(e) => setProjectCode(e.target.value)}
+              type="date"
+              placeholder="End Date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
             />
-            <Input
-              type="text"
-              placeholder="Client"
-              value={client}
-              onChange={(e) => setClient(e.target.value)}
-            />
-            <Select
-              value={projectType}
-              onValueChange={(value: typeof PROJECT_TYPES[number]) => setProjectType(value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Project Type" />
-              </SelectTrigger>
-              <SelectContent>
-                {PROJECT_TYPES.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {type.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <Input
-                type="date"
-                placeholder="Start Date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-              <Input
-                type="date"
-                placeholder="End Date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <Input
-                type="number"
-                placeholder="Budget"
-                value={budget}
-                onChange={(e) => setBudget(e.target.value)}
-              />
-              <Input
-                type="number"
-                placeholder="Billable Rate"
-                value={billableRate}
-                onChange={(e) => setBillableRate(e.target.value)}
-              />
-            </div>
-            
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             <Input
               type="number"
-              placeholder="Sales Price"
-              value={salesPrice}
-              onChange={(e) => setSalesPrice(e.target.value)}
+              placeholder="Budget"
+              value={budget}
+              onChange={(e) => setBudget(e.target.value)}
             />
-            
-            <Textarea
-              placeholder="Project Notes"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className="h-[120px]"
+            <Input
+              type="number"
+              placeholder="Billable Rate"
+              value={billableRate}
+              onChange={(e) => setBillableRate(e.target.value)}
             />
-            
-            <Select
-              value={status}
-              onValueChange={(value: ProjectStatus) => setStatus(value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Project Status" />
-              </SelectTrigger>
-              <SelectContent>
-                {PROJECT_STATUSES.map((statusOption) => (
-                  <SelectItem key={statusOption} value={statusOption}>
-                    {statusOption.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
+          <Input
+            type="number"
+            placeholder="Sales Price"
+            value={salesPrice}
+            onChange={(e) => setSalesPrice(e.target.value)}
+          />
+          <Textarea
+            placeholder="Project Notes"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            className="h-[120px]"
+          />
+          <Select
+            value={status}
+            onValueChange={(value: ProjectStatus) => setStatus(value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Project Status" />
+            </SelectTrigger>
+            <SelectContent>
+              {PROJECT_STATUSES.map((statusOption) => (
+                <SelectItem key={statusOption} value={statusOption}>
+                  {statusOption.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900">Cost Breakdown</h3>
           <div className="grid grid-cols-1 gap-6">
-            {/* Creative Director Hours Section */}
             <div className="p-4 border rounded-lg bg-white/50">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Creative Director Hours (€{CREATIVE_DIRECTOR_RATE}/hour)
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Creative Director Hours (€{CREATIVE_DIRECTOR_RATE}/hour)</label>
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <Input
@@ -602,11 +591,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                     onChange={(e) => setInternalPaidHours(e.target.value)}
                     className="flex-1"
                   />
-                  <div className={`text-xs font-semibold break-words ${
-                    isOverBudget(internalCost, Number(internalPaidHours) * CREATIVE_DIRECTOR_RATE) 
-                      ? 'text-red-600' 
-                      : 'text-gray-900'
-                  } min-w-[80px] text-right`}>
+                  <div className={`text-xs font-semibold break-words ${isOverBudget(internalCost, Number(internalPaidHours) * CREATIVE_DIRECTOR_RATE) ? 'text-red-600' : 'text-gray-900'} min-w-[80px] text-right`}>
                     <div className="truncate">
                       Paid: €{(Number(internalPaidHours) * CREATIVE_DIRECTOR_RATE).toLocaleString()} ({Number(internalPaidHours)} hrs)
                     </div>
@@ -788,4 +773,216 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                     type="number"
                     placeholder="Paid Amount"
                     value={designPaidAmount}
-                    onChange={(e) => setDesignPaidAmount(e
+                    onChange={(e) => setDesignPaidAmount(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className={`text-xs font-semibold break-words ${isOverBudget(Number(designCost), Number(designPaidAmount)) ? 'text-red-600' : 'text-gray-900'} min-w-[80px] text-right`}>
+                    <div className="truncate">
+                      Paid: €{Number(designPaidAmount).toLocaleString()}
+                    </div>
+                    {isOverBudget(Number(designCost), Number(designPaidAmount)) && (
+                      <div className="truncate">
+                        Exceeded by €{(Number(designPaidAmount) - Number(designCost)).toLocaleString()}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 border rounded-lg bg-white/50">
+              <label className="block text-sm font-medium text-gray-700 mb-2">3D Modeling Cost</label>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="3D Modeling Cost"
+                    value={modeling3dCost}
+                    onChange={(e) => setModeling3dCost(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-xs font-semibold text-gray-900 min-w-[80px] text-right">
+                    €{Number(modeling3dCost || 0).toLocaleString()}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Paid Amount"
+                    value={modeling3dPaidAmount}
+                    onChange={(e) => setModeling3dPaidAmount(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className={`text-xs font-semibold break-words ${isOverBudget(Number(modeling3dCost), Number(modeling3dPaidAmount)) ? 'text-red-600' : 'text-gray-900'} min-w-[80px] text-right`}>
+                    <div className="truncate">
+                      Paid: €{Number(modeling3dPaidAmount).toLocaleString()}
+                    </div>
+                    {isOverBudget(Number(modeling3dCost), Number(modeling3dPaidAmount)) && (
+                      <div className="truncate">
+                        Exceeded by €{(Number(modeling3dPaidAmount) - Number(modeling3dCost)).toLocaleString()}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 border rounded-lg bg-white/50">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Rendering Cost</label>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Rendering Cost"
+                    value={renderingCost}
+                    onChange={(e) => setRenderingCost(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-xs font-semibold text-gray-900 min-w-[80px] text-right">
+                    €{Number(renderingCost || 0).toLocaleString()}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Paid Amount"
+                    value={renderingPaidAmount}
+                    onChange={(e) => setRenderingPaidAmount(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className={`text-xs font-semibold break-words ${isOverBudget(Number(renderingCost), Number(renderingPaidAmount)) ? 'text-red-600' : 'text-gray-900'} min-w-[80px] text-right`}>
+                    <div className="truncate">
+                      Paid: €{Number(renderingPaidAmount).toLocaleString()}
+                    </div>
+                    {isOverBudget(Number(renderingCost), Number(renderingPaidAmount)) && (
+                      <div className="truncate">
+                        Exceeded by €{(Number(renderingPaidAmount) - Number(renderingCost)).toLocaleString()}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 border rounded-lg bg-white/50">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Total Expected Cost</label>
+              <div className="text-sm font-bold text-gray-900">
+                €{totalCost.toLocaleString()}
+              </div>
+            </div>
+
+            <div className="p-4 border rounded-lg bg-white/50">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Total Paid Amount</label>
+              <div className={`text-sm font-bold break-words ${totalPaidAmount > totalCost ? 'text-red-600' : 'text-gray-900'}`}>
+                <div className="truncate">
+                  €{totalPaidAmount.toLocaleString()}
+                </div>
+                {totalPaidAmount > totalCost && (
+                  <div className="truncate">
+                    Exceeded by €{(totalPaidAmount - totalCost).toLocaleString()}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="p-4 border rounded-lg bg-green-50">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Gross Profit (Based on Paid Amount)</label>
+                  <div className={`text-sm font-bold ${grossProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    €{grossProfit.toLocaleString()}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Gross Profit Margin</label>
+                  <div className={`text-sm font-bold ${grossProfitMargin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {grossProfitMargin.toFixed(1)}%
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-4 border rounded-lg bg-blue-50">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Expected Gross Profit (Based on Expected Costs)</label>
+                  <div className={`text-sm font-bold ${(Number(salesPrice) - totalCost) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    €{(Number(salesPrice) - totalCost).toLocaleString()}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Expected Gross Profit Margin</label>
+                  <div className={`text-sm font-bold ${(Number(salesPrice) - totalCost) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {Number(salesPrice) ? (((Number(salesPrice) - totalCost) / Number(salesPrice)) * 100).toFixed(1) : '0'}%
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6">
+        <div className="p-4 border rounded-lg bg-blue-50">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Profit Margin Analysis</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Expected Profit Margins (Based on Costs)</label>
+                <div className={`text-sm font-bold ${expectedGrossProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <div>Gross Profit: €{expectedGrossProfit.toLocaleString()}</div>
+                  <div>Margin: {expectedGrossProfitMargin.toFixed(1)}%</div>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Actual Profit Margins (Based on Paid)</label>
+                <div className={`text-sm font-bold ${grossProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <div>Gross Profit: €{grossProfit.toLocaleString()}</div>
+                  <div>Margin: {grossProfitMargin.toFixed(1)}%</div>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Profit Difference Analysis</label>
+                <div className={`text-sm font-bold ${profitDifference >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <div>Profit Difference: €{profitDifference.toLocaleString()}</div>
+                  <div>Margin Difference: {profitMarginDifference.toFixed(1)}%</div>
+                  <div className="text-xs text-gray-600 mt-1">
+                    {profitDifference >= 0 
+                      ? "Actual profit is higher than expected" 
+                      : "Actual profit is lower than expected"}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex gap-2 justify-end">
+        <Button type="button" variant="outline" onClick={onCancel}>
+          <XIcon className="w-4 h-4 mr-2" />
+          Cancel
+        </Button>
+        <Button type="button" variant="secondary" onClick={handleSaveAsDraft}>
+          <SaveIcon className="w-4 h-4 mr-2" />
+          Save as Draft
+        </Button>
+        <Button type="submit">
+          {mode === 'edit' ? (
+            <>
+              <SaveIcon className="w-4 h-4 mr-2" />
+              Save Changes
+            </>
+          ) : (
+            <>
+              <PlusIcon className="w-4 h-4 mr-2" />
+              Add Project
+            </>
+          )}
+        </Button>
+      </div>
+    </form>
+  );
+};
