@@ -46,7 +46,7 @@ const PROJECT_STATUSES: ProjectStatus[] = [
   'completed'
 ];
 
-const CREATIVE_DIRECTOR_RATE = 43;
+const CREATIVE_DIRECTOR_RATE = 65;
 const PROJECT_TYPES = ['fixed_fee', 'time_and_materials', 'retainer'] as const;
 
 export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'create' }: ProjectFormProps) => {
