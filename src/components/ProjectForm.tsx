@@ -66,12 +66,12 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
   );
   const [externalCost, setExternalCost] = useState(String(initialData?.external_cost || ""));
   const [softwareCost, setSoftwareCost] = useState(String(initialData?.software_cost || ""));
-  const [salesPrice, setSalesPrice] = useState(String(initialData?.sales_price || ""));
+  const [salesPrice, setSalesPrice] = useState(String(initialData?.sales_price || "");
   const [vrDevelopmentCost, setVrDevelopmentCost] = useState(String(initialData?.vr_development_cost || ""));
   const [softwareDevelopmentCost, setSoftwareDevelopmentCost] = useState(String(initialData?.software_development_cost || ""));
   const [designCost, setDesignCost] = useState(String(initialData?.design_cost || ""));
   const [modeling3dCost, setModeling3dCost] = useState(String(initialData?.modeling_3d_cost || ""));
-  const [renderingCost, setRenderingCost] = useState(String(initialData?.rendering_cost || "");
+  const [renderingCost, setRenderingCost] = useState(String(initialData?.rendering_cost || ""));
   const [status, setStatus] = useState<ProjectStatus>(
     (initialData?.status || 'pending') as ProjectStatus
   );
