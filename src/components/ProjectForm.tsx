@@ -119,10 +119,10 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
         rendering_cost: Number(renderingCost) || 0,
         status: status as ProjectStatus,
         is_draft: false,
-        external_cost_category: 'contractor',
-        internal_cost_category: 'internal',
-        software_cost_category: 'software'
-      };
+        external_cost_category: 'contractor' as const,
+        internal_cost_category: 'internal' as const,
+        software_cost_category: 'software' as const
+      } satisfies Database['public']['Tables']['projects']['Insert'];
 
       let result;
       
