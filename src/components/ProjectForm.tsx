@@ -1,3 +1,4 @@
+<lov-code>
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -475,101 +476,112 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900">Project Details</h3>
-          <Input
-            type="text"
-            placeholder="Project Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <Input
-            type="text"
-            placeholder="Project Code"
-            value={projectCode}
-            onChange={(e) => setProjectCode(e.target.value)}
-          />
-          <Input
-            type="text"
-            placeholder="Client"
-            value={client}
-            onChange={(e) => setClient(e.target.value)}
-          />
-          <Select
-            value={projectType}
-            onValueChange={(value: typeof PROJECT_TYPES[number]) => setProjectType(value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Project Type" />
-            </SelectTrigger>
-            <SelectContent>
-              {PROJECT_TYPES.map((type) => (
-                <SelectItem key={type} value={type}>
-                  {type.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <div className="grid grid-cols-2 gap-4">
+          
+          <div className="space-y-4">
             <Input
-              type="date"
-              placeholder="Start Date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              type="text"
+              placeholder="Project Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
             <Input
-              type="date"
-              placeholder="End Date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              type="text"
+              placeholder="Project Code"
+              value={projectCode}
+              onChange={(e) => setProjectCode(e.target.value)}
             />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
+            <Input
+              type="text"
+              placeholder="Client"
+              value={client}
+              onChange={(e) => setClient(e.target.value)}
+            />
+            <Select
+              value={projectType}
+              onValueChange={(value: typeof PROJECT_TYPES[number]) => setProjectType(value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Project Type" />
+              </SelectTrigger>
+              <SelectContent>
+                {PROJECT_TYPES.map((type) => (
+                  <SelectItem key={type} value={type}>
+                    {type.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                type="date"
+                placeholder="Start Date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+              <Input
+                type="date"
+                placeholder="End Date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                type="number"
+                placeholder="Budget"
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+              />
+              <Input
+                type="number"
+                placeholder="Billable Rate"
+                value={billableRate}
+                onChange={(e) => setBillableRate(e.target.value)}
+              />
+            </div>
+            
             <Input
               type="number"
-              placeholder="Budget"
-              value={budget}
-              onChange={(e) => setBudget(e.target.value)}
+              placeholder="Sales Price"
+              value={salesPrice}
+              onChange={(e) => setSalesPrice(e.target.value)}
             />
-            <Input
-              type="number"
-              placeholder="Billable Rate"
-              value={billableRate}
-              onChange={(e) => setBillableRate(e.target.value)}
+            
+            <Textarea
+              placeholder="Project Notes"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              className="h-[120px]"
             />
+            
+            <Select
+              value={status}
+              onValueChange={(value: ProjectStatus) => setStatus(value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Project Status" />
+              </SelectTrigger>
+              <SelectContent>
+                {PROJECT_STATUSES.map((statusOption) => (
+                  <SelectItem key={statusOption} value={statusOption}>
+                    {statusOption.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <Input
-            type="number"
-            placeholder="Sales Price"
-            value={salesPrice}
-            onChange={(e) => setSalesPrice(e.target.value)}
-          />
-          <Textarea
-            placeholder="Project Notes"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            className="h-[120px]"
-          />
-          <Select
-            value={status}
-            onValueChange={(value: ProjectStatus) => setStatus(value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Project Status" />
-            </SelectTrigger>
-            <SelectContent>
-              {PROJECT_STATUSES.map((statusOption) => (
-                <SelectItem key={statusOption} value={statusOption}>
-                  {statusOption.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
 
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900">Cost Breakdown</h3>
           <div className="grid grid-cols-1 gap-6">
+            {/* Creative Director Hours Section */}
             <div className="p-4 border rounded-lg bg-white/50">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Creative Director Hours (€{CREATIVE_DIRECTOR_RATE}/hour)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Creative Director Hours (€{CREATIVE_DIRECTOR_RATE}/hour)
+              </label>
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <Input
@@ -591,7 +603,11 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                     onChange={(e) => setInternalPaidHours(e.target.value)}
                     className="flex-1"
                   />
-                  <div className={`text-xs font-semibold break-words ${isOverBudget(internalCost, Number(internalPaidHours) * CREATIVE_DIRECTOR_RATE) ? 'text-red-600' : 'text-gray-900'} min-w-[80px] text-right`}>
+                  <div className={`text-xs font-semibold break-words ${
+                    isOverBudget(internalCost, Number(internalPaidHours) * CREATIVE_DIRECTOR_RATE) 
+                      ? 'text-red-600' 
+                      : 'text-gray-900'
+                  } min-w-[80px] text-right`}>
                     <div className="truncate">
                       Paid: €{(Number(internalPaidHours) * CREATIVE_DIRECTOR_RATE).toLocaleString()} ({Number(internalPaidHours)} hrs)
                     </div>
@@ -773,7 +789,4 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                     type="number"
                     placeholder="Paid Amount"
                     value={designPaidAmount}
-                    onChange={(e) => setDesignPaidAmount(e.target.value)}
-                    className="flex-1"
-                  />
-                  <div className={`text-xs font-semibold break-words ${isOverBudget(Number(designCost), Number(designPaidAmount)) ? 'text-
+                    onChange={(e) => setDesign
