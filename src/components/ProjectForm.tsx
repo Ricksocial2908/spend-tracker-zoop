@@ -477,6 +477,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
   return (
     <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in bg-white/80 backdrop-blur-sm p-6 rounded-xl border border-gray-200">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Left Column */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900">Project Details</h3>
           <Input
@@ -569,11 +570,15 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
           </Select>
         </div>
 
+        {/* Right Column */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold text-gray-900">Cost Breakdown</h3>
           <div className="grid grid-cols-1 gap-6">
+            {/* Creative Director Hours */}
             <div className="p-4 border rounded-lg bg-white/50">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Creative Director Hours (€{CREATIVE_DIRECTOR_RATE}/hour)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Creative Director Hours (€{CREATIVE_DIRECTOR_RATE}/hour)
+              </label>
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <Input
@@ -595,7 +600,11 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                     onChange={(e) => setInternalPaidHours(e.target.value)}
                     className="flex-1"
                   />
-                  <div className={`text-xs font-semibold break-words ${isOverBudget(internalCost, Number(internalPaidHours) * CREATIVE_DIRECTOR_RATE) ? 'text-red-600' : 'text-gray-900'} min-w-[80px] text-right`}>
+                  <div className={`text-xs font-semibold break-words ${
+                    isOverBudget(internalCost, Number(internalPaidHours) * CREATIVE_DIRECTOR_RATE) 
+                      ? 'text-red-600' 
+                      : 'text-gray-900'
+                  } min-w-[80px] text-right`}>
                     <div className="truncate">
                       Paid: €{(Number(internalPaidHours) * CREATIVE_DIRECTOR_RATE).toLocaleString()} ({Number(internalPaidHours)} hrs)
                     </div>
@@ -609,6 +618,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
               </div>
             </div>
 
+            {/* External Cost */}
             <div className="p-4 border rounded-lg bg-white/50">
               <label className="block text-sm font-medium text-gray-700 mb-2">External Cost</label>
               <div className="space-y-2">
@@ -632,7 +642,11 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                     onChange={(e) => setExternalPaidAmount(e.target.value)}
                     className="flex-1"
                   />
-                  <div className={`text-xs font-semibold break-words ${isOverBudget(Number(externalCost), Number(externalPaidAmount)) ? 'text-red-600' : 'text-gray-900'} min-w-[80px] text-right`}>
+                  <div className={`text-xs font-semibold break-words ${
+                    isOverBudget(Number(externalCost), Number(externalPaidAmount)) 
+                      ? 'text-red-600' 
+                      : 'text-gray-900'
+                  } min-w-[80px] text-right`}>
                     <div className="truncate">
                       Paid: €{Number(externalPaidAmount).toLocaleString()}
                     </div>
@@ -646,6 +660,7 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
               </div>
             </div>
 
+            {/* Software Cost */}
             <div className="p-4 border rounded-lg bg-white/50">
               <label className="block text-sm font-medium text-gray-700 mb-2">Software Cost</label>
               <div className="space-y-2">
@@ -669,7 +684,11 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                     onChange={(e) => setSoftwarePaidAmount(e.target.value)}
                     className="flex-1"
                   />
-                  <div className={`text-xs font-semibold break-words ${isOverBudget(Number(softwareCost), Number(softwarePaidAmount)) ? 'text-red-600' : 'text-gray-900'} min-w-[80px] text-right`}>
+                  <div className={`text-xs font-semibold break-words ${
+                    isOverBudget(Number(softwareCost), Number(softwarePaidAmount)) 
+                      ? 'text-red-600' 
+                      : 'text-gray-900'
+                  } min-w-[80px] text-right`}>
                     <div className="truncate">
                       Paid: €{Number(softwarePaidAmount).toLocaleString()}
                     </div>
@@ -683,5 +702,65 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
               </div>
             </div>
 
+            {/* Cost Summary */}
             <div className="p-4 border rounded-lg bg-white/50">
-              <label
+              <h4 className="text-sm font-medium text-gray-900 mb-4">Cost Summary</h4>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Total Cost:</span>
+                  <span>€{totalCost.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Total Paid:</span>
+                  <span>€{totalPaidAmount.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Sales Price:</span>
+                  <span>€{Number(salesPrice || 0).toLocaleString()}</span>
+                </div>
+                <div className="border-t pt-2 mt-2">
+                  <div className="flex justify-between font-medium">
+                    <span>Expected Gross Profit:</span>
+                    <span>€{expectedGrossProfit.toLocaleString()} ({expectedGrossProfitMargin.toFixed(1)}%)</span>
+                  </div>
+                  <div className="flex justify-between font-medium">
+                    <span>Actual Gross Profit:</span>
+                    <span className={grossProfit < expectedGrossProfit ? 'text-red-600' : 'text-green-600'}>
+                      €{grossProfit.toLocaleString()} ({grossProfitMargin.toFixed(1)}%)
+                    </span>
+                  </div>
+                  {profitDifference !== 0 && (
+                    <div className="flex justify-between text-sm mt-1">
+                      <span>Difference:</span>
+                      <span className={profitDifference < 0 ? 'text-red-600' : 'text-green-600'}>
+                        €{profitDifference.toLocaleString()} ({profitMarginDifference.toFixed(1)}%)
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Form Actions */}
+      <div className="flex justify-end gap-4 mt-6">
+        {onCancel && (
+          <Button type="button" variant="outline" onClick={onCancel}>
+            <XIcon className="w-4 h-4 mr-2" />
+            Cancel
+          </Button>
+        )}
+        <Button type="button" variant="outline" onClick={handleSaveAsDraft}>
+          <SaveIcon className="w-4 h-4 mr-2" />
+          Save as Draft
+        </Button>
+        <Button type="submit">
+          <PlusIcon className="w-4 h-4 mr-2" />
+          {mode === 'edit' ? 'Update' : 'Add'} Project
+        </Button>
+      </div>
+    </form>
+  );
+};
