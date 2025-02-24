@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,19 +12,17 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <div className="min-h-screen bg-background bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-background to-background">
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <div className="container mx-auto px-4 py-6">
-            <Navigation />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/projects" element={<Projects />} />
-            </Routes>
-          </div>
-        </BrowserRouter>
-      </div>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <div className="container mx-auto">
+          <Navigation />
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/projects" element={<Projects />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );

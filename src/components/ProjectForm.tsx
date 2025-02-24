@@ -6,9 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { PlusIcon, XIcon, SaveIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Database } from "@/integrations/supabase/types";
 
-type ProjectStatus = Database["public"]["Enums"]["project_status"];
+type ProjectStatus = 'active' | 'pending' | 'awaiting_po' | 'nearing_completion' | 'completed';
 
 interface ProjectFormProps {
   onProjectAdded: () => void;
@@ -46,7 +45,7 @@ const PROJECT_STATUSES: ProjectStatus[] = [
   'completed'
 ];
 
-const CREATIVE_DIRECTOR_RATE = 65;
+const CREATIVE_DIRECTOR_RATE = 43;
 const PROJECT_TYPES = ['fixed_fee', 'time_and_materials', 'retainer'] as const;
 
 export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'create' }: ProjectFormProps) => {
@@ -118,11 +117,8 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
         modeling_3d_cost: Number(modeling3dCost) || 0,
         rendering_cost: Number(renderingCost) || 0,
         status: status as ProjectStatus,
-        is_draft: false,
-        external_cost_category: 'contractor' as const,
-        internal_cost_category: 'internal' as const,
-        software_cost_category: 'software' as const
-      } satisfies Database['public']['Tables']['projects']['Insert'];
+        is_draft: false
+      };
 
       let result;
       
