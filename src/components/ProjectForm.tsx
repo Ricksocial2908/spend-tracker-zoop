@@ -6,8 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { PlusIcon, XIcon, SaveIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
 
-type ProjectStatus = 'active' | 'pending' | 'awaiting_po' | 'nearing_completion' | 'completed';
+type ProjectStatus = Database["public"]["Enums"]["project_status"];
 
 interface ProjectFormProps {
   onProjectAdded: () => void;
@@ -116,9 +117,12 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
         design_cost: Number(designCost) || 0,
         modeling_3d_cost: Number(modeling3dCost) || 0,
         rendering_cost: Number(renderingCost) || 0,
-        status: status as ProjectStatus,
-        is_draft: false
-      };
+        status: status as Database["public"]["Enums"]["project_status"],
+        is_draft: false,
+        external_cost_category: 'contractor' as const,
+        internal_cost_category: 'internal' as const,
+        software_cost_category: 'software' as const
+      } satisfies Omit<Database['public']['Tables']['projects']['Insert'], 'id' | 'created_at'>;
 
       let result;
       
@@ -330,8 +334,11 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
         modeling_3d_cost: Number(modeling3dCost) || 0,
         rendering_cost: Number(renderingCost) || 0,
         status: 'pending',
-        is_draft: true
-      };
+        is_draft: true,
+        external_cost_category: 'contractor' as const,
+        internal_cost_category: 'internal' as const,
+        software_cost_category: 'software' as const
+      } satisfies Omit<Database['public']['Tables']['projects']['Insert'], 'id' | 'created_at'>;
 
       let result;
       
@@ -767,218 +774,4 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                 <div className="flex items-center gap-2">
                   <Input
                     type="number"
-                    placeholder="Paid Amount"
-                    value={designPaidAmount}
-                    onChange={(e) => setDesignPaidAmount(e.target.value)}
-                    className="flex-1"
-                  />
-                  <div className={`text-xs font-semibold break-words ${isOverBudget(Number(designCost), Number(designPaidAmount)) ? 'text-red-600' : 'text-gray-900'} min-w-[80px] text-right`}>
-                    <div className="truncate">
-                      Paid: €{Number(designPaidAmount).toLocaleString()}
-                    </div>
-                    {isOverBudget(Number(designCost), Number(designPaidAmount)) && (
-                      <div className="truncate">
-                        Exceeded by €{(Number(designPaidAmount) - Number(designCost)).toLocaleString()}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 border rounded-lg bg-white/50">
-              <label className="block text-sm font-medium text-gray-700 mb-2">3D Modeling Cost</label>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Input
-                    type="number"
-                    placeholder="3D Modeling Cost"
-                    value={modeling3dCost}
-                    onChange={(e) => setModeling3dCost(e.target.value)}
-                    className="flex-1"
-                  />
-                  <div className="text-xs font-semibold text-gray-900 min-w-[80px] text-right">
-                    €{Number(modeling3dCost || 0).toLocaleString()}
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Input
-                    type="number"
-                    placeholder="Paid Amount"
-                    value={modeling3dPaidAmount}
-                    onChange={(e) => setModeling3dPaidAmount(e.target.value)}
-                    className="flex-1"
-                  />
-                  <div className={`text-xs font-semibold break-words ${isOverBudget(Number(modeling3dCost), Number(modeling3dPaidAmount)) ? 'text-red-600' : 'text-gray-900'} min-w-[80px] text-right`}>
-                    <div className="truncate">
-                      Paid: €{Number(modeling3dPaidAmount).toLocaleString()}
-                    </div>
-                    {isOverBudget(Number(modeling3dCost), Number(modeling3dPaidAmount)) && (
-                      <div className="truncate">
-                        Exceeded by €{(Number(modeling3dPaidAmount) - Number(modeling3dCost)).toLocaleString()}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 border rounded-lg bg-white/50">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Rendering Cost</label>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Input
-                    type="number"
-                    placeholder="Rendering Cost"
-                    value={renderingCost}
-                    onChange={(e) => setRenderingCost(e.target.value)}
-                    className="flex-1"
-                  />
-                  <div className="text-xs font-semibold text-gray-900 min-w-[80px] text-right">
-                    €{Number(renderingCost || 0).toLocaleString()}
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Input
-                    type="number"
-                    placeholder="Paid Amount"
-                    value={renderingPaidAmount}
-                    onChange={(e) => setRenderingPaidAmount(e.target.value)}
-                    className="flex-1"
-                  />
-                  <div className={`text-xs font-semibold break-words ${isOverBudget(Number(renderingCost), Number(renderingPaidAmount)) ? 'text-red-600' : 'text-gray-900'} min-w-[80px] text-right`}>
-                    <div className="truncate">
-                      Paid: €{Number(renderingPaidAmount).toLocaleString()}
-                    </div>
-                    {isOverBudget(Number(renderingCost), Number(renderingPaidAmount)) && (
-                      <div className="truncate">
-                        Exceeded by €{(Number(renderingPaidAmount) - Number(renderingCost)).toLocaleString()}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 border rounded-lg bg-white/50">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Total Expected Cost</label>
-              <div className="text-sm font-bold text-gray-900">
-                €{totalCost.toLocaleString()}
-              </div>
-            </div>
-
-            <div className="p-4 border rounded-lg bg-white/50">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Total Paid Amount</label>
-              <div className={`text-sm font-bold break-words ${totalPaidAmount > totalCost ? 'text-red-600' : 'text-gray-900'}`}>
-                <div className="truncate">
-                  €{totalPaidAmount.toLocaleString()}
-                </div>
-                {totalPaidAmount > totalCost && (
-                  <div className="truncate">
-                    Exceeded by €{(totalPaidAmount - totalCost).toLocaleString()}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="p-4 border rounded-lg bg-green-50">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Gross Profit (Based on Paid Amount)</label>
-                  <div className={`text-sm font-bold ${grossProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    €{grossProfit.toLocaleString()}
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Gross Profit Margin</label>
-                  <div className={`text-sm font-bold ${grossProfitMargin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {grossProfitMargin.toFixed(1)}%
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-4 border rounded-lg bg-blue-50">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Expected Gross Profit (Based on Expected Costs)</label>
-                  <div className={`text-sm font-bold ${(Number(salesPrice) - totalCost) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    €{(Number(salesPrice) - totalCost).toLocaleString()}
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Expected Gross Profit Margin</label>
-                  <div className={`text-sm font-bold ${(Number(salesPrice) - totalCost) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {Number(salesPrice) ? (((Number(salesPrice) - totalCost) / Number(salesPrice)) * 100).toFixed(1) : '0'}%
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-6">
-        <div className="p-4 border rounded-lg bg-blue-50">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Profit Margin Analysis</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Expected Profit Margins (Based on Costs)</label>
-                <div className={`text-sm font-bold ${expectedGrossProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  <div>Gross Profit: €{expectedGrossProfit.toLocaleString()}</div>
-                  <div>Margin: {expectedGrossProfitMargin.toFixed(1)}%</div>
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Actual Profit Margins (Based on Paid)</label>
-                <div className={`text-sm font-bold ${grossProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  <div>Gross Profit: €{grossProfit.toLocaleString()}</div>
-                  <div>Margin: {grossProfitMargin.toFixed(1)}%</div>
-                </div>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Profit Difference Analysis</label>
-                <div className={`text-sm font-bold ${profitDifference >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  <div>Profit Difference: €{profitDifference.toLocaleString()}</div>
-                  <div>Margin Difference: {profitMarginDifference.toFixed(1)}%</div>
-                  <div className="text-xs text-gray-600 mt-1">
-                    {profitDifference >= 0 
-                      ? "Actual profit is higher than expected" 
-                      : "Actual profit is lower than expected"}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex gap-2 justify-end">
-        <Button type="button" variant="outline" onClick={onCancel}>
-          <XIcon className="w-4 h-4 mr-2" />
-          Cancel
-        </Button>
-        <Button type="button" variant="secondary" onClick={handleSaveAsDraft}>
-          <SaveIcon className="w-4 h-4 mr-2" />
-          Save as Draft
-        </Button>
-        <Button type="submit">
-          {mode === 'edit' ? (
-            <>
-              <SaveIcon className="w-4 h-4 mr-2" />
-              Save Changes
-            </>
-          ) : (
-            <>
-              <PlusIcon className="w-4 h-4 mr-2" />
-              Add Project
-            </>
-          )}
-        </Button>
-      </div>
-    </form>
-  );
-};
+                    placeholder="
