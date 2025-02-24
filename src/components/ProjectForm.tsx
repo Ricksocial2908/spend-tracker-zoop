@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -695,6 +694,90 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                     {isOverBudget(Number(softwareCost), Number(softwarePaidAmount)) && (
                       <div className="truncate">
                         Exceeded by €{(Number(softwarePaidAmount) - Number(softwareCost)).toLocaleString()}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Software Development Cost */}
+            <div className="p-4 border rounded-lg bg-white/50">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Software Development Cost</label>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Software Development Cost"
+                    value={softwareDevelopmentCost}
+                    onChange={(e) => setSoftwareDevelopmentCost(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-xs font-semibold text-gray-900 min-w-[80px] text-right">
+                    €{Number(softwareDevelopmentCost || 0).toLocaleString()}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Paid Amount"
+                    value={softwareDevelopmentPaidAmount}
+                    onChange={(e) => setSoftwareDevelopmentPaidAmount(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className={`text-xs font-semibold break-words ${
+                    isOverBudget(Number(softwareDevelopmentCost), Number(softwareDevelopmentPaidAmount)) 
+                      ? 'text-red-600' 
+                      : 'text-gray-900'
+                  } min-w-[80px] text-right`}>
+                    <div className="truncate">
+                      Paid: €{Number(softwareDevelopmentPaidAmount).toLocaleString()}
+                    </div>
+                    {isOverBudget(Number(softwareDevelopmentCost), Number(softwareDevelopmentPaidAmount)) && (
+                      <div className="truncate">
+                        Exceeded by €{(Number(softwareDevelopmentPaidAmount) - Number(softwareDevelopmentCost)).toLocaleString()}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Design Cost */}
+            <div className="p-4 border rounded-lg bg-white/50">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Design Cost</label>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Design Cost"
+                    value={designCost}
+                    onChange={(e) => setDesignCost(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-xs font-semibold text-gray-900 min-w-[80px] text-right">
+                    €{Number(designCost || 0).toLocaleString()}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Paid Amount"
+                    value={designPaidAmount}
+                    onChange={(e) => setDesignPaidAmount(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className={`text-xs font-semibold break-words ${
+                    isOverBudget(Number(designCost), Number(designPaidAmount)) 
+                      ? 'text-red-600' 
+                      : 'text-gray-900'
+                  } min-w-[80px] text-right`}>
+                    <div className="truncate">
+                      Paid: €{Number(designPaidAmount).toLocaleString()}
+                    </div>
+                    {isOverBudget(Number(designCost), Number(designPaidAmount)) && (
+                      <div className="truncate">
+                        Exceeded by €{(Number(designPaidAmount) - Number(designCost)).toLocaleString()}
                       </div>
                     )}
                   </div>
