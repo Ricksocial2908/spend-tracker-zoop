@@ -195,7 +195,11 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
                 key={expense.id}
                 onClick={() => handleRowClick(expense.id)}
                 className={`cursor-pointer transition-colors ${
-                  highlightedIds.includes(expense.id) ? "bg-blue-200 hover:bg-blue-300" : "hover:bg-muted/50"
+                  highlightedIds.includes(expense.id) 
+                    ? "bg-blue-200 hover:bg-blue-300" 
+                    : expense.status === "keep"
+                    ? "bg-blue-50 hover:bg-blue-100"
+                    : "hover:bg-muted/50"
                 }`}
               >
                 <TableCell>{new Date(expense.date).toLocaleDateString()}</TableCell>
