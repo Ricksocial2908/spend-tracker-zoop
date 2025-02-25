@@ -617,6 +617,48 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
               </div>
             </div>
 
+            {/* VR Development Costs */}
+            <div className="p-4 border rounded-lg bg-white/50">
+              <label className="block text-sm font-medium text-gray-700 mb-2">VR Development Costs</label>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="VR Development Cost"
+                    value={vrDevelopmentCost}
+                    onChange={(e) => setVrDevelopmentCost(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className="text-xs font-semibold text-gray-900 min-w-[80px] text-right">
+                    €{Number(vrDevelopmentCost || 0).toLocaleString()}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Paid Amount"
+                    value={vrDevelopmentPaidAmount}
+                    onChange={(e) => setVrDevelopmentPaidAmount(e.target.value)}
+                    className="flex-1"
+                  />
+                  <div className={`text-xs font-semibold break-words ${
+                    isOverBudget(Number(vrDevelopmentCost), Number(vrDevelopmentPaidAmount)) 
+                      ? 'text-red-600' 
+                      : 'text-gray-900'
+                  } min-w-[80px] text-right`}>
+                    <div className="truncate">
+                      Paid: €{Number(vrDevelopmentPaidAmount).toLocaleString()}
+                    </div>
+                    {isOverBudget(Number(vrDevelopmentCost), Number(vrDevelopmentPaidAmount)) && (
+                      <div className="truncate">
+                        Exceeded by €{(Number(vrDevelopmentPaidAmount) - Number(vrDevelopmentCost)).toLocaleString()}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* External Cost */}
             <div className="p-4 border rounded-lg bg-white/50">
               <label className="block text-sm font-medium text-gray-700 mb-2">External Cost</label>
