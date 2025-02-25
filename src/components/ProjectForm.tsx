@@ -46,7 +46,7 @@ const PROJECT_STATUSES: ProjectStatus[] = [
   'completed'
 ];
 
-const CREATIVE_DIRECTOR_RATE = 65;
+const CREATIVE_DIRECTOR_RATE = 43;
 const PROJECT_TYPES = ['fixed_fee', 'time_and_materials', 'retainer'] as const;
 
 export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'create' }: ProjectFormProps) => {
@@ -610,48 +610,6 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
                     {isOverBudget(internalCost, Number(internalPaidHours) * CREATIVE_DIRECTOR_RATE) && (
                       <div className="truncate">
                         Exceeded by €{((Number(internalPaidHours) * CREATIVE_DIRECTOR_RATE) - internalCost).toLocaleString()} / {(Number(internalPaidHours) - Number(creativeDirectorHours)).toFixed(1)}hrs
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* VR Development Costs */}
-            <div className="p-4 border rounded-lg bg-white/50">
-              <label className="block text-sm font-medium text-gray-700 mb-2">VR Development Costs</label>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Input
-                    type="number"
-                    placeholder="VR Development Cost"
-                    value={vrDevelopmentCost}
-                    onChange={(e) => setVrDevelopmentCost(e.target.value)}
-                    className="flex-1"
-                  />
-                  <div className="text-xs font-semibold text-gray-900 min-w-[80px] text-right">
-                    €{Number(vrDevelopmentCost || 0).toLocaleString()}
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Input
-                    type="number"
-                    placeholder="Paid Amount"
-                    value={vrDevelopmentPaidAmount}
-                    onChange={(e) => setVrDevelopmentPaidAmount(e.target.value)}
-                    className="flex-1"
-                  />
-                  <div className={`text-xs font-semibold break-words ${
-                    isOverBudget(Number(vrDevelopmentCost), Number(vrDevelopmentPaidAmount)) 
-                      ? 'text-red-600' 
-                      : 'text-gray-900'
-                  } min-w-[80px] text-right`}>
-                    <div className="truncate">
-                      Paid: €{Number(vrDevelopmentPaidAmount).toLocaleString()}
-                    </div>
-                    {isOverBudget(Number(vrDevelopmentCost), Number(vrDevelopmentPaidAmount)) && (
-                      <div className="truncate">
-                        Exceeded by €{(Number(vrDevelopmentPaidAmount) - Number(vrDevelopmentCost)).toLocaleString()}
                       </div>
                     )}
                   </div>
