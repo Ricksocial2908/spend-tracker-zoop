@@ -8,7 +8,25 @@ import {
   TableFooter,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { EditIcon, CheckCircleIcon, XCircleIcon, ArrowUpDown, DownloadIcon, FileText } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  EditIcon,
+  CheckCircleIcon,
+  XCircleIcon,
+  ArrowUpDown,
+  DownloadIcon,
+  FileText,
+  Trash2Icon,
+} from "lucide-react";
 import { useState } from "react";
 import { EditExpenseDialog } from "./EditExpenseDialog";
 import { supabase } from "@/integrations/supabase/client";
@@ -38,6 +56,8 @@ type SortDirection = 'asc' | 'desc';
 export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) => {
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
   const [highlightedIds, setHighlightedIds] = useState<number[]>([]);
   const [sortField, setSortField] = useState<SortField>('date');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
@@ -263,6 +283,17 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
                         <CheckCircleIcon className="h-4 w-4 text-green-500" />
                       )}
                     </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setExpenseToDelete(expense);
+                      }}
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2Icon className="h-4 w-4" />
+                    </Button>
                   </div>
                 </TableCell>
               </TableRow>
@@ -294,6 +325,27 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
         onOpenChange={setEditDialogOpen}
         onExpenseUpdated={onExpenseUpdated}
       />
+
+      <AlertDialog open={!!expenseToDelete} onOpenChange={() => setExpenseToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to delete this expense?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the expense
+              "{expenseToDelete?.name}" with an amount of €{expenseToDelete?.amount.toLocaleString()}.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            >
+              Delete Expense
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
