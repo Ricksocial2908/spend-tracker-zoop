@@ -85,6 +85,26 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
     }
   };
 
+  const handleDelete = async () => {
+    if (!expenseToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from("expenses")
+        .delete()
+        .eq("id", expenseToDelete.id);
+
+      if (error) throw error;
+
+      toast.success("Expense deleted successfully");
+      onExpenseUpdated();
+      setExpenseToDelete(null);
+    } catch (error) {
+      console.error("Error deleting expense:", error);
+      toast.error("Failed to delete expense");
+    }
+  };
+
   const handleRowClick = (expenseId: number) => {
     setHighlightedIds(prev => {
       if (prev.includes(expenseId)) {
