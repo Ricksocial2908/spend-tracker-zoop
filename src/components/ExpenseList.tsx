@@ -199,6 +199,8 @@ export const ExpenseList = ({ expenses, onExpenseUpdated }: ExpenseListProps) =>
                     ? "bg-blue-200 hover:bg-blue-300" 
                     : expense.status === "keep"
                     ? "bg-blue-50 hover:bg-blue-100"
+                    : expense.status === "cancel"
+                    ? "bg-red-50 hover:bg-red-100"
                     : "hover:bg-muted/50"
                 }`}
               >
