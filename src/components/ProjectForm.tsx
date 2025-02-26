@@ -1,3 +1,4 @@
+<lov-code>
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,7 +47,7 @@ const PROJECT_STATUSES: ProjectStatus[] = [
   'completed'
 ];
 
-const CREATIVE_DIRECTOR_RATE = 43;
+const CREATIVE_DIRECTOR_RATE = 65;
 const PROJECT_TYPES = ['fixed_fee', 'time_and_materials', 'retainer'] as const;
 
 export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'create' }: ProjectFormProps) => {
@@ -787,63 +788,10 @@ export const ProjectForm = ({ onProjectAdded, onCancel, initialData, mode = 'cre
 
             {/* Cost Summary */}
             <div className="p-4 border rounded-lg bg-white/50">
-              <h4 className="text-sm font-medium text-gray-900 mb-4">Cost Summary</h4>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>Total Cost:</span>
-                  <span>€{totalCost.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Total Paid:</span>
-                  <span>€{totalPaidAmount.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Sales Price:</span>
-                  <span>€{Number(salesPrice || 0).toLocaleString()}</span>
-                </div>
-                <div className="border-t pt-2 mt-2">
-                  <div className="flex justify-between font-medium">
-                    <span>Expected Gross Profit:</span>
-                    <span>€{expectedGrossProfit.toLocaleString()} ({expectedGrossProfitMargin.toFixed(1)}%)</span>
-                  </div>
-                  <div className="flex justify-between font-medium">
-                    <span>Actual Gross Profit:</span>
-                    <span className={grossProfit < expectedGrossProfit ? 'text-red-600' : 'text-green-600'}>
-                      €{grossProfit.toLocaleString()} ({grossProfitMargin.toFixed(1)}%)
-                    </span>
-                  </div>
-                  {profitDifference !== 0 && (
-                    <div className="flex justify-between text-sm mt-1">
-                      <span>Difference:</span>
-                      <span className={profitDifference < 0 ? 'text-red-600' : 'text-green-600'}>
-                        €{profitDifference.toLocaleString()} ({profitMarginDifference.toFixed(1)}%)
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Form Actions */}
-      <div className="flex justify-end gap-4 mt-6">
-        {onCancel && (
-          <Button type="button" variant="outline" onClick={onCancel}>
-            <XIcon className="w-4 h-4 mr-2" />
-            Cancel
-          </Button>
-        )}
-        <Button type="button" variant="outline" onClick={handleSaveAsDraft}>
-          <SaveIcon className="w-4 h-4 mr-2" />
-          Save as Draft
-        </Button>
-        <Button type="submit">
-          <PlusIcon className="w-4 h-4 mr-2" />
-          {mode === 'edit' ? 'Update' : 'Add'} Project
-        </Button>
-      </div>
-    </form>
-  );
-};
+              <label className="block text-sm font-medium text-gray-700 mb-2">3D Modeling Cost</label>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="3D Modeling Cost"
+                    value
